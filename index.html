@@ -599,9 +599,9 @@ function App(){
               </div>
               <div style={{background:"rgba(255,255,255,0.07)",borderRadius:12,padding:16}}>
                 <div style={{color:"#fb923c",fontSize:14,fontWeight:700,marginBottom:12,fontFamily:"'Noto Sans KR',sans-serif"}}>주 펌프 사양</div>
-                <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:10}}>
-                  {[[" 토출량 (Q)",`${f3(C.M)} m³/min`],["전 양 정 (H)",`${C.J} m`],["전동기 출력",`${C.Php} HP`],["소화전 수 (N)",`${C.A} 개`],
-                    ["토출구경",`${sys.pumpDia} A`],["수원 용량",`${f3(C.D)} m³`],["작동 소화전",`${C.A} 개`],["호스 길이",`${sys.hoseLen} m`]].map(([l,v])=>(
+                <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10}}>
+                  {[["토출량 (Q)",`${f3(C.M)} m³/min`],["전 양 정 (H)",`${C.J} m`],["전동기 출력",`${C.Php} HP`],
+                    ["토출구경",`${sys.pumpDia} A`],["수원 용량",`${f3(C.D)} m³`],["작동 소화전",`${C.A} 개`]].map(([l,v])=>(
                     <div key={l} style={{background:"rgba(255,255,255,0.05)",borderRadius:8,padding:"8px 12px"}}>
                       <div style={{color:"#64748b",fontSize:11,fontFamily:"'Noto Sans KR',sans-serif"}}>{l}</div>
                       <div style={{color:"white",fontSize:15,fontWeight:700,fontFamily:"'Noto Sans Mono',monospace"}}>{v}</div>
@@ -732,14 +732,14 @@ function App(){
                   <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,fontFamily:"'Noto Sans KR',sans-serif"}}>
                     <thead>
                       <tr style={{background:"#b91c1c",color:"white"}}>
-                        {["구분","구경(A)","유량(m³/min)","동력(HP)","양정(m)","수원(m³)","전달방식"].map(h=>(
+                        {["구분","구경(A)","유량(m³/min)","동력(HP)","양정(m)","수원(m³)","전달방식","소화전 수(N)"].map(h=>(
                           <th key={h} style={{border:BD,padding:"7px 10px",textAlign:"center",fontWeight:700,whiteSpace:"nowrap",fontFamily:"'Noto Sans KR',sans-serif"}}>{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
                       <tr style={{fontWeight:700,background:"white"}}>
-                        {["주  펌  프",`${sys.pumpDia}×${sys.pumpDia}`,f3(C.M),C.Php,C.J,f3(C.D),TRANS_TYPE[sys.transType]?.label].map((v,i)=>(
+                        {["주  펌  프",`${sys.pumpDia}×${sys.pumpDia}`,f3(C.M),C.Php,C.J,f3(C.D),TRANS_TYPE[sys.transType]?.label,`${C.A} 개`].map((v,i)=>(
                           <td key={i} style={{border:BD,padding:"7px 10px",textAlign:"center",fontFamily:"'Noto Sans Mono','Noto Sans KR',monospace",fontSize:12,whiteSpace:"nowrap"}}>{v}</td>
                         ))}
                       </tr>
