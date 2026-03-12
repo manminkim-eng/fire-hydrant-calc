@@ -1,9 +1,9 @@
 // ═══════════════════════════════════════════════════════════════
 //  Service Worker — 옥내소화전 펌프 용량 계산서 PWA
-//  캐시 버전을 올리면 이전 캐시 자동 삭제 + 새 파일 캐시
+//  ★ 업데이트 시 CACHE_VERSION 숫자를 반드시 올려주세요
 // ═══════════════════════════════════════════════════════════════
 
-const CACHE_VERSION = 'v1.0.0';
+const CACHE_VERSION = 'v2.0.0';
 const CACHE_NAME    = `fire-hydrant-app-${CACHE_VERSION}`;
 
 const LOCAL_FILES = [
@@ -23,26 +23,20 @@ const CDN_FILES = [
     'https://unpkg.com/@babel/standalone/babel.min.js'
 ];
 
-// ═══ 1. INSTALL ═══
 self.addEventListener('install', (event) => {
-    console.log(`[SW] 설치 시작 (${CACHE_VERSION})`);
     event.waitUntil(
         caches.open(CACHE_NAME).then(async (cache) => {
             await cache.addAll(LOCAL_FILES);
-            console.log('[SW] 로컬 파일 캐시 완료');
             for (const url of CDN_FILES) {
                 try { await cache.add(url); }
-                catch (err) { console.warn('[SW] CDN 캐시 실패 (무시):', url); }
+                catch (err) { console.warn('[SW] CDN 캐시 실패:', url); }
             }
-            console.log('[SW] CDN 파일 캐시 완료');
         })
     );
     self.skipWaiting();
 });
 
-// ═══ 2. ACTIVATE ═══
 self.addEventListener('activate', (event) => {
-    console.log(`[SW] 활성화 (${CACHE_VERSION})`);
     event.waitUntil(
         caches.keys().then((keys) =>
             Promise.all(keys.map((k) => k !== CACHE_NAME ? caches.delete(k) : undefined))
@@ -51,11 +45,9 @@ self.addEventListener('activate', (event) => {
     self.clients.claim();
 });
 
-// ═══ 3. FETCH — Cache First ═══
 self.addEventListener('fetch', (event) => {
     if (event.request.method !== 'GET') return;
 
-    // Google Fonts: Stale While Revalidate
     if (event.request.url.includes('fonts.googleapis.com') ||
         event.request.url.includes('fonts.gstatic.com')) {
         event.respondWith(
@@ -71,7 +63,6 @@ self.addEventListener('fetch', (event) => {
         return;
     }
 
-    // 기본: Cache First
     event.respondWith(
         caches.match(event.request).then((cached) => {
             if (cached) return cached;
