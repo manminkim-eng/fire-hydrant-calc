@@ -17,6 +17,7 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png"/>
 
 <!-- 파비콘 -->
+<link rel="icon" href="icons/favicon.ico" sizes="any"/>
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png"/>
 <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png"/>
 
@@ -431,7 +432,7 @@ function FormulaModal({onClose}){
 }
 
 function App(){
-  const[tab,setTab]=useState(0);
+  const[tab,setTab]=useState(window.__INITIAL_TAB__||0);
   const[showFormula,setShowFormula]=useState(false);
   const[proj,setProj]=useState({name:"만민 건축사 신사옥 신축공사 현장",designer:"김만민",date:new Date().toISOString().slice(0,10)});
   const[sys,setSys]=useState({hydrants:3,actualHead:78,hoseLen:30,hoseType:2,transType:1,pumpDia:100,pumpEff:60,pipeType:"SCH10"});
@@ -1004,15 +1005,67 @@ function App(){
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 
-<!-- ═══ Service Worker 등록 ═══ -->
+<!-- ═══ Service Worker Ver 3.0 ═══ -->
 <script>
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>{
-    navigator.serviceWorker.register('./sw.js')
-      .then(r=>console.log('[PWA] SW 등록 완료 — scope:',r.scope))
-      .catch(e=>console.warn('[PWA] SW 등록 실패:',e));
+(function(){
+  if(!('serviceWorker' in navigator)) return;
+
+  /* ── 탭 딥링크: ?tab=N 처리 ── */
+  const _tabParam = new URLSearchParams(location.search).get('tab');
+  if(_tabParam !== null){
+    window.__INITIAL_TAB__ = parseInt(_tabParam) || 0;
+  }
+
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'})
+      .then(reg=>{
+        console.log('[PWA] SW 등록 — scope:', reg.scope);
+
+        /* ── 업데이트 감지 → 배너 표시 ── */
+        reg.addEventListener('updatefound', ()=>{
+          const newWorker = reg.installing;
+          newWorker.addEventListener('statechange', ()=>{
+            if(newWorker.state === 'installed' && navigator.serviceWorker.controller){
+              _showUpdateBanner(newWorker);
+            }
+          });
+        });
+
+        /* ── 주기적 업데이트 체크 (1시간) ── */
+        setInterval(()=>reg.update(), 60*60*1000);
+      })
+      .catch(e => console.warn('[PWA] SW 등록 실패:', e));
+
+    /* ── 컨트롤러 교체 시 자동 새로고침 ── */
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', ()=>{
+      if(!refreshing){ refreshing = true; location.reload(); }
+    });
   });
-}
+
+  function _showUpdateBanner(worker){
+    const b = document.createElement('div');
+    b.id = 'sw-update-banner';
+    b.style.cssText = [
+      'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:99999',
+      'background:#1e3a5f;color:white;border-radius:14px;padding:12px 18px',
+      'display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,0.35)',
+      'font-family:"Noto Sans KR",sans-serif;font-size:13px;white-space:nowrap',
+      'animation:slideUp 0.35s ease-out',
+    ].join(';');
+    b.innerHTML = `
+      <span>🔄 새 버전이 있습니다</span>
+      <button onclick="(function(){document.getElementById('sw-update-banner').remove();
+        navigator.serviceWorker.ready.then(r=>{r.waiting&&r.waiting.postMessage({type:'SKIP_WAITING'})})
+      })()" style="background:#DC2626;color:white;border:none;border-radius:8px;
+        padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;">업데이트</button>
+      <button onclick="document.getElementById('sw-update-banner').remove()"
+        style="background:rgba(255,255,255,0.15);color:white;border:none;border-radius:8px;
+        padding:6px 10px;font-size:11px;cursor:pointer;">나중에</button>
+    `;
+    document.body.appendChild(b);
+  }
+})();
 </script>
 </body>
 </html>
