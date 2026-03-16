@@ -6,29 +6,7 @@
 <title>옥내소화전 펌프 용량 계산서</title>
 
 <!-- ═══ PWA 설정 ═══ -->
-<link rel="manifest" href="manifest.json" id="pwa-manifest"/>
-<script>
-/* 바로가기 이름을 "옥내소화전"으로 강제 설정 */
-(function(){
-  var m={
-    name:"옥내소화전 펌프 용량 계산서",
-    short_name:"옥내소화전",
-    start_url:"./",
-    display:"standalone",
-    background_color:"#f1f5f9",
-    theme_color:"#DC2626",
-    icons:[
-      {src:"icons/icon-192.png",sizes:"192x192",type:"image/png",purpose:"any maskable"},
-      {src:"icons/icon-512.png",sizes:"512x512",type:"image/png",purpose:"any maskable"}
-    ]
-  };
-  try{
-    var blob=new Blob([JSON.stringify(m)],{type:"application/manifest+json"});
-    var url=URL.createObjectURL(blob);
-    document.getElementById("pwa-manifest").href=url;
-  }catch(e){}
-})();
-</script>
+<link rel="manifest" href="manifest.json"/>
 <meta name="theme-color" content="#DC2626"/>
 <meta name="description" content="옥내소화전 펌프 용량 계산서 - 소방시설 설계 전용"/>
 
@@ -164,64 +142,60 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.5;}
   to{transform:translateY(0);opacity:1;}
 }
 
-/* ── A4 계산서 출력 반응형 미리보기 ── */
-.report-preview-outer{
-  overflow:hidden;
-  background:#e8ecf1;
-  padding:20px 10px;
-  border-radius:14px;
-  margin-bottom:16px;
+/* ═══ A4 계산서 반응형 미리보기 ═══
+   transform-origin:0 0 + translateX 방식으로
+   정확한 중앙 배치 + 세로 높이 보정                 */
+.rpt-outer{
+  width:100%;overflow:hidden;
+  background:#e8ecf1;padding:20px 12px;
+  border-radius:14px;margin-bottom:16px;
+  /* JS가 height 를 동적 보정 */
 }
-.report-scale-wrap{
-  transform-origin:top center;
-  width:794px;           /* A4 고정폭 — JS가 scale 조정 */
-  margin:0 auto;
+.rpt-inner{
+  width:794px;         /* A4 @ 96dpi */
+  /* JS: transform-origin:0 0; transform:translateX(N)scale(S) */
 }
-.report-mobile-hint{
+.rpt-hint{
   display:none;
   align-items:center;gap:6px;
   background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;
   padding:8px 13px;font-size:10px;font-weight:600;color:#1e40af;
   margin-bottom:10px;
 }
-@media(max-width:860px){.report-mobile-hint{display:flex;}}
+@media(max-width:860px){.rpt-hint{display:flex;}}
 @media print{
-  .report-preview-outer{
-    background:white !important;padding:0 !important;
-    overflow:visible !important;border-radius:0 !important;
-    margin:0 !important;
-  }
-  .report-scale-wrap{
-    transform:none !important;width:auto !important;
-    margin:0 !important;
-  }
-  .report-mobile-hint{display:none !important;}
+  .rpt-outer{background:white!important;padding:0!important;overflow:visible!important;border-radius:0!important;margin:0!important;}
+  .rpt-inner{transform:none!important;width:auto!important;margin:0!important;}
+  .rpt-hint{display:none!important;}
 }
 
-/* ── 배관 구간 테이블 모바일 강화 ── */
-.seg-tbl-outer{
-  width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;
-  border-radius:6px;border:1px solid #e2e8f0;
-  /* 스크롤바 항상 표시 → 스크롤 가능 인지 */
-  scrollbar-width:thin;scrollbar-color:#94a3b8 #f1f5f9;
-}
-.seg-tbl-outer::-webkit-scrollbar{height:8px;}
-.seg-tbl-outer::-webkit-scrollbar-track{background:#f1f5f9;border-radius:4px;}
-.seg-tbl-outer::-webkit-scrollbar-thumb{background:#94a3b8;border-radius:4px;}
-.seg-scroll-hint{
+/* ═══ 배관 구간 테이블 모바일 스크롤 힌트 ═══ */
+.seg-hint{
   display:none;
-  align-items:center;gap:5px;justify-content:center;
+  align-items:center;gap:6px;justify-content:center;
   font-size:11px;font-weight:700;color:#6b7280;
-  padding:6px 0 4px;letter-spacing:0.02em;
+  padding:6px 0;
+  background:#f8fafc;
+  border:1px solid #e2e8f0;border-bottom:none;
+  border-radius:6px 6px 0 0;
 }
-@media(max-width:860px){.seg-scroll-hint{display:flex;}}
+@media(max-width:860px){.seg-hint{display:flex;}}
 
-/* ── 데이터 입력 탭 모바일 레이아웃 ── */
+/* ═══ 입력탭 모바일 반응형 개선 ═══ */
+.main-outer{max-width:1300px;margin:0 auto;padding:24px;}
 @media(max-width:640px){
-  .input-tab-wrap{padding:12px 10px 80px !important;}
+  .main-outer{padding:14px 10px 80px;}
+  .box-header{padding:9px 14px!important;font-size:11px!important;}
+  .box-body{padding:14px 12px!important;}
 }
-@media(max-width:480px){
-  .box-pad{padding:14px 12px !important;}
+@media(max-width:420px){
+  .main-outer{padding:12px 8px 80px;}
+}
+/* 헤더 모바일 */
+@media(max-width:640px){
+  .hdr-h1{font-size:18px!important;}
+  .hdr-pad{padding:0 14px!important;}
+  .sum-item{font-size:11px!important;}
 }
 </style>
 </head>
@@ -305,13 +279,23 @@ const SEC_TITLE_STYLE={
 };
 
 /* ═══ 컴포넌트 ═══════════════════════════════════════════════ */
-function Box({title,children}){
+/* Box — 다크 헤더 바 + 내부 패딩 카드 (01.jpg 스타일) */
+function Box({title,accent,children}){
+  const bg=accent||"#1e3a5f";
   return(
-    <div style={{background:"white",borderRadius:14,border:"1px solid #f1f5f9",padding:"18px 20px",boxShadow:"0 1px 4px rgba(0,0,0,0.06)"}}>
-      <div style={{fontSize:11,fontWeight:800,color:"#374151",textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:14,display:"flex",alignItems:"center",gap:8}}>
-        <span style={{color:"#dc2626",fontSize:14}}>◆</span>{title}
+    <div style={{background:"white",borderRadius:12,border:"1px solid #e5e7eb",overflow:"hidden",boxShadow:"0 1px 6px rgba(0,0,0,0.07)"}}>
+      <div className="box-header" style={{
+        background:`linear-gradient(135deg,${bg} 0%,${bg}ee 100%)`,
+        color:"white",padding:"10px 18px",
+        fontSize:12,fontWeight:800,letterSpacing:"0.04em",
+        display:"flex",alignItems:"center",gap:8,
+        fontFamily:"'Noto Sans KR',sans-serif"
+      }}>
+        <span style={{fontSize:15,opacity:0.85}}>◆</span>{title}
       </div>
-      {children}
+      <div className="box-body" style={{padding:"18px 18px"}}>
+        {children}
+      </div>
     </div>
   );
 }
@@ -531,29 +515,33 @@ function App(){
   const rem=i=>setSegs(prev=>prev.filter((_,j)=>j!==i));
   const add=()=>setSegs(prev=>[...prev,mkSeg()]);
 
-  /* ── A4 계산서 반응형 스케일링 ── */
+  /* ═══ A4 계산서 반응형 스케일링 ═══
+     transform-origin:0 0 + translateX(lOff)scale(s) 방식:
+     ① 콘텐츠를 왼쪽 기준(0,0)으로 축소
+     ② translateX 로 중앙 정렬
+     ③ outer.height = scrollHeight×scale 로 높이 보정
+     → 인쇄 시 transform:none 으로 A4 원본 복원        */
   useEffect(()=>{
-    if(tab!==2) return;
-    function scaleReport(){
-      const outer=document.getElementById('report-preview-outer');
-      const inner=document.getElementById('report-scale-wrap');
-      if(!outer||!inner) return;
+    if(tab!==2)return;
+    function scaleRpt(){
+      const outer=document.getElementById('rpt-outer');
+      const inner=document.getElementById('rpt-inner');
+      if(!outer||!inner)return;
       const A4W=794;
-      /* outer의 실제 가용 폭 (패딩 20px×2 제외) */
-      const avail=outer.clientWidth-40;
-      if(avail>=A4W){
-        inner.style.transform='';
-        outer.style.minHeight='';
-      } else {
-        const scale=avail/A4W;
-        inner.style.transform='scale('+scale+')';
-        /* transform은 레이아웃 공간 차지 안 함 → 부모 높이 수동 보정 */
-        outer.style.minHeight=Math.round(inner.scrollHeight*scale+40)+'px';
+      const outerW=outer.clientWidth;
+      const scale=Math.min(1,(outerW-24)/A4W);
+      if(scale>=1){
+        inner.style.cssText='width:794px;margin:0 auto;';
+        outer.style.height='auto';
+      }else{
+        const lOff=Math.max(0,(outerW-A4W*scale)/2);
+        inner.style.cssText=`width:794px;transform-origin:0 0;transform:translateX(${lOff}px) scale(${scale});`;
+        outer.style.height=(inner.scrollHeight*scale+40)+'px';
       }
     }
-    const t=setTimeout(scaleReport,120);
-    window.addEventListener('resize',scaleReport);
-    return()=>{clearTimeout(t);window.removeEventListener('resize',scaleReport);};
+    const t=setTimeout(scaleRpt,120);
+    window.addEventListener('resize',scaleRpt);
+    return()=>{clearTimeout(t);window.removeEventListener('resize',scaleRpt);};
   },[tab,segs,sys,proj]);
 
   /* ═══ PWA 설치 프롬프트 ═══ */
@@ -608,13 +596,13 @@ function App(){
 
       {/* ── 헤더 ── */}
       <div className="no-print" style={{background:"linear-gradient(135deg,#450a0a,#991b1b,#b91c1c)",color:"white",padding:"20px 0 0"}}>
-        <div style={{maxWidth:1300,margin:"0 auto",padding:"0 24px"}}>
+        <div className="hdr-pad" style={{maxWidth:1300,margin:"0 auto",padding:"0 24px"}}>
           <div className="hdr-row">
             <div>
               <div style={{fontSize:11,fontWeight:600,opacity:0.7,letterSpacing:"0.15em",textTransform:"uppercase",marginBottom:6}}>
                 Indoor Fire Hydrant Equipment
               </div>
-              <h1 style={{fontSize:26,fontWeight:900,letterSpacing:"0.04em",lineHeight:1.2}}>
+              <h1 className="hdr-h1" style={{fontSize:26,fontWeight:900,letterSpacing:"0.04em",lineHeight:1.2}}>
                 옥내소화전 펌프 용량 계산서
               </h1>
               <div style={{fontSize:11,marginTop:8,opacity:0.85,fontFamily:"'Noto Sans KR',sans-serif",letterSpacing:"0.02em"}}>
@@ -659,12 +647,12 @@ function App(){
         </div>
       </div>
 
-      <div style={{maxWidth:1300,margin:"0 auto",padding:"24px"}}>
+      <div className="main-outer">
 
         {/* ════════ TAB 0: 데이터 입력 ════════════════════════════ */}
         {tab===0&&(
           <div className="no-print" style={{display:"grid",gap:18}}>
-            <Box title="프로젝트 정보">
+            <Box title="Ⅰ-0. 프로젝트 정보" accent="#374151">
               <div className="g-proj">
                 <div><LabelEl>공사명</LabelEl><InpText val={proj.name} onChange={v=>sp("name",v)}/></div>
                 <div><LabelEl>설계자</LabelEl><InpText val={proj.designer} onChange={v=>sp("designer",v)}/></div>
@@ -676,7 +664,7 @@ function App(){
               </div>
             </Box>
 
-            <Box title="시스템 파라미터 (NFPC 102 기준)">
+            <Box title="Ⅰ-1. 옥내소화전 시스템 파라미터 (NFTC 102 기준)" accent="#991b1b">
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(210px,1fr))",gap:14}}>
                 {/* A */}
                 <div>
@@ -742,24 +730,24 @@ function App(){
               </div>
             </Box>
 
-            <Box title="배관 구간 데이터 입력 (Ⅰ-2. 배관 마찰손실)">
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10,flexWrap:"wrap",gap:8}}>
+            <Box title="Ⅰ-2. 배관 구간 데이터 입력 (마찰손실 자동 계산)" accent="#1e3a5f">
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
                 <p style={{fontSize:12,color:"#6b7280"}}>각 구간 유량·관경·직관 길이·관부속 수량 입력 → 손실수두 자동 계산</p>
-                <button onClick={add} style={{padding:"7px 16px",background:"#f97316",color:"white",border:"none",borderRadius:8,cursor:"pointer",fontWeight:700,fontSize:12,fontFamily:"'Noto Sans KR',sans-serif",flexShrink:0}}>+ 구간 추가</button>
+                <button onClick={add} style={{padding:"6px 14px",background:"#f97316",color:"white",border:"none",borderRadius:8,cursor:"pointer",fontWeight:700,fontSize:12,fontFamily:"'Noto Sans KR',sans-serif",flexShrink:0}}>+ 구간 추가</button>
               </div>
-              {/* 모바일 스크롤 안내 */}
-              <div className="seg-scroll-hint">
+              {/* 모바일 스크롤 힌트 */}
+              <div className="seg-hint">
                 <span style={{fontSize:14}}>←</span>
                 <span>좌우로 스크롤하여 모든 항목 입력</span>
                 <span style={{fontSize:14}}>→</span>
               </div>
-              <div className="seg-tbl-outer">
-                <table style={{borderCollapse:"collapse",fontSize:11,tableLayout:"auto",minWidth:1080}}>
+              <div className="tbl-wrap">
+                <table style={{borderCollapse:"collapse",fontSize:11,width:"100%",tableLayout:"fixed",minWidth:900}}>
                   <colgroup>
-                    <col style={{width:34}}/><col style={{width:72}}/><col style={{width:60}}/><col style={{width:62}}/>
-                    <col style={{width:54}}/><col style={{width:54}}/><col style={{width:54}}/><col style={{width:54}}/>
-                    <col style={{width:54}}/><col style={{width:54}}/><col style={{width:54}}/><col style={{width:54}}/>
-                    <col style={{width:76}}/><col style={{width:84}}/><col style={{width:76}}/><col style={{width:64}}/><col style={{width:34}}/> 
+                    <col style={{width:"3%"}}/><col style={{width:"7%"}}/><col style={{width:"6%"}}/><col style={{width:"6%"}}/>
+                    <col style={{width:"5%"}}/><col style={{width:"5%"}}/><col style={{width:"5%"}}/><col style={{width:"5%"}}/>
+                    <col style={{width:"5%"}}/><col style={{width:"5%"}}/><col style={{width:"5%"}}/><col style={{width:"5%"}}/>
+                    <col style={{width:"7%"}}/><col style={{width:"8%"}}/><col style={{width:"7%"}}/><col style={{width:"6%"}}/><col style={{width:"2%"}}/>
                   </colgroup>
                   <thead>
                     <tr style={{background:"#1e3a5f",color:"white"}}>
@@ -768,7 +756,7 @@ function App(){
                         "Gate\nV/V","Ball\nV/V","Angle\nV/V","Check\nV/V",
                         "상당직관\n(m)","마찰계수\n(m/100m)","손실수두\n(m)","유속\n(m/s)",""
                       ].map((h,i)=>(
-                        <th key={i} style={{border:BD,padding:"7px 3px",textAlign:"center",whiteSpace:"pre-line",lineHeight:1.4,fontFamily:"'Noto Sans KR',sans-serif",fontSize:9,fontWeight:700}}>{h}</th>
+                        <th key={i} style={{border:BD,padding:"5px 2px",textAlign:"center",whiteSpace:"pre-line",lineHeight:1.3,fontFamily:"'Noto Sans KR',sans-serif",fontSize:9,fontWeight:700}}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -780,35 +768,35 @@ function App(){
                       const bg=i%2===0?"white":"#f9fafb";
                       const inp=(k)=>(<input type="number" min="0" value={s[k]||""} placeholder="0"
                         onChange={e=>upd(i,k,parseFloat(e.target.value)||0)}
-                        style={{width:"100%",padding:"5px 3px",textAlign:"center",fontSize:11,border:"1px solid #e5e7eb",borderRadius:4,fontFamily:"'Noto Sans Mono',monospace",background:"white",minWidth:36,touchAction:"manipulation"}}/>);
+                        style={{width:"100%",padding:"2px 2px",textAlign:"center",fontSize:10,border:"1px solid #e5e7eb",borderRadius:4,fontFamily:"'Noto Sans Mono',monospace",background:"white"}}/>);
                       return(
                         <tr key={i} style={{background:bg}}>
-                          <td style={{...S.cell,padding:"6px 4px"}}><b style={{color:"#374151"}}>{i+1}</b></td>
-                          <td style={{...S.cell,padding:"4px 3px"}}>
+                          <td style={S.cell}><b style={{color:"#374151"}}>{i+1}</b></td>
+                          <td style={S.cell}>
                             <select value={s.flow} onChange={e=>upd(i,"flow",+e.target.value)}
-                              style={{width:"100%",padding:"5px 2px",fontSize:11,border:"1px solid #e5e7eb",borderRadius:4,background:"white",
+                              style={{width:"100%",padding:"2px 1px",fontSize:10,border:"none",background:"transparent",
                                 fontFamily:"'Noto Sans Mono',monospace",textAlign:"center",outline:"none"}}>
                               {[130,260,390,520,650].map(q=>(
                                 <option key={q} value={q}>{q}</option>
                               ))}
                             </select>
                           </td>
-                          <td style={{...S.cell,padding:"4px 3px"}}>
+                          <td style={S.cell}>
                             <select value={s.dia} onChange={e=>upd(i,"dia",+e.target.value)}
-                              style={{width:"100%",padding:"5px 2px",fontSize:11,border:"1px solid #e5e7eb",borderRadius:4,background:"white",fontFamily:"'Noto Sans KR',sans-serif",outline:"none"}}>
+                              style={{width:"100%",padding:"2px 1px",fontSize:10,border:"none",background:"transparent",fontFamily:"'Noto Sans KR',sans-serif",outline:"none"}}>
                               {PIPE_SIZES.map(d=><option key={d} value={d}>{d}</option>)}
                             </select>
                           </td>
-                          <td style={{...S.cell,padding:"4px 3px"}}>{inp("len")}</td>
-                          <td style={{...S.cell,padding:"4px 3px"}}>{inp("e90")}</td><td style={{...S.cell,padding:"4px 3px"}}>{inp("e45")}</td>
-                          <td style={{...S.cell,padding:"4px 3px"}}>{inp("teeB")}</td><td style={{...S.cell,padding:"4px 3px"}}>{inp("teeS")}</td>
-                          <td style={{...S.cell,padding:"4px 3px"}}>{inp("gate")}</td><td style={{...S.cell,padding:"4px 3px"}}>{inp("ball")}</td>
-                          <td style={{...S.cell,padding:"4px 3px"}}>{inp("angle")}</td><td style={{...S.cell,padding:"4px 3px"}}>{inp("check")}</td>
-                          <td style={{...S.cell,padding:"6px 4px",fontFamily:"'Noto Sans Mono',monospace",color:"#374151"}}>{f3(d.fl)}</td>
-                          <td style={{...S.cell,padding:"6px 4px",fontFamily:"'Noto Sans Mono',monospace",color:"#c2410c",fontWeight:700}}>{f3(d.fric)}</td>
-                          <td style={{...S.cell,padding:"6px 4px",fontFamily:"'Noto Sans Mono',monospace",color:"#1d4ed8",fontWeight:700}}>{f3(d.hl)}</td>
-                          <td style={{...S.cell,padding:"6px 4px",fontFamily:"'Noto Sans Mono',monospace",color:vW?"#dc2626":"#374151",fontWeight:vW?700:400}}>{f2(v)}{vW?" ⚠":""}</td>
-                          <td style={{...S.cell,padding:"4px 3px"}}><button onClick={()=>rem(i)} style={{color:"#ef4444",background:"none",border:"none",cursor:"pointer",fontWeight:700,fontSize:16,lineHeight:1,padding:"2px 4px"}}>×</button></td>
+                          <td style={S.cell}>{inp("len")}</td>
+                          <td style={S.cell}>{inp("e90")}</td><td style={S.cell}>{inp("e45")}</td>
+                          <td style={S.cell}>{inp("teeB")}</td><td style={S.cell}>{inp("teeS")}</td>
+                          <td style={S.cell}>{inp("gate")}</td><td style={S.cell}>{inp("ball")}</td>
+                          <td style={S.cell}>{inp("angle")}</td><td style={S.cell}>{inp("check")}</td>
+                          <td style={{...S.cell,fontFamily:"'Noto Sans Mono',monospace",color:"#374151"}}>{f3(d.fl)}</td>
+                          <td style={{...S.cell,fontFamily:"'Noto Sans Mono',monospace",color:"#c2410c",fontWeight:700}}>{f3(d.fric)}</td>
+                          <td style={{...S.cell,fontFamily:"'Noto Sans Mono',monospace",color:"#1d4ed8",fontWeight:700}}>{f3(d.hl)}</td>
+                          <td style={{...S.cell,fontFamily:"'Noto Sans Mono',monospace",color:vW?"#dc2626":"#374151",fontWeight:vW?700:400}}>{f2(v)}{vW?" ⚠":""}</td>
+                          <td style={S.cell}><button onClick={()=>rem(i)} style={{color:"#ef4444",background:"none",border:"none",cursor:"pointer",fontWeight:700,fontSize:15,lineHeight:1}}>×</button></td>
                         </tr>
                       );
                     })}
@@ -843,7 +831,7 @@ function App(){
         )}
         {tab===1&&(
           <div className="no-print" style={{display:"grid",gap:18}}>
-            <Box title="Ⅱ-1. 수원 용량 산정">
+            <Box title="Ⅱ-1. 수원 용량 산정" accent="#1d4ed8">
               <div className="g-4">
                 <Card label="A. 소화전 개수" value={C.A} unit="개" formula="최대 5개 적용" badge="NFTC §2.2.1.4" bc="blue"/>
                 <Card label="B. 개당 방사량" value={FLOW_PER_HYDRANT} unit="ℓ/min" formula="고정 기준값" badge="기준값" bc="blue"/>
@@ -852,7 +840,7 @@ function App(){
               </div>
             </Box>
 
-            <Box title="Ⅱ-2. 펌프 양정 계산">
+            <Box title="Ⅱ-2. 펌프 양정 계산" accent="#92400e">
               <div className="g-2">
                 <div className="g-2sm">
                   <Card label="E. 실양정 (h₁)" value={f1(C.E)} unit="m" formula="흡입+토출 양정"/>
@@ -884,7 +872,7 @@ function App(){
               </div>
             </Box>
 
-            <Box title="Ⅱ-3. 전동기 동력 계산">
+            <Box title="Ⅱ-3. 전동기 동력 계산" accent="#991b1b">
               <div className="g-4" style={{marginBottom:14}}>
                 <Card label="M. 토출량 (Q)" value={f3(C.M)} unit="m³/min" formula={`${C.Clpm} ÷ 1000`}/>
                 <Card label="J. 전양정 (H)" value={C.J} unit="m" formula="앞 계산 결과"/>
@@ -934,10 +922,10 @@ function App(){
         {/* ════════ TAB 2: 계산서 출력 ══════════════════════════════ */}
         {tab===2&&(
           <div>
-            {/* 모바일 힌트 */}
-            <div className="no-print report-mobile-hint">
+            {/* 모바일 A4 안내 힌트 */}
+            <div className="rpt-hint no-print">
               <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="17" r="1"/></svg>
-              A4 계산서 전체를 화면 폭에 맞게 자동 축소합니다 · 여러 장도 자동 적용 · 인쇄 시 원래 A4 크기로 출력됩니다
+              A4 전체를 화면 폭에 맞게 자동 축소합니다 · 여러 장 자동 적용 · 인쇄 시 원래 A4 크기로 출력
             </div>
             <div className="no-print" style={{display:"flex",justifyContent:"flex-end",marginBottom:14}}>
               <button onClick={()=>window.print()} style={{padding:"10px 24px",background:"#1e3a5f",color:"white",border:"none",borderRadius:10,cursor:"pointer",fontWeight:700,fontSize:13,fontFamily:"'Noto Sans KR',sans-serif",display:"flex",alignItems:"center",gap:8}}>
@@ -945,9 +933,11 @@ function App(){
               </button>
             </div>
 
-            {/* A4 미리보기 스케일 컨테이너 */}
-            <div id="report-preview-outer" className="report-preview-outer">
-              <div id="report-scale-wrap" className="report-scale-wrap">
+            {/* ─ A4 스케일 컨테이너 ─
+                rpt-outer: overflow:hidden + 동적 height 보정
+                rpt-inner: translateX(lOff) scale(s) 로 중앙 정렬  */}
+            <div id="rpt-outer" className="rpt-outer">
+              <div id="rpt-inner" className="rpt-inner">
 
             <div id="report-zone" style={{background:"white",borderRadius:14,boxShadow:"0 1px 3px rgba(0,0,0,0.1)",border:"1px solid #e5e7eb",padding:"44px 52px",fontFamily:"'Noto Sans KR',sans-serif"}}>
 
@@ -1086,8 +1076,8 @@ function App(){
               <div id="dev-stamp" style={{fontFamily:"'Orbitron',sans-serif",fontWeight:700,letterSpacing:"0.08em"}}>MANMIN · Ver-2.0</div>
 
             </div>{/* /report-zone */}
-            </div>{/* /report-scale-wrap */}
-            </div>{/* /report-preview-outer */}
+            </div>{/* /rpt-inner */}
+            </div>{/* /rpt-outer */}
           </div>
         )}
 

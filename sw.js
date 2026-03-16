@@ -8,6 +8,7 @@ const CACHE_NAME   = 'hydrant-pump-v1.0';
 const CDN_CACHE    = 'hydrant-pump-cdn-v1.0';
 const OFFLINE_PAGE = './index.html';
 
+/* ── 앱 셸: 설치 즉시 프리캐시 ─────────────────────────────── */
 const APP_SHELL = [
   './index.html',
   './manifest.json',
@@ -22,8 +23,10 @@ const APP_SHELL = [
   './icons/apple-touch-icon.png',
   './icons/favicon-32.png',
   './icons/favicon-16.png',
+  './icons/favicon.ico',
 ];
 
+/* ── CDN 오리진 (Network-First) ─────────────────────────────── */
 const CDN_ORIGINS = [
   'https://fonts.googleapis.com',
   'https://fonts.gstatic.com',
@@ -32,30 +35,36 @@ const CDN_ORIGINS = [
   'https://unpkg.com',
 ];
 
-/* INSTALL */
+/* ══════════════════════════════════════════════════════════════
+   INSTALL — 앱 셸 프리캐시
+   ══════════════════════════════════════════════════════════════ */
 self.addEventListener('install', (event) => {
   console.log('[SW] Install — 프리캐시 시작');
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => cache.addAll(APP_SHELL))
-      .then(() => { console.log('[SW] 완료'); return self.skipWaiting(); })
+      .then(() => { console.log('[SW] 프리캐시 완료'); return self.skipWaiting(); })
       .catch((err) => { console.warn('[SW] 일부 실패:', err); return self.skipWaiting(); })
   );
 });
 
-/* ACTIVATE */
+/* ══════════════════════════════════════════════════════════════
+   ACTIVATE — 구버전 캐시 삭제
+   ══════════════════════════════════════════════════════════════ */
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
       .then((keys) => Promise.all(
         keys.filter((k) => ![CACHE_NAME, CDN_CACHE].includes(k))
-            .map((k) => caches.delete(k))
+            .map((k) => { console.log('[SW] 삭제:', k); return caches.delete(k); })
       ))
       .then(() => self.clients.claim())
   );
 });
 
-/* FETCH */
+/* ══════════════════════════════════════════════════════════════
+   FETCH — 요청 라우팅
+   ══════════════════════════════════════════════════════════════ */
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   if (request.method !== 'GET') return;
@@ -68,6 +77,7 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(isCDN ? networkFirstCDN(request) : cacheFirstLocal(request));
 });
 
+/* ── Cache-First (로컬 자산) ─────────────────────────────────── */
 async function cacheFirstLocal(request) {
   const cached = await caches.match(request);
   if (cached) return cached;
@@ -86,6 +96,7 @@ async function cacheFirstLocal(request) {
   }
 }
 
+/* ── Network-First (CDN 자산) ────────────────────────────────── */
 async function networkFirstCDN(request) {
   try {
     const res = await fetch(request);
@@ -96,7 +107,9 @@ async function networkFirstCDN(request) {
   }
 }
 
-/* MESSAGE */
+/* ══════════════════════════════════════════════════════════════
+   MESSAGE — SKIP_WAITING 호환 (type / action 양쪽)
+   ══════════════════════════════════════════════════════════════ */
 self.addEventListener('message', (event) => {
   if (event.data?.type === 'SKIP_WAITING' || event.data?.action === 'SKIP_WAITING')
     self.skipWaiting();
@@ -104,7 +117,9 @@ self.addEventListener('message', (event) => {
     caches.keys().then((keys) => Promise.all(keys.map((k) => caches.delete(k))));
 });
 
-/* PUSH */
+/* ══════════════════════════════════════════════════════════════
+   PUSH — 알림 확장용 (현재 미사용)
+   ══════════════════════════════════════════════════════════════ */
 self.addEventListener('push', (event) => {
   const data = event.data?.json() ?? { title: '옥내소화전 계산서', body: '업데이트가 있습니다.' };
   event.waitUntil(
