@@ -6,7 +6,29 @@
 <title>옥내소화전 펌프 용량 계산서</title>
 
 <!-- ═══ PWA 설정 ═══ -->
-<link rel="manifest" href="manifest.json"/>
+<link rel="manifest" href="manifest.json" id="pwa-manifest"/>
+<script>
+/* 바로가기 이름을 "옥내소화전"으로 강제 설정 */
+(function(){
+  var m={
+    name:"옥내소화전 펌프 용량 계산서",
+    short_name:"옥내소화전",
+    start_url:"./",
+    display:"standalone",
+    background_color:"#f1f5f9",
+    theme_color:"#DC2626",
+    icons:[
+      {src:"icons/icon-192.png",sizes:"192x192",type:"image/png",purpose:"any maskable"},
+      {src:"icons/icon-512.png",sizes:"512x512",type:"image/png",purpose:"any maskable"}
+    ]
+  };
+  try{
+    var blob=new Blob([JSON.stringify(m)],{type:"application/manifest+json"});
+    var url=URL.createObjectURL(blob);
+    document.getElementById("pwa-manifest").href=url;
+  }catch(e){}
+})();
+</script>
 <meta name="theme-color" content="#DC2626"/>
 <meta name="description" content="옥내소화전 펌프 용량 계산서 - 소방시설 설계 전용"/>
 
@@ -140,6 +162,66 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.5;}
 @keyframes slideUp{
   from{transform:translateY(100%);opacity:0;}
   to{transform:translateY(0);opacity:1;}
+}
+
+/* ── A4 계산서 출력 반응형 미리보기 ── */
+.report-preview-outer{
+  overflow:hidden;
+  background:#e8ecf1;
+  padding:20px 10px;
+  border-radius:14px;
+  margin-bottom:16px;
+}
+.report-scale-wrap{
+  transform-origin:top center;
+  width:794px;           /* A4 고정폭 — JS가 scale 조정 */
+  margin:0 auto;
+}
+.report-mobile-hint{
+  display:none;
+  align-items:center;gap:6px;
+  background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;
+  padding:8px 13px;font-size:10px;font-weight:600;color:#1e40af;
+  margin-bottom:10px;
+}
+@media(max-width:860px){.report-mobile-hint{display:flex;}}
+@media print{
+  .report-preview-outer{
+    background:white !important;padding:0 !important;
+    overflow:visible !important;border-radius:0 !important;
+    margin:0 !important;
+  }
+  .report-scale-wrap{
+    transform:none !important;width:auto !important;
+    margin:0 !important;
+  }
+  .report-mobile-hint{display:none !important;}
+}
+
+/* ── 배관 구간 테이블 모바일 강화 ── */
+.seg-tbl-outer{
+  width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;
+  border-radius:6px;border:1px solid #e2e8f0;
+  /* 스크롤바 항상 표시 → 스크롤 가능 인지 */
+  scrollbar-width:thin;scrollbar-color:#94a3b8 #f1f5f9;
+}
+.seg-tbl-outer::-webkit-scrollbar{height:8px;}
+.seg-tbl-outer::-webkit-scrollbar-track{background:#f1f5f9;border-radius:4px;}
+.seg-tbl-outer::-webkit-scrollbar-thumb{background:#94a3b8;border-radius:4px;}
+.seg-scroll-hint{
+  display:none;
+  align-items:center;gap:5px;justify-content:center;
+  font-size:11px;font-weight:700;color:#6b7280;
+  padding:6px 0 4px;letter-spacing:0.02em;
+}
+@media(max-width:860px){.seg-scroll-hint{display:flex;}}
+
+/* ── 데이터 입력 탭 모바일 레이아웃 ── */
+@media(max-width:640px){
+  .input-tab-wrap{padding:12px 10px 80px !important;}
+}
+@media(max-width:480px){
+  .box-pad{padding:14px 12px !important;}
 }
 </style>
 </head>
@@ -449,6 +531,31 @@ function App(){
   const rem=i=>setSegs(prev=>prev.filter((_,j)=>j!==i));
   const add=()=>setSegs(prev=>[...prev,mkSeg()]);
 
+  /* ── A4 계산서 반응형 스케일링 ── */
+  useEffect(()=>{
+    if(tab!==2) return;
+    function scaleReport(){
+      const outer=document.getElementById('report-preview-outer');
+      const inner=document.getElementById('report-scale-wrap');
+      if(!outer||!inner) return;
+      const A4W=794;
+      /* outer의 실제 가용 폭 (패딩 20px×2 제외) */
+      const avail=outer.clientWidth-40;
+      if(avail>=A4W){
+        inner.style.transform='';
+        outer.style.minHeight='';
+      } else {
+        const scale=avail/A4W;
+        inner.style.transform='scale('+scale+')';
+        /* transform은 레이아웃 공간 차지 안 함 → 부모 높이 수동 보정 */
+        outer.style.minHeight=Math.round(inner.scrollHeight*scale+40)+'px';
+      }
+    }
+    const t=setTimeout(scaleReport,120);
+    window.addEventListener('resize',scaleReport);
+    return()=>{clearTimeout(t);window.removeEventListener('resize',scaleReport);};
+  },[tab,segs,sys,proj]);
+
   /* ═══ PWA 설치 프롬프트 ═══ */
   const[installPrompt,setInstallPrompt]=useState(null);
   const[showInstallBanner,setShowInstallBanner]=useState(false);
@@ -636,17 +743,23 @@ function App(){
             </Box>
 
             <Box title="배관 구간 데이터 입력 (Ⅰ-2. 배관 마찰손실)">
-              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
+              <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10,flexWrap:"wrap",gap:8}}>
                 <p style={{fontSize:12,color:"#6b7280"}}>각 구간 유량·관경·직관 길이·관부속 수량 입력 → 손실수두 자동 계산</p>
-                <button onClick={add} style={{padding:"6px 14px",background:"#f97316",color:"white",border:"none",borderRadius:8,cursor:"pointer",fontWeight:700,fontSize:12,fontFamily:"'Noto Sans KR',sans-serif"}}>+ 구간 추가</button>
+                <button onClick={add} style={{padding:"7px 16px",background:"#f97316",color:"white",border:"none",borderRadius:8,cursor:"pointer",fontWeight:700,fontSize:12,fontFamily:"'Noto Sans KR',sans-serif",flexShrink:0}}>+ 구간 추가</button>
               </div>
-              <div className="tbl-wrap">
-                <table style={{borderCollapse:"collapse",fontSize:11,width:"100%",tableLayout:"fixed",minWidth:900}}>
+              {/* 모바일 스크롤 안내 */}
+              <div className="seg-scroll-hint">
+                <span style={{fontSize:14}}>←</span>
+                <span>좌우로 스크롤하여 모든 항목 입력</span>
+                <span style={{fontSize:14}}>→</span>
+              </div>
+              <div className="seg-tbl-outer">
+                <table style={{borderCollapse:"collapse",fontSize:11,tableLayout:"auto",minWidth:1080}}>
                   <colgroup>
-                    <col style={{width:"3%"}}/><col style={{width:"7%"}}/><col style={{width:"6%"}}/><col style={{width:"6%"}}/>
-                    <col style={{width:"5%"}}/><col style={{width:"5%"}}/><col style={{width:"5%"}}/><col style={{width:"5%"}}/>
-                    <col style={{width:"5%"}}/><col style={{width:"5%"}}/><col style={{width:"5%"}}/><col style={{width:"5%"}}/>
-                    <col style={{width:"7%"}}/><col style={{width:"8%"}}/><col style={{width:"7%"}}/><col style={{width:"6%"}}/><col style={{width:"2%"}}/>
+                    <col style={{width:34}}/><col style={{width:72}}/><col style={{width:60}}/><col style={{width:62}}/>
+                    <col style={{width:54}}/><col style={{width:54}}/><col style={{width:54}}/><col style={{width:54}}/>
+                    <col style={{width:54}}/><col style={{width:54}}/><col style={{width:54}}/><col style={{width:54}}/>
+                    <col style={{width:76}}/><col style={{width:84}}/><col style={{width:76}}/><col style={{width:64}}/><col style={{width:34}}/> 
                   </colgroup>
                   <thead>
                     <tr style={{background:"#1e3a5f",color:"white"}}>
@@ -655,7 +768,7 @@ function App(){
                         "Gate\nV/V","Ball\nV/V","Angle\nV/V","Check\nV/V",
                         "상당직관\n(m)","마찰계수\n(m/100m)","손실수두\n(m)","유속\n(m/s)",""
                       ].map((h,i)=>(
-                        <th key={i} style={{border:BD,padding:"5px 2px",textAlign:"center",whiteSpace:"pre-line",lineHeight:1.3,fontFamily:"'Noto Sans KR',sans-serif",fontSize:9,fontWeight:700}}>{h}</th>
+                        <th key={i} style={{border:BD,padding:"7px 3px",textAlign:"center",whiteSpace:"pre-line",lineHeight:1.4,fontFamily:"'Noto Sans KR',sans-serif",fontSize:9,fontWeight:700}}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -667,35 +780,35 @@ function App(){
                       const bg=i%2===0?"white":"#f9fafb";
                       const inp=(k)=>(<input type="number" min="0" value={s[k]||""} placeholder="0"
                         onChange={e=>upd(i,k,parseFloat(e.target.value)||0)}
-                        style={{width:"100%",padding:"2px 2px",textAlign:"center",fontSize:10,border:"1px solid #e5e7eb",borderRadius:4,fontFamily:"'Noto Sans Mono',monospace",background:"white"}}/>);
+                        style={{width:"100%",padding:"5px 3px",textAlign:"center",fontSize:11,border:"1px solid #e5e7eb",borderRadius:4,fontFamily:"'Noto Sans Mono',monospace",background:"white",minWidth:36,touchAction:"manipulation"}}/>);
                       return(
                         <tr key={i} style={{background:bg}}>
-                          <td style={S.cell}><b style={{color:"#374151"}}>{i+1}</b></td>
-                          <td style={S.cell}>
+                          <td style={{...S.cell,padding:"6px 4px"}}><b style={{color:"#374151"}}>{i+1}</b></td>
+                          <td style={{...S.cell,padding:"4px 3px"}}>
                             <select value={s.flow} onChange={e=>upd(i,"flow",+e.target.value)}
-                              style={{width:"100%",padding:"2px 1px",fontSize:10,border:"none",background:"transparent",
+                              style={{width:"100%",padding:"5px 2px",fontSize:11,border:"1px solid #e5e7eb",borderRadius:4,background:"white",
                                 fontFamily:"'Noto Sans Mono',monospace",textAlign:"center",outline:"none"}}>
                               {[130,260,390,520,650].map(q=>(
                                 <option key={q} value={q}>{q}</option>
                               ))}
                             </select>
                           </td>
-                          <td style={S.cell}>
+                          <td style={{...S.cell,padding:"4px 3px"}}>
                             <select value={s.dia} onChange={e=>upd(i,"dia",+e.target.value)}
-                              style={{width:"100%",padding:"2px 1px",fontSize:10,border:"none",background:"transparent",fontFamily:"'Noto Sans KR',sans-serif",outline:"none"}}>
+                              style={{width:"100%",padding:"5px 2px",fontSize:11,border:"1px solid #e5e7eb",borderRadius:4,background:"white",fontFamily:"'Noto Sans KR',sans-serif",outline:"none"}}>
                               {PIPE_SIZES.map(d=><option key={d} value={d}>{d}</option>)}
                             </select>
                           </td>
-                          <td style={S.cell}>{inp("len")}</td>
-                          <td style={S.cell}>{inp("e90")}</td><td style={S.cell}>{inp("e45")}</td>
-                          <td style={S.cell}>{inp("teeB")}</td><td style={S.cell}>{inp("teeS")}</td>
-                          <td style={S.cell}>{inp("gate")}</td><td style={S.cell}>{inp("ball")}</td>
-                          <td style={S.cell}>{inp("angle")}</td><td style={S.cell}>{inp("check")}</td>
-                          <td style={{...S.cell,fontFamily:"'Noto Sans Mono',monospace",color:"#374151"}}>{f3(d.fl)}</td>
-                          <td style={{...S.cell,fontFamily:"'Noto Sans Mono',monospace",color:"#c2410c",fontWeight:700}}>{f3(d.fric)}</td>
-                          <td style={{...S.cell,fontFamily:"'Noto Sans Mono',monospace",color:"#1d4ed8",fontWeight:700}}>{f3(d.hl)}</td>
-                          <td style={{...S.cell,fontFamily:"'Noto Sans Mono',monospace",color:vW?"#dc2626":"#374151",fontWeight:vW?700:400}}>{f2(v)}{vW?" ⚠":""}</td>
-                          <td style={S.cell}><button onClick={()=>rem(i)} style={{color:"#ef4444",background:"none",border:"none",cursor:"pointer",fontWeight:700,fontSize:15,lineHeight:1}}>×</button></td>
+                          <td style={{...S.cell,padding:"4px 3px"}}>{inp("len")}</td>
+                          <td style={{...S.cell,padding:"4px 3px"}}>{inp("e90")}</td><td style={{...S.cell,padding:"4px 3px"}}>{inp("e45")}</td>
+                          <td style={{...S.cell,padding:"4px 3px"}}>{inp("teeB")}</td><td style={{...S.cell,padding:"4px 3px"}}>{inp("teeS")}</td>
+                          <td style={{...S.cell,padding:"4px 3px"}}>{inp("gate")}</td><td style={{...S.cell,padding:"4px 3px"}}>{inp("ball")}</td>
+                          <td style={{...S.cell,padding:"4px 3px"}}>{inp("angle")}</td><td style={{...S.cell,padding:"4px 3px"}}>{inp("check")}</td>
+                          <td style={{...S.cell,padding:"6px 4px",fontFamily:"'Noto Sans Mono',monospace",color:"#374151"}}>{f3(d.fl)}</td>
+                          <td style={{...S.cell,padding:"6px 4px",fontFamily:"'Noto Sans Mono',monospace",color:"#c2410c",fontWeight:700}}>{f3(d.fric)}</td>
+                          <td style={{...S.cell,padding:"6px 4px",fontFamily:"'Noto Sans Mono',monospace",color:"#1d4ed8",fontWeight:700}}>{f3(d.hl)}</td>
+                          <td style={{...S.cell,padding:"6px 4px",fontFamily:"'Noto Sans Mono',monospace",color:vW?"#dc2626":"#374151",fontWeight:vW?700:400}}>{f2(v)}{vW?" ⚠":""}</td>
+                          <td style={{...S.cell,padding:"4px 3px"}}><button onClick={()=>rem(i)} style={{color:"#ef4444",background:"none",border:"none",cursor:"pointer",fontWeight:700,fontSize:16,lineHeight:1,padding:"2px 4px"}}>×</button></td>
                         </tr>
                       );
                     })}
@@ -821,11 +934,20 @@ function App(){
         {/* ════════ TAB 2: 계산서 출력 ══════════════════════════════ */}
         {tab===2&&(
           <div>
+            {/* 모바일 힌트 */}
+            <div className="no-print report-mobile-hint">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="17" r="1"/></svg>
+              A4 계산서 전체를 화면 폭에 맞게 자동 축소합니다 · 여러 장도 자동 적용 · 인쇄 시 원래 A4 크기로 출력됩니다
+            </div>
             <div className="no-print" style={{display:"flex",justifyContent:"flex-end",marginBottom:14}}>
               <button onClick={()=>window.print()} style={{padding:"10px 24px",background:"#1e3a5f",color:"white",border:"none",borderRadius:10,cursor:"pointer",fontWeight:700,fontSize:13,fontFamily:"'Noto Sans KR',sans-serif",display:"flex",alignItems:"center",gap:8}}>
                 🖨️ 인쇄 / PDF 저장
               </button>
             </div>
+
+            {/* A4 미리보기 스케일 컨테이너 */}
+            <div id="report-preview-outer" className="report-preview-outer">
+              <div id="report-scale-wrap" className="report-scale-wrap">
 
             <div id="report-zone" style={{background:"white",borderRadius:14,boxShadow:"0 1px 3px rgba(0,0,0,0.1)",border:"1px solid #e5e7eb",padding:"44px 52px",fontFamily:"'Noto Sans KR',sans-serif"}}>
 
@@ -964,6 +1086,8 @@ function App(){
               <div id="dev-stamp" style={{fontFamily:"'Orbitron',sans-serif",fontWeight:700,letterSpacing:"0.08em"}}>MANMIN · Ver-2.0</div>
 
             </div>{/* /report-zone */}
+            </div>{/* /report-scale-wrap */}
+            </div>{/* /report-preview-outer */}
           </div>
         )}
 
