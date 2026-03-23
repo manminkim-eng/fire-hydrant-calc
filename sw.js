@@ -1,73 +1,89 @@
-/* ══════════════════════════════════════════════════
-   Service Worker — 옥내소화전 PWA
-   옥내소화전 펌프 용량 계산서 MANMIN-Ver3.0
-   ══════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════
+   Service Worker — 옥내소화전 펌프 용량 계산서
+   Developer MANMIN · Ver-3.1
+═══════════════════════════════════════════════════════════════ */
 
-const CACHE = '옥내소화전-v3.0';
-const OFFLINE = './offline.html';
+const CACHE_NAME   = 'manmin-indoor-hydrant-v3.1';
+const STATIC_CACHE = 'manmin-indoor-hydrant-static-v3.1';
 
-const PRECACHE = [
+const PRECACHE_URLS = [
   './',
   './index.html',
   './manifest.json',
-  './offline.html',
-  './favicon.ico',
-  './icons/icon-192x192.png',
   './icons/icon-192.png',
-  './icons/icon-512x512.png',
+  './icons/icon-512.png',
+  './icons/apple-touch-icon.png',
+  './icons/favicon-32.png',
+  './icons/favicon-16.png',
+  './icons/favicon.ico',
 ];
 
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE)
-      .then(c => c.addAll(PRECACHE))
+/* ── INSTALL ── */
+self.addEventListener('install', (event) => {
+  console.log('[SW] Installing indoor-hydrant-v3.1...');
+  event.waitUntil(
+    caches.open(STATIC_CACHE)
+      .then((cache) => cache.addAll(PRECACHE_URLS).catch((e) => console.warn('[SW] Pre-cache 일부 실패:', e)))
       .then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener('activate', e => {
-  e.waitUntil(
+/* ── ACTIVATE : 구버전 캐시 정리 ── */
+self.addEventListener('activate', (event) => {
+  console.log('[SW] Activating...');
+  event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(
-        keys.filter(k => k !== CACHE).map(k => caches.delete(k))
-      ))
+      .then((keys) =>
+        Promise.all(
+          keys
+            .filter((k) => k !== CACHE_NAME && k !== STATIC_CACHE)
+            .map((k) => { console.log('[SW] 구버전 삭제:', k); return caches.delete(k); })
+        )
+      )
       .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('fetch', e => {
-  const req = e.request;
-  if (req.method !== 'GET') return;
-  const url = new URL(req.url);
-  const isCDN = ['fonts.googleapis.com','fonts.gstatic.com',
-    'unpkg.com','cdnjs.cloudflare.com','cdn.jsdelivr.net']
-    .some(d => url.hostname.includes(d));
+/* ── FETCH : Network-First, 오프라인 시 Cache 폴백 ── */
+self.addEventListener('fetch', (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
 
-  if (req.mode === 'navigate') {
-    e.respondWith(fetch(req).catch(() => caches.match(OFFLINE)));
+  /* 외부 CDN (Google Fonts, unpkg 등) */
+  if (url.origin !== location.origin) {
+    event.respondWith(
+      fetch(request)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((c) => c.put(request, copy));
+          return res;
+        })
+        .catch(() => caches.match(request))
+    );
     return;
   }
-  e.respondWith(isCDN ? networkFirst(req) : staleWhileRevalidate(req));
+
+  /* 로컬 리소스 */
+  event.respondWith(
+    fetch(request)
+      .then((res) => {
+        if (!res || res.status !== 200 || res.type === 'opaque') return res;
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then((c) => c.put(request, copy));
+        return res;
+      })
+      .catch(() =>
+        caches.match(request).then(
+          (cached) => cached || caches.match('./index.html')
+        )
+      )
+  );
 });
 
-self.addEventListener('message', e => {
-  if (e.data?.type === 'SKIP_WAITING') self.skipWaiting();
+/* ── MESSAGE : SKIP_WAITING ── */
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    console.log('[SW] SKIP_WAITING → 즉시 활성화');
+    self.skipWaiting();
+  }
 });
-
-async function networkFirst(req) {
-  try {
-    const res = await fetch(req);
-    if (res?.status === 200)(await caches.open(CACHE)).put(req, res.clone());
-    return res;
-  } catch { return caches.match(req); }
-}
-
-async function staleWhileRevalidate(req) {
-  const c = await caches.open(CACHE);
-  const cached = await c.match(req);
-  const fresh = fetch(req).then(res => {
-    if (res?.status === 200 && res.type !== 'opaque') c.put(req, res.clone());
-    return res;
-  }).catch(() => cached);
-  return cached || fresh;
-}
