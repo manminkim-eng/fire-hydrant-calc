@@ -9,17 +9,19 @@
 <link rel="manifest" href="manifest.json"/>
 <meta name="theme-color" content="#DC2626"/>
 <meta name="description" content="옥내소화전 펌프 용량 계산서 - 소방시설 설계 전용"/>
-
 <!-- iOS Safari 지원 -->
 <meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="옥내소화전"/>
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png"/>
-
+<link rel="apple-touch-icon" sizes="152x152" href="icons/icon-152x152.png"/>
+<link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192x192.png"/>
 <!-- 파비콘 -->
 <link rel="icon" href="icons/favicon.ico" sizes="any"/>
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png"/>
 <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png"/>
+<meta name="msapplication-TileColor" content="#DC2626"/>
+<meta name="msapplication-TileImage" content="icons/icon-144x144.png"/>
 
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -197,6 +199,26 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.5;}
   .hdr-pad{padding:0 14px!important;}
   .sum-item{font-size:11px!important;}
 }
+
+/* ── PWA 헤더 설치 버튼 ── */
+#pwa-hdr-btn{
+  display:none;align-items:center;gap:6px;
+  background:linear-gradient(135deg,#f97316,#ea580c);
+  color:#fff;border:none;padding:8px 14px;border-radius:8px;
+  font-size:12px;font-weight:800;cursor:pointer;
+  font-family:'Noto Sans KR',sans-serif;
+  white-space:nowrap;flex-shrink:0;
+  transition:all .15s;animation:hdr-pulse 2.2s ease-in-out infinite;
+  position:relative;z-index:10;
+}
+#pwa-hdr-btn.visible{display:flex;}
+#pwa-hdr-btn:hover{background:linear-gradient(135deg,#ea580c,#c2410c);transform:translateY(-1px);}
+@keyframes hdr-pulse{
+  0%,100%{box-shadow:0 2px 8px rgba(249,115,22,.5);}
+  50%{box-shadow:0 2px 20px rgba(249,115,22,.85);}
+}
+@media(max-width:520px){#pwa-hdr-btn .pwa-hdr-txt{display:none;}}
+@media print{#pwa-hdr-btn{display:none!important;}}
 </style>
 </head>
 <body>
@@ -550,7 +572,10 @@ function App(){
 
   useEffect(()=>{
     const h=(e)=>{e.preventDefault();setInstallPrompt(e);
-      if(!window.matchMedia('(display-mode:standalone)').matches) setShowInstallBanner(true);
+      const hdrBtn=document.getElementById('pwa-hdr-btn');
+      if(hdrBtn) hdrBtn.classList.add('visible');
+      if(!window.matchMedia('(display-mode:standalone)').matches && !sessionStorage.getItem('ib-dismissed'))
+        setTimeout(()=>setShowInstallBanner(true),2000);
     };
     window.addEventListener('beforeinstallprompt',h);
     return()=>window.removeEventListener('beforeinstallprompt',h);
@@ -560,9 +585,14 @@ function App(){
     if(!installPrompt)return;
     installPrompt.prompt();
     const r=await installPrompt.userChoice;
-    if(r.outcome==='accepted')console.log('[PWA] 설치 완료');
+    if(r.outcome==='accepted'){
+      const hdrBtn=document.getElementById('pwa-hdr-btn');
+      if(hdrBtn) hdrBtn.classList.remove('visible');
+    }
     setInstallPrompt(null);setShowInstallBanner(false);
   };
+  // 전역 함수 등록 (헤더 버튼에서 호출)
+  React.useEffect(()=>{window.pwaTriggerInstall=handleInstall;},[installPrompt]);
 
   /* ── 계산 코어 ── */
   const C=useMemo(()=>{
@@ -615,11 +645,16 @@ function App(){
                 </span>
               </div>
             </div>
+            <div style={{display:"flex",alignItems:"flex-start",gap:12}}>
+              <button id="pwa-hdr-btn" onClick={()=>window.pwaTriggerInstall&&window.pwaTriggerInstall()}>
+                <span>&#128242;</span><span className="pwa-hdr-txt">설치</span>
+              </button>
             <div className="hdr-right" style={{textAlign:"right",opacity:0.75,fontSize:11}}>
               <div style={{fontWeight:700,fontSize:13}}>NFTC 102</div>
               <div>옥내소화전설비의</div>
               <div>화재안전기술기준</div>
               <div style={{marginTop:4,fontSize:10,color:"#fca5a5"}}>[시행 2022. 12. 1.]</div>
+            </div>
             </div>
           </div>
           {/* 탭 */}
@@ -1134,65 +1169,39 @@ function App(){
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 
-<!-- ═══ Service Worker Ver 3.0 ═══ -->
+<!-- Service Worker (improved) -->
 <script>
 (function(){
   if(!('serviceWorker' in navigator)) return;
-
-  /* ── 탭 딥링크: ?tab=N 처리 ── */
-  const _tabParam = new URLSearchParams(location.search).get('tab');
-  if(_tabParam !== null){
-    window.__INITIAL_TAB__ = parseInt(_tabParam) || 0;
-  }
-
-  window.addEventListener('load', ()=>{
+  window.addEventListener('load', function(){
     navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'})
-      .then(reg=>{
-        console.log('[PWA] SW 등록 — scope:', reg.scope);
-
-        /* ── 업데이트 감지 → 배너 표시 ── */
-        reg.addEventListener('updatefound', ()=>{
-          const newWorker = reg.installing;
-          newWorker.addEventListener('statechange', ()=>{
-            if(newWorker.state === 'installed' && navigator.serviceWorker.controller){
-              _showUpdateBanner(newWorker);
+      .then(function(reg){
+        reg.addEventListener('updatefound', function(){
+          var nw = reg.installing; if(!nw) return;
+          nw.addEventListener('statechange', function(){
+            if(nw.state==='installed' && navigator.serviceWorker.controller){
+              var b=document.createElement('div');
+              b.style.cssText='position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:9999;background:#DC2626;color:#fff;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.4);white-space:nowrap;font-family:sans-serif;';
+              b.innerHTML='<span>&#128260; 새 버전 있음</span><button onclick="navigator.serviceWorker.ready.then(function(r){r.waiting&&r.waiting.postMessage({type:\'SKIP_WAITING\'})});this.parentNode.remove();" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:4px 10px;border-radius:6px;cursor:pointer;font-weight:700;">업데이트</button>';
+              document.body.appendChild(b);
             }
           });
         });
-
-        /* ── 주기적 업데이트 체크 (1시간) ── */
-        setInterval(()=>reg.update(), 60*60*1000);
       })
-      .catch(e => console.warn('[PWA] SW 등록 실패:', e));
-
-    /* ── 컨트롤러 교체 시 자동 새로고침 ── */
-    let refreshing = false;
-    navigator.serviceWorker.addEventListener('controllerchange', ()=>{
-      if(!refreshing){ refreshing = true; location.reload(); }
+      .catch(function(e){console.info('[SW]',e.message);});
+    navigator.serviceWorker.addEventListener('controllerchange', function(){
+      if(!window._reload){window._reload=true;location.reload();}
     });
   });
-
-  function _showUpdateBanner(worker){
-    const b = document.createElement('div');
-    b.id = 'sw-update-banner';
-    b.style.cssText = [
-      'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:99999',
-      'background:#1e3a5f;color:white;border-radius:14px;padding:12px 18px',
-      'display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,0.35)',
-      'font-family:"Noto Sans KR",sans-serif;font-size:13px;white-space:nowrap',
-      'animation:slideUp 0.35s ease-out',
-    ].join(';');
-    b.innerHTML = `
-      <span>🔄 새 버전이 있습니다</span>
-      <button onclick="(function(){document.getElementById('sw-update-banner').remove();
-        navigator.serviceWorker.ready.then(r=>{r.waiting&&r.waiting.postMessage({type:'SKIP_WAITING'})})
-      })()" style="background:#DC2626;color:white;border:none;border-radius:8px;
-        padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;">업데이트</button>
-      <button onclick="document.getElementById('sw-update-banner').remove()"
-        style="background:rgba(255,255,255,0.15);color:white;border:none;border-radius:8px;
-        padding:6px 10px;font-size:11px;cursor:pointer;">나중에</button>
-    `;
-    document.body.appendChild(b);
+  window.addEventListener('appinstalled', function(){
+    var btn=document.getElementById('pwa-hdr-btn');
+    if(btn) btn.classList.remove('visible');
+  });
+  if(window.matchMedia('(display-mode:standalone)').matches||window.navigator.standalone===true){
+    document.addEventListener('DOMContentLoaded',function(){
+      var btn=document.getElementById('pwa-hdr-btn');
+      if(btn) btn.style.display='none';
+    });
   }
 })();
 </script>
