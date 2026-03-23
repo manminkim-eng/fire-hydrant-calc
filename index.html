@@ -41,7 +41,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.5;}
     size:A4 portrait;
     margin:14mm 12mm 22mm 14mm;
     @bottom-right{
-      content:"MANMIN-Ver3.1";
+      content:"MANMIN-Ver3.2";
       font-family:'Orbitron',sans-serif;
       font-size:8pt;
       font-weight:700;
@@ -542,7 +542,7 @@ function FormulaModal({onClose}){
           </div>
 
           <div style={{textAlign:"center",fontSize:10,color:"#9ca3af",paddingTop:8,borderTop:"1px solid #f1f5f9"}}>
-            NFPC 102 / NFTC 102·604 · Hazen-Williams Formula · MANMIN Ver-3.1
+            NFPC 102 / NFTC 102·604 · Hazen-Williams Formula · MANMIN Ver-3.2
           </div>
         </div>
       </div>
@@ -602,9 +602,14 @@ function App(){
   const[showInstallBanner,setShowInstallBanner]=useState(false);
 
   useEffect(()=>{
-    const h=(e)=>{e.preventDefault();setInstallPrompt(e);
+    const h=(e)=>{
+      e.preventDefault();
+      setInstallPrompt(e);
       const hdrBtn=document.getElementById('pwa-hdr-btn');
       if(hdrBtn) hdrBtn.classList.add('visible');
+      /* ★ Ver 3.2: pwa-installed 플래그 초기화 (재설치 상황이므로) */
+      sessionStorage.removeItem('pwa-installed');
+      /* standalone 아니고 배너 미표시 이력 없으면 2초 후 배너 표시 */
       if(!window.matchMedia('(display-mode:standalone)').matches && !sessionStorage.getItem('ib-dismissed'))
         setTimeout(()=>setShowInstallBanner(true),2000);
     };
@@ -619,6 +624,8 @@ function App(){
     if(r.outcome==='accepted'){
       const hdrBtn=document.getElementById('pwa-hdr-btn');
       if(hdrBtn) hdrBtn.classList.remove('visible');
+      /* ★ Ver 3.2: 설치 완료 플래그 기록 */
+      sessionStorage.setItem('pwa-installed','1');
     }
     setInstallPrompt(null);setShowInstallBanner(false);
   };
@@ -673,7 +680,7 @@ function App(){
               <div style={{fontSize:11,marginTop:8,opacity:0.85,fontFamily:"'Noto Sans KR',sans-serif",letterSpacing:"0.02em"}}>
                 Indoor Fire Hydrant Pump Capacity Calculator · NFPC/NFTC 102 적용&nbsp;
                 <span style={{fontFamily:"'Orbitron',sans-serif",fontWeight:900,fontSize:12,color:"#fca5a5",letterSpacing:"0.08em",textShadow:"0 0 8px rgba(252,165,165,0.6)"}}>
-                  MANMIN · Ver-3.1
+                  MANMIN · Ver-3.2
                 </span>
               </div>
             </div>
@@ -907,7 +914,7 @@ function App(){
             </Box>
             {/* ── TAB 0 하단 우측 개발자 표기 ── */}
             <div style={{textAlign:"right",fontFamily:"'Orbitron',sans-serif",fontSize:10,fontWeight:700,color:"#94a3b8",letterSpacing:"0.08em",paddingRight:4}}>
-              MANMIN · Ver-3.1
+              MANMIN · Ver-3.2
             </div>
           </div>
         )}
@@ -996,7 +1003,7 @@ function App(){
             </div>
             {/* ── TAB 1 하단 우측 개발자 표기 ── */}
             <div style={{textAlign:"right",fontFamily:"'Orbitron',sans-serif",fontSize:10,fontWeight:700,color:"#94a3b8",letterSpacing:"0.08em",marginTop:6,paddingRight:4}}>
-              MANMIN · Ver-3.1
+              MANMIN · Ver-3.2
             </div>
           </div>
         )}
@@ -1155,7 +1162,7 @@ function App(){
               </div>
 
               {/* ─ Developer 바닥글 (문서 흐름 최하단 우측, 인쇄 시 fixed footer) ─ */}
-              <div id="dev-stamp" style={{fontFamily:"'Orbitron',sans-serif",fontWeight:700,letterSpacing:"0.08em"}}>MANMIN · Ver-3.1</div>
+              <div id="dev-stamp" style={{fontFamily:"'Orbitron',sans-serif",fontWeight:700,letterSpacing:"0.08em"}}>MANMIN · Ver-3.2</div>
 
             </div>{/* /report-zone */}
             </div>{/* /rpt-inner */}
@@ -1211,40 +1218,109 @@ function App(){
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 
-<!-- Service Worker (improved) -->
+<!-- ═══ Service Worker Ver 3.2 — 재설치 문제 원천 차단 ═══ -->
 <script>
 (function(){
+  'use strict';
   if(!('serviceWorker' in navigator)) return;
+
   window.addEventListener('load', function(){
     navigator.serviceWorker.register('./sw.js', {updateViaCache:'none'})
       .then(function(reg){
+        console.log('[PWA v3.2] SW 등록 — scope:', reg.scope);
+
+        /* ★ 핵심: 대기 중인 SW가 있으면 즉시 skipWaiting 적용
+           재설치 후 이전 SW가 waiting 상태로 남아 있을 때 처리 */
+        if(reg.waiting) {
+          console.log('[PWA v3.2] waiting SW 감지 → skipWaiting 즉시 적용');
+          reg.waiting.postMessage({type:'SKIP_WAITING'});
+        }
+
+        /* 새 SW 발견 시 업데이트 배너 표시 */
         reg.addEventListener('updatefound', function(){
-          var nw = reg.installing; if(!nw) return;
+          var nw = reg.installing;
+          if(!nw) return;
           nw.addEventListener('statechange', function(){
-            if(nw.state==='installed' && navigator.serviceWorker.controller){
-              var b=document.createElement('div');
-              b.style.cssText='position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:9999;background:#DC2626;color:#fff;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px;box-shadow:0 4px 20px rgba(0,0,0,.4);white-space:nowrap;font-family:sans-serif;';
-              b.innerHTML='<span>&#128260; 새 버전 있음</span><button onclick="navigator.serviceWorker.ready.then(function(r){r.waiting&&r.waiting.postMessage({type:\'SKIP_WAITING\'})});this.parentNode.remove();" style="background:rgba(255,255,255,.2);border:none;color:#fff;padding:4px 10px;border-radius:6px;cursor:pointer;font-weight:700;">업데이트</button>';
-              document.body.appendChild(b);
+            if(nw.state === 'installed' && navigator.serviceWorker.controller){
+              _showUpdateBanner(nw);
             }
           });
         });
+
+        /* 1시간마다 업데이트 체크 */
+        setInterval(function(){ reg.update(); }, 60 * 60 * 1000);
       })
-      .catch(function(e){console.info('[SW]',e.message);});
+      .catch(function(e){ console.warn('[PWA v3.2] SW 등록 실패:', e); });
+
+    /* controllerchange → 자동 새로고침 */
+    var _ref = false;
     navigator.serviceWorker.addEventListener('controllerchange', function(){
-      if(!window._reload){window._reload=true;location.reload();}
+      if(!_ref){ _ref = true; location.reload(); }
+    });
+
+    /* SW로부터 CACHE_CLEARED 메시지 수신 시 페이지 새로고침 */
+    navigator.serviceWorker.addEventListener('message', function(event){
+      if(event.data && event.data.type === 'CACHE_CLEARED'){
+        console.log('[PWA v3.2] 캐시 초기화 완료 → 새로고침');
+        location.reload();
+      }
     });
   });
+
+  /* 앱 설치 완료 이벤트 — FAB/헤더 버튼 숨김 */
   window.addEventListener('appinstalled', function(){
-    var btn=document.getElementById('pwa-hdr-btn');
+    console.log('[PWA v3.2] 설치 완료');
+    var btn = document.getElementById('pwa-hdr-btn');
     if(btn) btn.classList.remove('visible');
+    /* ★ 설치 완료 시 sessionStorage에 기록 → 재방문 시 배너 재표시 방지 */
+    sessionStorage.setItem('pwa-installed', '1');
   });
-  if(window.matchMedia('(display-mode:standalone)').matches||window.navigator.standalone===true){
-    document.addEventListener('DOMContentLoaded',function(){
-      var btn=document.getElementById('pwa-hdr-btn');
-      if(btn) btn.style.display='none';
+
+  /* standalone 모드로 실행 중이면 설치 버튼 숨김 */
+  if(window.matchMedia('(display-mode:standalone)').matches || window.navigator.standalone === true){
+    document.addEventListener('DOMContentLoaded', function(){
+      var btn = document.getElementById('pwa-hdr-btn');
+      if(btn) btn.style.display = 'none';
     });
   }
+
+  /* ── 업데이트 배너 ── */
+  function _showUpdateBanner(worker) {
+    if(document.getElementById('sw-update-banner')) return;
+    var b = document.createElement('div');
+    b.id = 'sw-update-banner';
+    b.style.cssText = [
+      'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:99999',
+      'background:#DC2626;color:white;border-radius:14px;padding:12px 18px',
+      'display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,.45)',
+      'font-family:"Noto Sans KR",sans-serif;font-size:13px;white-space:nowrap',
+      'animation:slideUp .35s ease-out',
+      'border:1px solid rgba(255,255,255,.2)',
+    ].join(';');
+    b.innerHTML =
+      '<span>🔄 새 버전 (v3.2) 이 있습니다</span>' +
+      '<button onclick="(function(){' +
+        'document.getElementById(\'sw-update-banner\').remove();' +
+        'navigator.serviceWorker.ready.then(function(r){' +
+          'if(r.waiting) r.waiting.postMessage({type:\'SKIP_WAITING\'});' +
+        '});' +
+      '})()" style="background:white;color:#DC2626;border:none;border-radius:8px;' +
+        'padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;">업데이트</button>' +
+      '<button onclick="document.getElementById(\'sw-update-banner\').remove()" ' +
+        'style="background:rgba(255,255,255,.15);color:white;border:none;border-radius:8px;' +
+        'padding:6px 10px;font-size:11px;cursor:pointer;">나중에</button>';
+    document.body.appendChild(b);
+  }
+
+  /* ── 긴급 캐시 초기화 함수 (콘솔에서 호출 가능: clearPwaCache()) ── */
+  window.clearPwaCache = function(){
+    if(!navigator.serviceWorker.controller){
+      console.warn('[PWA v3.2] 활성 SW 없음');
+      return;
+    }
+    navigator.serviceWorker.controller.postMessage({type:'CLEAR_CACHE'});
+    console.log('[PWA v3.2] CLEAR_CACHE 전송 — 캐시 초기화 중...');
+  };
 })();
 </script>
 </body>
