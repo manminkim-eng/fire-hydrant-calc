@@ -1,6 +1,6 @@
 /* ═══════════════════════════════════════════════════════════════
    Service Worker — 옥내소화전 펌프 용량 계산서
-   Developer MANMIN · Ver-3.2
+   Developer MANMIN · Ver-3.3
 
    ▣ Ver 3.2 핵심 개선 — 재설치 문제 원천 차단
    ① INSTALL  : skipWaiting() 즉시 호출 → 대기 없이 바로 활성화
@@ -11,7 +11,7 @@
    ⑤ SYNC     : 앱 재설치 후 첫 방문 시 캐시 강제 갱신
 ═══════════════════════════════════════════════════════════════ */
 
-const CACHE_VER    = 'v3.2';
+const CACHE_VER    = 'v3.3';
 const CACHE_NAME   = `manmin-indoor-hydrant-${CACHE_VER}`;
 const STATIC_CACHE = `manmin-indoor-hydrant-static-${CACHE_VER}`;
 

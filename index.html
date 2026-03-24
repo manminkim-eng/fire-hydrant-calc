@@ -41,7 +41,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.5;}
     size:A4 portrait;
     margin:14mm 12mm 22mm 14mm;
     @bottom-right{
-      content:"MANMIN-Ver3.2";
+      content:"MANMIN-Ver3.3";
       font-family:'Orbitron',sans-serif;
       font-size:8pt;
       font-weight:700;
@@ -86,15 +86,15 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.5;}
 /* 계산식 안내 floating button */
 .formula-fab{
   position:fixed;bottom:80px;right:16px;z-index:1000;
-  background:linear-gradient(135deg,#1e3a5f,#1e40af);
+  background:linear-gradient(135deg,#450a0a,#991b1b,#b91c1c);
   color:white;border:none;border-radius:14px;
   padding:10px 14px;font-size:11px;font-weight:800;
-  cursor:pointer;box-shadow:0 4px 18px rgba(30,58,95,0.45);
+  cursor:pointer;box-shadow:0 4px 18px rgba(153,27,27,0.50);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   line-height:1.3;gap:2px;font-family:'Noto Sans KR',sans-serif;
   transition:transform 0.15s,box-shadow 0.15s;
 }
-.formula-fab:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(30,58,95,0.55);}
+.formula-fab:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(153,27,27,0.68);}
 
 /* ══ PWA 설치 FAB ══ */
 .pwa-install-fab{
@@ -129,15 +129,22 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.5;}
 /* 계산식 안내 모달 */
 .fml-overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:12px;}
 .fml-box{position:relative;background:white;border-radius:18px;padding:0;max-width:720px;width:100%;max-height:90vh;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.3);display:flex;flex-direction:column;}
-.fml-head{background:linear-gradient(135deg,#1e3a5f,#1e40af);color:white;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.fml-head{background:linear-gradient(135deg,#450a0a,#991b1b,#b91c1c);color:white;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .fml-body{overflow-y:auto;padding:20px 22px;-webkit-overflow-scrolling:touch;}
 .fml-body::-webkit-scrollbar{width:6px;}
-.fml-body::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px;}
+.fml-body::-webkit-scrollbar-thumb{background:#fca5a5;border-radius:3px;}
 .fml-sec{margin-bottom:22px;}
-.fml-sec-title{font-size:12px;font-weight:800;color:#1e3a5f;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;display:flex;align-items:center;gap:6px;border-left:3px solid #1e40af;padding-left:8px;}
+.fml-sec-title{font-size:12px;font-weight:800;color:#991b1b;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;display:flex;align-items:center;gap:6px;border-left:3px solid #b91c1c;padding-left:8px;}
 .fml-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px;margin-bottom:8px;}
-.fml-eq{font-family:'Noto Sans Mono',monospace;font-size:13px;font-weight:700;color:#1e3a5f;background:#eff6ff;border-radius:6px;padding:6px 10px;margin:6px 0;display:block;word-break:break-all;}
+.fml-eq{font-family:'Noto Sans Mono',monospace;font-size:13px;font-weight:700;color:#7f1d1d;background:#fef2f2;border-radius:6px;padding:6px 10px;margin:6px 0;display:block;word-break:break-all;}
 .fml-note{font-size:10px;color:#6b7280;margin-top:4px;line-height:1.7;}
+.fml-itabs{display:flex;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;flex-shrink:0;background:rgba(0,0,0,.25);}
+.fml-itabs::-webkit-scrollbar{display:none;}
+.fml-itab{padding:9px 15px;border:none;background:transparent;color:rgba(255,255,255,.6);font-size:11.5px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .15s;flex-shrink:0;}
+.fml-itab:hover:not(.on){color:rgba(255,255,255,.88);}
+.fml-itab.on{color:#fff;border-bottom-color:#fca5a5;}
+.fml-panel{display:none;}
+.fml-panel.on{display:block;}
 /* 반응형 브레이크포인트 */
 @media(max-width:1024px){
   .g-4{grid-template-columns:repeat(2,1fr);}
@@ -433,116 +440,249 @@ function RRow({no,label,value,unit,basis,hi}){
 
 /* ═══ 계산식 안내 모달 ══════════════════════════════════════ */
 function FormulaModal({onClose}){
+  const [itab,setItab]=React.useState('howto');
+  const tabs=[['howto','🗺️ 이용방법'],['source','🟦 수원 산정'],['head','🟧 펌프 양정'],['power','🟥 전동기 동력'],['pipe','🔩 상당직관']];
   return(
     <div className="fml-overlay" onClick={onClose}>
       <div className="fml-box" onClick={e=>e.stopPropagation()}>
         <div className="fml-head">
           <div>
             <div style={{fontSize:16,fontWeight:900,letterSpacing:"0.04em"}}>📐 계산식 안내</div>
-            <div style={{fontSize:11,opacity:0.8,marginTop:2}}>NFPC/NFTC 102 적용 산출 공식 전체</div>
+            <div style={{fontSize:11,opacity:0.8,marginTop:2}}>NFPC/NFTC 102 적용 산출 공식 전체 · Ver-3.3</div>
           </div>
           <button onClick={onClose} style={{background:"rgba(255,255,255,0.15)",border:"none",color:"white",borderRadius:8,width:34,height:34,fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700}}>✕</button>
         </div>
+
+        {/* 탭 바 */}
+        <div className="fml-itabs">
+          {tabs.map(([k,l])=>(
+            <button key={k} className={`fml-itab${itab===k?' on':''}`} onClick={()=>setItab(k)}>{l}</button>
+          ))}
+        </div>
+
         <div className="fml-body">
 
-          {/* ── Ⅱ-1 수원 ── */}
-          <div className="fml-sec">
-            <div className="fml-sec-title">🟦 Ⅱ-1. 수원 용량 산정</div>
-            <div className="fml-card">
-              <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>A. 가장 많은 층 소화전 수</div>
-              <code className="fml-eq">A = min(설치개수, 기준개수) &nbsp;[개] &nbsp;— 일반 2개, 고층 5개 제한</code>
-              <div className="fml-note">화재안전기술기준 NFTC 102 제2.2.1.4항 — 일반(29층↓): 최대 2개 / 고층(30~49층)·초고층(50층↑): 최대 5개</div>
+          {/* ══ 탭: 이용방법 ══ */}
+          <div className={`fml-panel${itab==='howto'?' on':''}`}>
+
+            {/* 상단 배너 */}
+            <div style={{background:"linear-gradient(135deg,#450a0a,#991b1b,#b91c1c)",borderRadius:13,padding:"16px 18px",marginBottom:16}}>
+              <div style={{fontSize:13,fontWeight:900,color:"#fbbf24",marginBottom:5,display:"flex",alignItems:"center",gap:8}}>
+                <span style={{fontSize:20}}>🚒</span> 옥내소화전 펌프 용량 계산서 이용방법
+              </div>
+              <div style={{fontSize:10.5,color:"rgba(255,255,255,.7)",lineHeight:1.65}}>
+                NFPC 102 / NFTC 102·604 · Hazen-Williams Formula · MANMIN Ver-3.3<br/>
+                아래 순서대로 입력하면 수원·양정·동력이 자동으로 산출됩니다.
+              </div>
             </div>
-            <div className="fml-card">
-              <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>C. 펌프 토출량 (ℓ/min)</div>
-              <code className="fml-eq">C = A × 130 &nbsp;[ℓ/min]</code>
-              <div className="fml-note">옥내소화전 1개당 규정 방사량 = 130 ℓ/min (고정값)</div>
+
+            {/* STEP 1 */}
+            <div style={{display:"flex",gap:11,alignItems:"flex-start",background:"#f8fafc",border:"1.5px solid #e2e8f0",borderLeft:"4px solid #991b1b",borderRadius:10,padding:"13px 14px",marginBottom:9}}>
+              <div style={{minWidth:30,height:30,background:"linear-gradient(135deg,#991b1b,#450a0a)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:900,color:"#fff",flexShrink:0,boxShadow:"0 2px 8px rgba(153,27,27,.35)"}}>1</div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:12,fontWeight:900,color:"#991b1b",marginBottom:5}}>📋 프로젝트 기본 정보 입력</div>
+                <div style={{fontSize:10.5,color:"#374151",lineHeight:1.85}}>
+                  ① <strong>공사명·설계자·날짜</strong>를 입력합니다 — 출력 계산서 상단에 표기됩니다.<br/>
+                  ② 상단 탭에서 <strong>「⚙️ 조건 입력」</strong>을 선택하여 시스템 기본 조건을 설정합니다.<br/>
+                  ③ 입력한 내용은 실시간으로 계산서에 자동 반영됩니다.
+                </div>
+              </div>
             </div>
-            <div className="fml-card">
-              <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>D. 수원 용량 (m³)</div>
-              <code className="fml-eq">D = A × 130 × T ÷ 1,000 &nbsp;[m³] &nbsp;(T: 방수시간)</code>
-              <div className="fml-note">방수 지속시간 T = 일반(29층↓) 20분 / 고층(30~49층) 40분 / 초고층(50층↑) 60분 적용 (NFTC 102·604)<br/>1,000 ℓ = 1 m³ 환산 / 최소 2.6 m³ 이상</div>
+
+            {/* STEP 2 */}
+            <div style={{display:"flex",gap:11,alignItems:"flex-start",background:"#fef2f2",border:"1.5px solid #fecaca",borderLeft:"4px solid #b91c1c",borderRadius:10,padding:"13px 14px",marginBottom:9}}>
+              <div style={{minWidth:30,height:30,background:"linear-gradient(135deg,#b91c1c,#991b1b)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:900,color:"#fff",flexShrink:0,boxShadow:"0 2px 8px rgba(185,28,28,.35)"}}>2</div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:12,fontWeight:900,color:"#b91c1c",marginBottom:5}}>🟦 수원 용량 조건 설정</div>
+                <div style={{fontSize:10.5,color:"#374151",lineHeight:1.85}}>
+                  ① <strong>층수(건물 유형)</strong>를 입력합니다 — 29층↓(일반) / 30~49층(고층) / 50층↑(초고층) 자동 분류.<br/>
+                  ② <strong>가장 많은 층의 소화전 수</strong>를 입력하면 기준개수(일반 2개·고층 5개)가 자동 제한됩니다.<br/>
+                  ③ 수원 용량(m³) = 기준개수 × 130 ℓ/min × 방수시간(T) ÷ 1,000이 자동 계산됩니다.
+                </div>
+              </div>
+            </div>
+
+            {/* STEP 3 */}
+            <div style={{display:"flex",gap:11,alignItems:"flex-start",background:"#fff1f2",border:"1.5px solid #fecdd3",borderLeft:"4px solid #dc2626",borderRadius:10,padding:"13px 14px",marginBottom:9}}>
+              <div style={{minWidth:30,height:30,background:"linear-gradient(135deg,#dc2626,#b91c1c)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:900,color:"#fff",flexShrink:0,boxShadow:"0 2px 8px rgba(220,38,38,.35)"}}>3</div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:12,fontWeight:900,color:"#dc2626",marginBottom:5}}>🟧 펌프 양정 조건 입력</div>
+                <div style={{fontSize:10.5,color:"#374151",lineHeight:1.85}}>
+                  ① <strong>실양정(흡입+토출 m)</strong>을 입력합니다 — 펌프 설치 위치에서 최고 소화전까지의 높이.<br/>
+                  ② <strong>호스 길이(m)·호스 종류</strong>를 선택합니다 — 관경별·재질별 마찰손실이 자동 적용됩니다.<br/>
+                  ③ <strong>배관 세그먼트</strong>를 추가하여 관경·길이·관부속 수량을 입력하면 Hazen-Williams 공식으로 마찰손실이 자동 계산됩니다.<br/>
+                  ④ 전양정 = (실양정 + 배관손실 + 호스손실 + 노즐압 17m) × 1.1(안전율)로 자동 산출됩니다.
+                </div>
+              </div>
+            </div>
+
+            {/* STEP 4 */}
+            <div style={{display:"flex",gap:11,alignItems:"flex-start",background:"#fef2f2",border:"1.5px solid #fecaca",borderLeft:"4px solid #dc2626",borderRadius:10,padding:"13px 14px",marginBottom:9}}>
+              <div style={{minWidth:30,height:30,background:"linear-gradient(135deg,#dc2626,#b91c1c)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:900,color:"#fff",flexShrink:0,boxShadow:"0 2px 8px rgba(220,38,38,.35)"}}>4</div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:12,fontWeight:900,color:"#b91c1c",marginBottom:5}}>🟥 전동기 동력 조건 설정</div>
+                <div style={{fontSize:10.5,color:"#374151",lineHeight:1.85}}>
+                  ① <strong>펌프 관경(mm)</strong>을 선택합니다 — 40A·65A·100A·150A에 따라 펌프 효율(η)이 자동 설정됩니다.<br/>
+                  ② <strong>전달 방식</strong>(전동기 직결·이외 원동기)을 선택합니다 — 전달계수 K가 자동 적용됩니다.<br/>
+                  ③ 이론 출력(kW) 계산 후 HP로 환산하여 <strong>상위 표준 규격</strong>이 자동 선정됩니다.
+                </div>
+              </div>
+            </div>
+
+            {/* STEP 5 */}
+            <div style={{display:"flex",gap:11,alignItems:"flex-start",background:"#fff1f2",border:"1.5px solid #fca5a5",borderLeft:"4px solid #450a0a",borderRadius:10,padding:"13px 14px",marginBottom:16}}>
+              <div style={{minWidth:30,height:30,background:"linear-gradient(135deg,#450a0a,#7f1d1d)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:900,color:"#fff",flexShrink:0,boxShadow:"0 2px 8px rgba(69,10,10,.4)"}}>5</div>
+              <div style={{flex:1,minWidth:0}}>
+                <div style={{fontSize:12,fontWeight:900,color:"#7f1d1d",marginBottom:5}}>🖨️ 결과 확인 및 출력</div>
+                <div style={{fontSize:10.5,color:"#374151",lineHeight:1.85}}>
+                  ① <strong>「📄 계산서」 탭</strong>에서 최종 산출 결과를 확인합니다.<br/>
+                  ② 상단 <strong>🖨️ 인쇄 버튼</strong>을 클릭하면 소방 계산서 양식으로 A4 출력·PDF 저장됩니다.<br/>
+                  ③ <strong>「📱 모바일」 탭</strong>에서 JPG로 저장하거나 공유할 수 있습니다.<br/>
+                  ④ PWA 설치: 우측 하단 설치 버튼 또는 iOS Safari → 공유 → 홈 화면에 추가.
+                </div>
+              </div>
+            </div>
+
+            {/* 주요 기능 */}
+            <div className="fml-sec-title" style={{marginTop:0}}>💡 주요 기능 안내</div>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
+              <div className="fml-card" style={{borderLeft:"3px solid #991b1b"}}>
+                <div style={{fontSize:11,fontWeight:800,color:"#991b1b",marginBottom:4}}>📐 계산식 안내 버튼</div>
+                <div className="fml-note">우측 하단 플로팅 버튼(FAB)을 클릭하면 이 창이 열립니다. 탭을 전환하여 수원·양정·동력·상당직관 계산식을 확인하세요.</div>
+              </div>
+              <div className="fml-card" style={{borderLeft:"3px solid #b91c1c"}}>
+                <div style={{fontSize:11,fontWeight:800,color:"#b91c1c",marginBottom:4}}>⚡ 실시간 자동 계산</div>
+                <div className="fml-note">모든 입력값 변경 즉시 수원·양정·동력이 실시간 재산출됩니다. 별도 계산 버튼 없이 값만 변경하면 됩니다.</div>
+              </div>
+              <div className="fml-card" style={{borderLeft:"3px solid #dc2626"}}>
+                <div style={{fontSize:11,fontWeight:800,color:"#dc2626",marginBottom:4}}>🔩 배관 세그먼트 추가</div>
+                <div className="fml-note">「+ 세그먼트 추가」 버튼으로 구간별 배관을 등록합니다. 관경·길이·관부속 수량을 입력하면 상당직관 및 마찰손실이 자동 계산됩니다.</div>
+              </div>
+              <div className="fml-card" style={{borderLeft:"3px solid #7f1d1d"}}>
+                <div style={{fontSize:11,fontWeight:800,color:"#7f1d1d",marginBottom:4}}>📋 법적 기준 자동 적용</div>
+                <div className="fml-note">층수 입력 시 NFTC 102 기준에 따라 소화전 기준개수·방수시간·최소 수원이 자동 분기 적용됩니다.</div>
+              </div>
+            </div>
+
+            {/* 법적 근거 */}
+            <div style={{border:"1.5px solid #fca5a5",background:"#fef2f2",borderRadius:10,padding:"12px 13px"}}>
+              <div style={{fontSize:11,fontWeight:800,color:"#991b1b",marginBottom:6}}>📌 주요 법적 근거</div>
+              <div className="fml-note" style={{fontSize:10.5,lineHeight:2.1}}>
+                <strong>NFPC 102</strong> — 옥내소화전설비의 화재안전성능기준 (방수압력·방수량 기준)<br/>
+                <strong>NFTC 102</strong> — 옥내소화전설비의 화재안전기술기준 (소화전 개수·수원 산정)<br/>
+                <strong>NFTC 604</strong> — 고층건축물의 화재안전기술기준 (고층·초고층 방수시간 기준)<br/>
+                <strong>Hazen-Williams 공식</strong> — 배관 마찰손실 산정 (C값: 백관 120, STS/CPVC 150)
+              </div>
+            </div>
+
+          </div>
+
+          {/* ══ 탭: 수원 산정 ══ */}
+          <div className={`fml-panel${itab==='source'?' on':''}`}>
+            <div className="fml-sec">
+              <div className="fml-sec-title">🟦 Ⅱ-1. 수원 용량 산정</div>
+              <div className="fml-card">
+                <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>A. 가장 많은 층 소화전 수</div>
+                <code className="fml-eq">A = min(설치개수, 기준개수) &nbsp;[개] &nbsp;— 일반 2개, 고층 5개 제한</code>
+                <div className="fml-note">화재안전기술기준 NFTC 102 제2.2.1.4항 — 일반(29층↓): 최대 2개 / 고층(30~49층)·초고층(50층↑): 최대 5개</div>
+              </div>
+              <div className="fml-card">
+                <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>C. 펌프 토출량 (ℓ/min)</div>
+                <code className="fml-eq">C = A × 130 &nbsp;[ℓ/min]</code>
+                <div className="fml-note">옥내소화전 1개당 규정 방사량 = 130 ℓ/min (고정값)</div>
+              </div>
+              <div className="fml-card">
+                <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>D. 수원 용량 (m³)</div>
+                <code className="fml-eq">D = A × 130 × T ÷ 1,000 &nbsp;[m³] &nbsp;(T: 방수시간)</code>
+                <div className="fml-note">방수 지속시간 T = 일반(29층↓) 20분 / 고층(30~49층) 40분 / 초고층(50층↑) 60분 적용 (NFTC 102·604)<br/>1,000 ℓ = 1 m³ 환산 / 최소 2.6 m³ 이상</div>
+              </div>
             </div>
           </div>
 
-          {/* ── Ⅱ-2 양정 ── */}
-          <div className="fml-sec">
-            <div className="fml-sec-title">🟧 Ⅱ-2. 펌프 양정 계산</div>
-            <div className="fml-card">
-              <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>E. 실양정 h₁ (m)</div>
-              <code className="fml-eq">E = 흡입양정 + 토출양정 &nbsp;[m]</code>
-              <div className="fml-note">펌프 설치위치 ~ 최고 소화전 방출구까지의 높이 (설계 도면 기준)</div>
-            </div>
-            <div className="fml-card">
-              <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>F. 배관 마찰손실 h₂ (m) — Hazen-Williams 공식</div>
-              <code className="fml-eq">h = (10.67 × Q¹·⁸⁵²) ÷ (C¹·⁸⁵² × D⁴·⁸⁷) × L &nbsp;[m]</code>
-              <div className="fml-note">
-                Q : 유량 (ℓ/min → m³/s 환산: Q÷60,000 적용) &nbsp;|&nbsp; C : 유속계수 (배관종류별 상이) &nbsp;|&nbsp; D : 관 내경 (m)<br/>
-                L : 상당직관 합계 = 직관 + 관부속 상당직관 합계 (m)<br/>
-                ※ 배관 종류별 C값 : KS D3507 (백관) = 120, STS/CPVC = 150
+          {/* ══ 탭: 펌프 양정 ══ */}
+          <div className={`fml-panel${itab==='head'?' on':''}`}>
+            <div className="fml-sec">
+              <div className="fml-sec-title">🟧 Ⅱ-2. 펌프 양정 계산</div>
+              <div className="fml-card">
+                <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>E. 실양정 h₁ (m)</div>
+                <code className="fml-eq">E = 흡입양정 + 토출양정 &nbsp;[m]</code>
+                <div className="fml-note">펌프 설치위치 ~ 최고 소화전 방출구까지의 높이 (설계 도면 기준)</div>
               </div>
-            </div>
-            <div className="fml-card">
-              <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>G. 호스 마찰손실 h₃ (m)</div>
-              <code className="fml-eq">G = 손실율 × 호스길이 ÷ 100 &nbsp;[m]</code>
-              <div className="fml-note">
-                40mm 아마호스 : 26 m/100m &nbsp;|&nbsp; 40mm 고무내장 : 12 m/100m<br/>
-                50mm 아마호스 : 7 m/100m &nbsp;&nbsp;|&nbsp; 50mm 고무내장 : 3 m/100m<br/>
-                25mm 호스릴 : 고정 손실수두 14 m 적용
+              <div className="fml-card">
+                <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>F. 배관 마찰손실 h₂ (m) — Hazen-Williams 공식</div>
+                <code className="fml-eq">h = (10.67 × Q¹·⁸⁵²) ÷ (C¹·⁸⁵² × D⁴·⁸⁷) × L &nbsp;[m]</code>
+                <div className="fml-note">
+                  Q : 유량 (ℓ/min → m³/s 환산: Q÷60,000 적용) &nbsp;|&nbsp; C : 유속계수 (배관종류별 상이) &nbsp;|&nbsp; D : 관 내경 (m)<br/>
+                  L : 상당직관 합계 = 직관 + 관부속 상당직관 합계 (m)<br/>
+                  ※ 배관 종류별 C값 : KS D3507 (백관) = 120, STS/CPVC = 150
+                </div>
               </div>
-            </div>
-            <div className="fml-card">
-              <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>H. 노즐선단 방수압 h₄ (m)</div>
-              <code className="fml-eq">H = 17 m &nbsp;(고정) &nbsp;← 0.17 MPa = 1.7 kgf/cm² = 17 m</code>
-              <div className="fml-note">NFPC 102 제6조: 방수압력 최솟값 0.17 MPa → 수두 17 m 고정 적용</div>
-            </div>
-            <div className="fml-card" style={{border:"1.5px solid #fed7aa",background:"#fff7ed"}}>
-              <div style={{fontSize:12,fontWeight:700,color:"#c2410c",marginBottom:4}}>J. 전양정 — 최종 결과값</div>
-              <code className="fml-eq" style={{background:"#fef3c7",color:"#92400e"}}>J = (E + F + G + H) × 1.1 &nbsp;→ 올림(ceil) [m]</code>
-              <div className="fml-note">
-                안전율 10% 가산: I = (E+F+G+H) × 0.1<br/>
-                소계 합산 후 올림 적용: J = ceil(E + F + G + H + I)
+              <div className="fml-card">
+                <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>G. 호스 마찰손실 h₃ (m)</div>
+                <code className="fml-eq">G = 손실율 × 호스길이 ÷ 100 &nbsp;[m]</code>
+                <div className="fml-note">
+                  40mm 아마호스 : 26 m/100m &nbsp;|&nbsp; 40mm 고무내장 : 12 m/100m<br/>
+                  50mm 아마호스 : 7 m/100m &nbsp;&nbsp;|&nbsp; 50mm 고무내장 : 3 m/100m<br/>
+                  25mm 호스릴 : 고정 손실수두 14 m 적용
+                </div>
+              </div>
+              <div className="fml-card">
+                <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>H. 노즐선단 방수압 h₄ (m)</div>
+                <code className="fml-eq">H = 17 m &nbsp;(고정) &nbsp;← 0.17 MPa = 1.7 kgf/cm² = 17 m</code>
+                <div className="fml-note">NFPC 102 제6조: 방수압력 최솟값 0.17 MPa → 수두 17 m 고정 적용</div>
+              </div>
+              <div className="fml-card" style={{border:"1.5px solid #fed7aa",background:"#fff7ed"}}>
+                <div style={{fontSize:12,fontWeight:700,color:"#c2410c",marginBottom:4}}>J. 전양정 — 최종 결과값</div>
+                <code className="fml-eq" style={{background:"#fef3c7",color:"#92400e"}}>J = (E + F + G + H) × 1.1 &nbsp;→ 올림(ceil) [m]</code>
+                <div className="fml-note">
+                  안전율 10% 가산: I = (E+F+G+H) × 0.1<br/>
+                  소계 합산 후 올림 적용: J = ceil(E + F + G + H + I)
+                </div>
               </div>
             </div>
           </div>
 
-          {/* ── Ⅱ-3 동력 ── */}
-          <div className="fml-sec">
-            <div className="fml-sec-title">🟥 Ⅱ-3. 전동기 동력 계산</div>
-            <div className="fml-card" style={{border:"1.5px solid #fecaca",background:"#fef2f2"}}>
-              <div style={{fontSize:12,fontWeight:700,color:"#b91c1c",marginBottom:4}}>P. 전동기 이론 출력 (kW)</div>
-              <code className="fml-eq" style={{background:"#fee2e2",color:"#7f1d1d"}}>P = 0.163 × M × J × K ÷ η &nbsp;[kW]</code>
-              <div className="fml-note">
-                0.163 : 단위환산 상수 (ρ×g/60,000)<br/>
-                M : 토출량 (m³/min) = C ÷ 1,000<br/>
-                J : 전양정 (m)<br/>
-                K : 전달계수 — 전동기 직결 1.1 / 전동기 이외 원동기 1.15<br/>
-                η : 펌프 효율 — 40A=0.40, 65A=0.55, 100A=0.60, 150A=0.70
+          {/* ══ 탭: 전동기 동력 ══ */}
+          <div className={`fml-panel${itab==='power'?' on':''}`}>
+            <div className="fml-sec">
+              <div className="fml-sec-title">🟥 Ⅱ-3. 전동기 동력 계산</div>
+              <div className="fml-card" style={{border:"1.5px solid #fecaca",background:"#fef2f2"}}>
+                <div style={{fontSize:12,fontWeight:700,color:"#b91c1c",marginBottom:4}}>P. 전동기 이론 출력 (kW)</div>
+                <code className="fml-eq" style={{background:"#fee2e2",color:"#7f1d1d"}}>P = 0.163 × M × J × K ÷ η &nbsp;[kW]</code>
+                <div className="fml-note">
+                  0.163 : 단위환산 상수 (ρ×g/60,000)<br/>
+                  M : 토출량 (m³/min) = C ÷ 1,000<br/>
+                  J : 전양정 (m)<br/>
+                  K : 전달계수 — 전동기 직결 1.1 / 전동기 이외 원동기 1.15<br/>
+                  η : 펌프 효율 — 40A=0.40, 65A=0.55, 100A=0.60, 150A=0.70
+                </div>
               </div>
-            </div>
-            <div className="fml-card">
-              <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>Q. 전동기 채택 출력 (HP)</div>
-              <code className="fml-eq">HP (이론) = P(kW) × 1.341 → 상위 표준 규격 선정</code>
-              <div className="fml-note">표준 규격 : 3·5·7.5·10·15·20·25·30·40·50·60·75·100·125·150·200 HP</div>
+              <div className="fml-card">
+                <div style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>Q. 전동기 채택 출력 (HP)</div>
+                <code className="fml-eq">HP (이론) = P(kW) × 1.341 → 상위 표준 규격 선정</code>
+                <div className="fml-note">표준 규격 : 3·5·7.5·10·15·20·25·30·40·50·60·75·100·125·150·200 HP</div>
+              </div>
             </div>
           </div>
 
-          {/* ── 배관 마찰 상당직관 ── */}
-          <div className="fml-sec">
-            <div className="fml-sec-title">🔩 관부속 상당직관 계산 원리</div>
-            <div className="fml-card">
-              <code className="fml-eq">상당직관(m) = Σ [ 관부속 수량 × 해당 관경의 상당직관 환산값 ]</code>
-              <div className="fml-note">
-                나사 접합 기준 상당직관 적용 (KS B 6721 준용)<br/>
-                Reducer → 45°Elbow 동일 적용 (관경 小 기준)<br/>
-                Coupling → 직류 Tee 동일 &nbsp;|&nbsp; Union/Flange/Socket → 무시 (손실 미소)<br/>
-                Alarm V/V, Foot V/V, Strainer → Angle V/V 동일
+          {/* ══ 탭: 상당직관 ══ */}
+          <div className={`fml-panel${itab==='pipe'?' on':''}`}>
+            <div className="fml-sec">
+              <div className="fml-sec-title">🔩 관부속 상당직관 계산 원리</div>
+              <div className="fml-card">
+                <code className="fml-eq">상당직관(m) = Σ [ 관부속 수량 × 해당 관경의 상당직관 환산값 ]</code>
+                <div className="fml-note">
+                  나사 접합 기준 상당직관 적용 (KS B 6721 준용)<br/>
+                  Reducer → 45°Elbow 동일 적용 (관경 小 기준)<br/>
+                  Coupling → 직류 Tee 동일 &nbsp;|&nbsp; Union/Flange/Socket → 무시 (손실 미소)<br/>
+                  Alarm V/V, Foot V/V, Strainer → Angle V/V 동일
+                </div>
               </div>
             </div>
           </div>
 
           <div style={{textAlign:"center",fontSize:10,color:"#9ca3af",paddingTop:8,borderTop:"1px solid #f1f5f9"}}>
-            NFPC 102 / NFTC 102·604 · Hazen-Williams Formula · MANMIN Ver-3.2
+            NFPC 102 / NFTC 102·604 · Hazen-Williams Formula · MANMIN Ver-3.3
           </div>
         </div>
       </div>
@@ -607,7 +747,7 @@ function App(){
       setInstallPrompt(e);
       const hdrBtn=document.getElementById('pwa-hdr-btn');
       if(hdrBtn) hdrBtn.classList.add('visible');
-      /* ★ Ver 3.2: pwa-installed 플래그 초기화 (재설치 상황이므로) */
+      /* ★ Ver 3.3: pwa-installed 플래그 초기화 (재설치 상황이므로) */
       sessionStorage.removeItem('pwa-installed');
       /* standalone 아니고 배너 미표시 이력 없으면 2초 후 배너 표시 */
       if(!window.matchMedia('(display-mode:standalone)').matches && !sessionStorage.getItem('ib-dismissed'))
@@ -624,7 +764,7 @@ function App(){
     if(r.outcome==='accepted'){
       const hdrBtn=document.getElementById('pwa-hdr-btn');
       if(hdrBtn) hdrBtn.classList.remove('visible');
-      /* ★ Ver 3.2: 설치 완료 플래그 기록 */
+      /* ★ Ver 3.3: 설치 완료 플래그 기록 */
       sessionStorage.setItem('pwa-installed','1');
     }
     setInstallPrompt(null);setShowInstallBanner(false);
@@ -680,7 +820,7 @@ function App(){
               <div style={{fontSize:11,marginTop:8,opacity:0.85,fontFamily:"'Noto Sans KR',sans-serif",letterSpacing:"0.02em"}}>
                 Indoor Fire Hydrant Pump Capacity Calculator · NFPC/NFTC 102 적용&nbsp;
                 <span style={{fontFamily:"'Orbitron',sans-serif",fontWeight:900,fontSize:12,color:"#fca5a5",letterSpacing:"0.08em",textShadow:"0 0 8px rgba(252,165,165,0.6)"}}>
-                  MANMIN · Ver-3.2
+                  MANMIN · Ver-3.3
                 </span>
               </div>
             </div>
@@ -914,7 +1054,7 @@ function App(){
             </Box>
             {/* ── TAB 0 하단 우측 개발자 표기 ── */}
             <div style={{textAlign:"right",fontFamily:"'Orbitron',sans-serif",fontSize:10,fontWeight:700,color:"#94a3b8",letterSpacing:"0.08em",paddingRight:4}}>
-              MANMIN · Ver-3.2
+              MANMIN · Ver-3.3
             </div>
           </div>
         )}
@@ -1003,7 +1143,7 @@ function App(){
             </div>
             {/* ── TAB 1 하단 우측 개발자 표기 ── */}
             <div style={{textAlign:"right",fontFamily:"'Orbitron',sans-serif",fontSize:10,fontWeight:700,color:"#94a3b8",letterSpacing:"0.08em",marginTop:6,paddingRight:4}}>
-              MANMIN · Ver-3.2
+              MANMIN · Ver-3.3
             </div>
           </div>
         )}
@@ -1162,7 +1302,7 @@ function App(){
               </div>
 
               {/* ─ Developer 바닥글 (문서 흐름 최하단 우측, 인쇄 시 fixed footer) ─ */}
-              <div id="dev-stamp" style={{fontFamily:"'Orbitron',sans-serif",fontWeight:700,letterSpacing:"0.08em"}}>MANMIN · Ver-3.2</div>
+              <div id="dev-stamp" style={{fontFamily:"'Orbitron',sans-serif",fontWeight:700,letterSpacing:"0.08em"}}>MANMIN · Ver-3.3</div>
 
             </div>{/* /report-zone */}
             </div>{/* /rpt-inner */}
@@ -1218,7 +1358,7 @@ function App(){
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 
-<!-- ═══ Service Worker Ver 3.2 — 재설치 문제 원천 차단 ═══ -->
+<!-- ═══ Service Worker Ver 3.3 — 재설치 문제 원천 차단 ═══ -->
 <script>
 (function(){
   'use strict';
