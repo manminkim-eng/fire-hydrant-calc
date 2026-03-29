@@ -188,23 +188,20 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.5;}
 .rpt-outer{
   width:100%;
   max-width:100%;
-  overflow:hidden;
   box-sizing:border-box;
+  overflow:hidden;
   background:#e8ecf1;
-  padding:20px 0;          /* 좌우 패딩 제거 → 중앙 계산 오류 방지 */
+  padding:20px 0;
   border-radius:14px;
   margin-bottom:16px;
-  display:flex;
-  justify-content:center;  /* 수평 중앙 정렬 */
-  align-items:flex-start;
+  position:relative;
   /* JS가 height 를 동적 보정 */
 }
 .rpt-inner{
-  width:794px;             /* A4 @ 96dpi */
-  max-width:100%;
+  width:794px;             /* A4 @ 96dpi — 고정 */
   box-sizing:border-box;
-  flex-shrink:0;
-  /* JS: transform-origin:top center; transform:scale(S) */
+  position:relative;
+  /* JS: transform-origin:top left; transform:translateX(N)scale(S) */
 }
 .rpt-hint{
   display:none;
@@ -719,12 +716,15 @@ function App(){
   const rem=i=>setSegs(prev=>prev.filter((_,j)=>j!==i));
   const add=()=>setSegs(prev=>[...prev,mkSeg()]);
 
-  /* ═══ A4 계산서 반응형 스케일링 ═══
-     transform-origin:top center 방식:
-     ① outer에 display:flex + justify-content:center 로 수평 중앙 확보
-     ② scale 축소 시 top center 기준으로 중앙 유지
-     ③ outer.height = scrollHeight×scale 로 높이 보정
-     → 인쇄 시 transform:none 으로 A4 원본 복원        */
+  /* ═══ A4 계산서 반응형 스케일링 v3.4 ═══
+     【원리】 transform-origin: top left 고정 후
+              translateX(offset) scale(s) 로 수동 중앙 배치
+     ① scale = (outerWidth - gap) / 794  (최대 1.0)
+     ② scaledW = 794 × scale
+     ③ offset  = (outerWidth - scaledW) / 2   ← 정중앙 픽셀
+     ④ inner.transform = translateX(offset) scale(scale)
+     ⑤ outer.height    = inner.scrollHeight × scale + 40
+     → 인쇄 시 transform:none 완전 해제                     */
   useEffect(()=>{
     if(tab!==2)return;
     function scaleRpt(){
@@ -732,20 +732,29 @@ function App(){
       const inner=document.getElementById('rpt-inner');
       if(!outer||!inner)return;
       const A4W=794;
-      /* 좌우 패딩 없이 실제 사용 가능한 너비 계산 */
+      const gap=16;                                  /* 상하 여백 */
       const outerW=outer.clientWidth;
-      const scale=Math.min(1,(outerW-24)/A4W);
+      const scale=Math.min(1,(outerW-gap)/A4W);
       if(scale>=1){
-        /* 데스크탑: 원본 크기, 중앙 정렬은 flex로 처리 */
-        inner.style.cssText='width:794px;box-sizing:border-box;transform:none;transform-origin:top center;';
+        /* 데스크탑: 원본 크기, 수동 중앙 정렬 */
+        const offset=Math.max(0,(outerW-A4W)/2);
+        inner.style.cssText=
+          `width:794px;box-sizing:border-box;`+
+          `transform-origin:top left;`+
+          `transform:translateX(${offset}px) scale(1);`;
         outer.style.height='auto';
       }else{
-        /* 모바일/태블릿: top center 기준으로 축소 → 좌우 쏠림 없음 */
-        inner.style.cssText=`width:794px;box-sizing:border-box;transform-origin:top center;transform:scale(${scale});`;
+        /* 모바일/태블릿: 축소 후 정중앙 배치 */
+        const scaledW=A4W*scale;
+        const offset=Math.max(0,(outerW-scaledW)/2);
+        inner.style.cssText=
+          `width:794px;box-sizing:border-box;`+
+          `transform-origin:top left;`+
+          `transform:translateX(${offset}px) scale(${scale});`;
         outer.style.height=(inner.scrollHeight*scale+40)+'px';
       }
     }
-    const t=setTimeout(scaleRpt,120);
+    const t=setTimeout(scaleRpt,60);          /* 120→60ms: 깜빡임 최소화 */
     window.addEventListener('resize',scaleRpt);
     return()=>{clearTimeout(t);window.removeEventListener('resize',scaleRpt);};
   },[tab,segs,sys,proj]);
