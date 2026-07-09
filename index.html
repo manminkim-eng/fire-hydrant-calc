@@ -40,7 +40,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.5;}
     size:A4 portrait;
     margin:14mm 12mm 22mm 14mm;
     @bottom-right{
-      content:"MANMIN-Ver3.3";
+      content:"MANMIN-Ver3.4";
       font-family:'Orbitron',sans-serif;
       font-size:8pt;
       font-weight:700;
@@ -455,7 +455,7 @@ function FormulaModal({onClose}){
         <div className="fml-head">
           <div>
             <div style={{fontSize:16,fontWeight:900,letterSpacing:"0.04em"}}>📐 계산식 안내</div>
-            <div style={{fontSize:11,opacity:0.8,marginTop:2}}>NFPC/NFTC 102 적용 산출 공식 전체 · Ver-3.3</div>
+            <div style={{fontSize:11,opacity:0.8,marginTop:2}}>NFPC/NFTC 102 적용 산출 공식 전체 · Ver-3.4</div>
           </div>
           <button onClick={onClose} style={{background:"rgba(255,255,255,0.15)",border:"none",color:"white",borderRadius:8,width:34,height:34,fontSize:18,cursor:"pointer",display:"flex",alignItems:"center",justifyContent:"center",fontWeight:700}}>✕</button>
         </div>
@@ -478,7 +478,7 @@ function FormulaModal({onClose}){
                 <span style={{fontSize:20}}>🚒</span> 옥내소화전 펌프 용량 계산서 이용방법
               </div>
               <div style={{fontSize:10.5,color:"rgba(255,255,255,.7)",lineHeight:1.65}}>
-                NFPC 102 / NFTC 102·604 · Hazen-Williams Formula · MANMIN Ver-3.3<br/>
+                NFPC 102 / NFTC 102·604 · Hazen-Williams Formula · MANMIN Ver-3.4<br/>
                 아래 순서대로 입력하면 수원·양정·동력이 자동으로 산출됩니다.
               </div>
             </div>
@@ -689,7 +689,7 @@ function FormulaModal({onClose}){
           </div>
 
           <div style={{textAlign:"center",fontSize:10,color:"#9ca3af",paddingTop:8,borderTop:"1px solid #f1f5f9"}}>
-            NFPC 102 / NFTC 102·604 · Hazen-Williams Formula · MANMIN Ver-3.3
+            NFPC 102 / NFTC 102·604 · Hazen-Williams Formula · MANMIN Ver-3.4
           </div>
         </div>
       </div>
@@ -768,7 +768,7 @@ function App(){
       setInstallPrompt(e);
       const hdrBtn=document.getElementById('pwa-hdr-btn');
       if(hdrBtn) hdrBtn.classList.add('visible');
-      /* ★ Ver 3.3: pwa-installed 플래그 초기화 (재설치 상황이므로) */
+      /* ★ Ver 3.4: pwa-installed 플래그 초기화 (재설치 상황이므로) */
       sessionStorage.removeItem('pwa-installed');
       /* standalone 아니고 배너 미표시 이력 없으면 2초 후 배너 표시 */
       if(!window.matchMedia('(display-mode:standalone)').matches && !sessionStorage.getItem('ib-dismissed'))
@@ -785,7 +785,7 @@ function App(){
     if(r.outcome==='accepted'){
       const hdrBtn=document.getElementById('pwa-hdr-btn');
       if(hdrBtn) hdrBtn.classList.remove('visible');
-      /* ★ Ver 3.3: 설치 완료 플래그 기록 */
+      /* ★ Ver 3.4: 설치 완료 플래그 기록 */
       sessionStorage.setItem('pwa-installed','1');
     }
     setInstallPrompt(null);setShowInstallBanner(false);
@@ -841,7 +841,7 @@ function App(){
               <div style={{fontSize:11,marginTop:8,opacity:0.85,fontFamily:"'Noto Sans KR',sans-serif",letterSpacing:"0.02em"}}>
                 Indoor Fire Hydrant Pump Capacity Calculator · NFPC/NFTC 102 적용&nbsp;
                 <span style={{fontFamily:"'Orbitron',sans-serif",fontWeight:900,fontSize:12,color:"#fca5a5",letterSpacing:"0.08em",textShadow:"0 0 8px rgba(252,165,165,0.6)"}}>
-                  MANMIN · Ver-3.3
+                  MANMIN · Ver-3.4
                 </span>
               </div>
             </div>
@@ -853,7 +853,7 @@ function App(){
               <div style={{fontWeight:700,fontSize:13}}>NFTC 102</div>
               <div>옥내소화전설비의</div>
               <div>화재안전기술기준</div>
-              <div style={{marginTop:4,fontSize:10,color:"#fca5a5"}}>[시행 2022. 12. 1.]</div>
+              <div style={{marginTop:4,fontSize:10,color:"#fca5a5"}}>[시행 2026. 7. 1.]</div>
             </div>
             </div>
           </div>
@@ -1075,7 +1075,7 @@ function App(){
             </Box>
             {/* ── TAB 0 하단 우측 개발자 표기 ── */}
             <div style={{textAlign:"right",fontFamily:"'Orbitron',sans-serif",fontSize:10,fontWeight:700,color:"#94a3b8",letterSpacing:"0.08em",paddingRight:4}}>
-              MANMIN · Ver-3.3
+              MANMIN · Ver-3.4
             </div>
           </div>
         )}
@@ -1164,7 +1164,7 @@ function App(){
             </div>
             {/* ── TAB 1 하단 우측 개발자 표기 ── */}
             <div style={{textAlign:"right",fontFamily:"'Orbitron',sans-serif",fontSize:10,fontWeight:700,color:"#94a3b8",letterSpacing:"0.08em",marginTop:6,paddingRight:4}}>
-              MANMIN · Ver-3.3
+              MANMIN · Ver-3.4
             </div>
           </div>
         )}
@@ -1323,7 +1323,7 @@ function App(){
               </div>
 
               {/* ─ Developer 바닥글 (문서 흐름 최하단 우측, 인쇄 시 fixed footer) ─ */}
-              <div id="dev-stamp" style={{fontFamily:"'Orbitron',sans-serif",fontWeight:700,letterSpacing:"0.08em"}}>MANMIN · Ver-3.3</div>
+              <div id="dev-stamp" style={{fontFamily:"'Orbitron',sans-serif",fontWeight:700,letterSpacing:"0.08em"}}>MANMIN · Ver-3.4</div>
 
             </div>{/* /report-zone */}
             </div>{/* /rpt-inner */}
@@ -1379,7 +1379,7 @@ function App(){
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 </script>
 
-<!-- ═══ Service Worker Ver 3.3 — 재설치 문제 원천 차단 ═══ -->
+<!-- ═══ Service Worker Ver 3.4 — 재설치 문제 원천 차단 ═══ -->
 <script>
 (function(){
   'use strict';
