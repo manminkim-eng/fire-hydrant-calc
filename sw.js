@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
-   v5.1.0 회차 2026-10-15 — NFPC 102(제2025-25호) · NFTC 102(제2026-34호) 원문 대조 근거 정정 · 옥상수조 1/3 · KS 강관 내경 · 계산 엔진 단일화 · 캐시명 v5.1.0
+   v5.1.0 회차 2026-10-15 — NFPC 102(제2025-25호) · NFTC 102(제2026-34호) 원문 대조 근거 정정 · 옥상수조 1/3 · KS 강관 내경 · 계산 엔진 단일화 · 매뉴얼(/manual/) 캐시 제외 · 캐시명 v5.1.0
    S9 회차 2026-09-05 — R28 JPG v5.5 소제목 동반 이관 동반 캐시명 v5.0.6
    S4 회차 2026-09-04 — R1b #mm-print-stamp 인쇄 비표시 동반 캐시명 v5.0.5
    S3-0 회차 2026-09-04 — R27 html2canvas 클론 정화 동반 캐시명 v5.0.4
@@ -107,6 +107,7 @@ self.addEventListener('fetch', (event) => {
   if (request.method !== 'GET') return;
 
   const url = new URL(request.url);
+  if (url.pathname.indexOf('/manual/') !== -1) return;   /* v5.1.0 — 매뉴얼은 온라인 전용 · 캐시 제외 */
 
   /* 외부 CDN (Google Fonts, unpkg 등) — Network-First with cache fallback */
   if (url.origin !== self.location.origin) {

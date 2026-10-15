@@ -433,7 +433,7 @@ function Box({title,accent,children}){
     </div>
   );
 }
-function LabelEl({children}){return <label style={{display:"block",fontSize:11,fontWeight:700,color:"#6b7280",textTransform:"uppercase",letterSpacing:"0.06em",marginBottom:5}}>{children}</label>;}
+function LabelEl({children}){return <label style={{display:"block",fontSize:11,fontWeight:700,color:"#6b7280",textTransform:"none",letterSpacing:"0.06em",marginBottom:5}}>{children}</label>;}
 function InpText({val,onChange,placeholder}){return <input type="text" value={val} placeholder={placeholder||""} onChange={e=>onChange(e.target.value)} style={{width:"100%",padding:"8px 12px",borderRadius:8,border:BD,background:"white",fontSize:13,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif",outline:"none"}}/>;}
 function InpNum({val,onChange,unit,min,max}){
   return(
@@ -463,7 +463,7 @@ function Card({label,value,unit,formula,badge,bc}){
   const [bg,tc,bc2]=colors[bc]||colors.default;
   return(
     <div style={{background:bg,border:`1.5px solid ${bc2}`,borderRadius:12,padding:"12px 14px"}}>
-      <div style={{fontSize:10,fontWeight:700,color:"#9ca3af",textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:4,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+      <div style={{fontSize:10,fontWeight:700,color:"#9ca3af",textTransform:"none",letterSpacing:"0.08em",marginBottom:4,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
         <span>{label}</span>
         {badge&&<span style={{background:tc,color:"white",borderRadius:4,padding:"1px 6px",fontSize:9,fontWeight:700}}>{badge}</span>}
       </div>
@@ -557,7 +557,7 @@ function FormulaModal({onClose}){
                 <div style={{fontSize:12,fontWeight:900,color:"#991b1b",marginBottom:5}}>📋 프로젝트 기본 정보 입력</div>
                 <div style={{fontSize:10.5,color:"#374151",lineHeight:1.85}}>
                   ① <strong>공사명·설계자·날짜</strong>를 입력합니다 — 출력 계산서 상단에 표기됩니다.<br/>
-                  ② 상단 탭에서 <strong>「⚙️ 조건 입력」</strong>을 선택하여 시스템 기본 조건을 설정합니다.<br/>
+                  ② 상단 <strong>「① 데이터 입력」</strong> 탭에서 시스템 기본 조건을 설정합니다.<br/>
                   ③ 입력한 내용은 실시간으로 계산서에 자동 반영됩니다.
                 </div>
               </div>
@@ -569,9 +569,10 @@ function FormulaModal({onClose}){
               <div style={{flex:1,minWidth:0}}>
                 <div style={{fontSize:12,fontWeight:900,color:"#b91c1c",marginBottom:5}}>🟦 수원 용량 조건 설정</div>
                 <div style={{fontSize:10.5,color:"#374151",lineHeight:1.85}}>
-                  ① <strong>층수(건물 유형)</strong>를 입력합니다 — 29층↓(일반) / 30~49층(고층) / 50층↑(초고층) 자동 분류.<br/>
+                  ① <strong>건축물 규모</strong>를 고릅니다 — 일반(29층↓) / 고층(30~49층) / 초고층(50층↑) (NFTC 604 — 높이 120 m 이상도 고층건축물).<br/>
                   ② <strong>가장 많은 층의 소화전 수</strong>를 입력하면 기준개수(일반 2개·고층 5개)가 자동 제한됩니다.<br/>
-                  ③ 수원 용량(m³) = 기준개수 × 130 ℓ/min × 방수시간(T) ÷ 1,000이 자동 계산됩니다.
+                  ③ 수원 용량(m³) = 기준개수 × 130 ℓ/min × 방수시간(T) ÷ 1,000이 자동 계산됩니다.<br/>
+                  ④ <strong>옥상수조</strong>를 고릅니다 — 설치 대상이면 유효수량의 1/3 이상을 더하고, NFTC 102 2.1.2 단서에 해당하면 면제.
                 </div>
               </div>
             </div>
@@ -596,7 +597,7 @@ function FormulaModal({onClose}){
               <div style={{flex:1,minWidth:0}}>
                 <div style={{fontSize:12,fontWeight:900,color:"#b91c1c",marginBottom:5}}>🟥 전동기 동력 조건 설정</div>
                 <div style={{fontSize:10.5,color:"#374151",lineHeight:1.85}}>
-                  ① <strong>펌프 관경(mm)</strong>을 선택합니다 — 40A·65A·100A·150A에 따라 펌프 효율(η)이 자동 설정됩니다.<br/>
+                  ① <strong>펌프 토출구경</strong>을 고르고 <strong>펌프 효율(η)</strong>을 입력합니다 — 입력란 아래 구경별 참고 효율(MANMIN 참고값) · 제조사 성능곡선으로 확인.<br/>
                   ② <strong>전달 방식</strong>(전동기 직결·이외 원동기)을 선택합니다 — 전달계수 K가 자동 적용됩니다.<br/>
                   ③ 이론 출력(kW) 계산 후 HP로 환산하여 <strong>상위 표준 규격</strong>이 자동 선정됩니다.
                 </div>
@@ -609,9 +610,9 @@ function FormulaModal({onClose}){
               <div style={{flex:1,minWidth:0}}>
                 <div style={{fontSize:12,fontWeight:900,color:"#7f1d1d",marginBottom:5}}>🖨️ 결과 확인 및 출력</div>
                 <div style={{fontSize:10.5,color:"#374151",lineHeight:1.85}}>
-                  ① <strong>「📄 계산서」 탭</strong>에서 최종 산출 결과를 확인합니다.<br/>
-                  ② 상단 <strong>🖨️ 인쇄 버튼</strong>을 클릭하면 소방 계산서 양식으로 A4 출력·PDF 저장됩니다.<br/>
-                  ③ <strong>「📱 모바일」 탭</strong>에서 JPG로 저장하거나 공유할 수 있습니다.<br/>
+                  ① <strong>「② 계산 결과」</strong> 탭에서 결과를, <strong>「③ 계산서 출력」</strong> 탭에서 A4 계산서를 확인합니다.<br/>
+                  ② 계산서 위 <strong>🖨️ 인쇄 · PDF</strong> 버튼으로 A4 출력 · PDF 저장합니다.<br/>
+                  ③ <strong>🖼️ JPG 저장</strong> 버튼으로 A4 쪽 그림을 저장합니다.<br/>
                   ④ PWA 설치: 우측 하단 설치 버튼 또는 iOS Safari → 공유 → 홈 화면에 추가.
                 </div>
               </div>
@@ -783,6 +784,8 @@ function App(){
   const upd=(i,k,v)=>setSegs(prev=>prev.map((s,j)=>j===i?{...s,[k]:v}:s));
   const rem=i=>setSegs(prev=>prev.filter((_,j)=>j!==i));
   const add=()=>setSegs(prev=>[...prev,mkSeg()]);
+  /* v5.1.0 — 매뉴얼 캡처용 읽기 · 설정 창구(화면 동작과 무관) */
+  window.__mmHyd={setSys,setSegs,setProj,setTab,setShowFormula,get:()=>({sys,segs,proj})};
 
   /* ═══ A4 계산서 반응형 스케일링 v5.0 ═══
      【원리】 transform-origin: top left 고정 후
@@ -914,6 +917,9 @@ function App(){
                 transition:"all 0.15s",
               }}>{t}</button>
             ))}
+            <a className="tb-manual" href="https://manminkim-eng.github.io/fire-hydrant-calc/manual/" target="_blank" rel="noopener"
+               onClick={e=>{if(navigator.onLine===false){e.preventDefault();const t=document.createElement('div');t.textContent='매뉴얼은 인터넷 연결 시 열립니다';t.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;z-index:9999';document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}}}
+               style={{marginLeft:"auto",padding:"11px 16px",fontWeight:700,fontSize:13,color:"rgba(255,255,255,0.85)",textDecoration:"none",borderBottom:"3px solid transparent",fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>📘 매뉴얼</a>
           </div>
         </div>
       </div>
@@ -1189,10 +1195,10 @@ function App(){
               </div>
               <div style={{background:"#f8fafc",borderRadius:12,padding:14}}>
                 <div style={{fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",fontSize:12,color:"#475569",marginBottom:12,padding:"8px 12px",background:"white",borderRadius:8,border:BD}}>
-                  P = 0.163 × Q × H × K / E = 0.163 × {f3(C.M)} × {C.J} × {TRANS_TYPE[sys.transType]?.k} ÷ {C.N}{" "}= <b style={{color:"#c2410c"}}>{f3(C.Pkw)} kW</b>
+                  P = 0.163 × Q × H × K ÷ η = 0.163 × {f3(C.M)} × {C.J} × {TRANS_TYPE[sys.transType]?.k} ÷ {C.N}{" "}= <b style={{color:"#c2410c"}}>{f3(C.Pkw)} kW</b>
                 </div>
                 <div className="g-motor">
-                  <Card label="P. 이론 출력" value={f3(C.Pkw)} unit="kW" formula="0.163×Q×H×K/E"/>
+                  <Card label="P. 이론 출력" value={f3(C.Pkw)} unit="kW" formula="0.163×Q×H×K÷η"/>
                   <Card label="P. 환산 출력" value={f2(C.Pkw*1.341)} unit="HP (이론)" formula="kW × 1.341"/>
                   <Card label="Q. 선정 출력" value={C.Php} unit="HP" formula="표준 규격 상위 선정" badge="채택" bc="orange"/>
                 </div>
