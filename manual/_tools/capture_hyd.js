@@ -10,11 +10,11 @@ const sg=(o)=>Object.assign({},Z,o);
    예제 B = 고층 40층 업무시설 — 30~49층 · 6개 설치 → 5개 · 실양정 135 m · KS D 3562 Sch40 · 125A
    예제 C = 지하주차장 호스릴 — 일반 · 4개 → 2개 · 25 mm 호스릴 · 옥상수조 면제(NFTC 102 2.1.2(1) 지하층만) */
 const EX={
- A:{proj:{name:'익산시 ○○동 업무시설 신축공사',designer:'김만민',date:'2026-10-15'},sys:{hydrants:3,actualHead:45,hoseLen:30,hoseType:2,transType:1,pumpDia:100,pumpEff:60,pipeType:'SCH10',buildingType:1,roofEx:0},
+ A:{proj:{name:'익산시 ○○동 업무시설 신축공사',designer:'김만민',date:'2026-10-15'},sys:{hydrants:3,actualHead:45,hoseLen:30,hoseType:2,transType:1,pumpDia:100,pumpEff:60,pipeType:'SCH10',buildingType:1,roofEx:0,lowHead:1.5},
     segs:[sg({flow:260,dia:100,len:25,e90:4,teeS:3,gate:2,check:1}),sg({flow:260,dia:65,len:40,e90:1,teeS:9}),sg({flow:130,dia:50,len:8,e90:2,teeB:1,angle:1})]},
- B:{proj:{name:'○○ 복합업무시설(지상 40층) 신축공사',designer:'김만민',date:'2026-10-15'},sys:{hydrants:6,actualHead:135,hoseLen:30,hoseType:2,transType:1,pumpDia:125,pumpEff:65,pipeType:'SCH40',buildingType:2,roofEx:0},
+ B:{proj:{name:'○○ 복합업무시설(지상 40층) 신축공사',designer:'김만민',date:'2026-10-15'},sys:{hydrants:6,actualHead:135,hoseLen:30,hoseType:2,transType:1,pumpDia:125,pumpEff:65,pipeType:'SCH40',buildingType:2,roofEx:0,lowHead:1.5},
     segs:[sg({flow:650,dia:150,len:30,e90:4,teeS:2,gate:2,check:1}),sg({flow:650,dia:125,len:125,teeS:38}),sg({flow:130,dia:50,len:6,e90:2,teeB:1,angle:1})]},
- C:{proj:{name:'익산시 ○○동 지하주차장 증축공사',designer:'김만민',date:'2026-10-15'},sys:{hydrants:4,actualHead:12,hoseLen:30,hoseType:5,transType:1,pumpDia:65,pumpEff:55,pipeType:'SCH10',buildingType:1,roofEx:1},
+ C:{proj:{name:'익산시 ○○동 지하주차장 증축공사',designer:'김만민',date:'2026-10-15'},sys:{hydrants:4,actualHead:12,hoseLen:30,hoseType:5,transType:1,pumpDia:65,pumpEff:55,pipeType:'SCH10',buildingType:1,roofEx:1,lowHead:1.5},
     segs:[sg({flow:260,dia:65,len:30,e90:3,teeS:4,gate:1,check:1}),sg({flow:130,dia:40,len:15,teeB:1,angle:1})]},
 };
 const FREEZE=`(()=>{const T=new Date(2026,9,15,10,0,0).getTime();const D=Date;class F extends D{constructor(...a){if(a.length)super(...a);else super(T);}static now(){return T;}}window.Date=F;window.alert=()=>{};window.confirm=()=>true;try{localStorage.clear();localStorage.setItem('pwa-dismissed','1');}catch(e){}})()`;
@@ -29,26 +29,26 @@ window.__find=sel=>{if(sel.startsWith('box:'))return __box(sel.slice(4));if(sel.
  for(const s of sel.split(',')){const e=[...document.querySelectorAll(s)].find(__vis);if(e)return e;}return null;};
 window.__EX=${JSON.stringify(EX)};
 window.__run=(k,tab)=>{const e=__EX[k];__mmHyd.setShowFormula(false);__mmHyd.setProj(e.proj);__mmHyd.setSys(e.sys);__mmHyd.setSegs(e.segs);__mmHyd.setTab(tab||0);window.scrollTo(0,0);};
-window.__ex=k=>{const e=__EX[k];const c=HYDENG.calc(e.sys,e.segs);const r={};['A','Clpm','D','R','Dt','E','F','G','I','Jraw','J','M','N','O','Pkw','Php','waterTime','maxN','roofEx'].forEach(x=>r[x]=c[x]);
+window.__ex=k=>{const e=__EX[k];const c=HYDENG.calc(e.sys,e.segs);const r={};['A','Clpm','D','R','Dt','E','F','G','I','Jraw','J','M','N','O','Pkw','Php','waterTime','maxN','roofEx','Pdis','pipePressOK','hL','Plow','needPRV','hStar'].forEach(x=>r[x]=c[x]);
  r.seg=c.sdets.map(d=>({fric:d.fric,tl:d.tl,hl:d.hl}));r.vel=e.segs.map(s=>calcVelocity(s.flow,s.dia,e.sys.pipeType));return {in:e,R:r};};`;
 const SHOTS=[
  {id:'s01_overview',pre:"__run('A',0)",clip:'viewport',m:[['.tab-bar-wrap','작업 탭 · 매뉴얼'],['.sum-bar','요약 바'],['box:Ⅰ-0','프로젝트 정보'],['box:Ⅰ-1','시스템 파라미터'],['box:Ⅰ-2','배관 구간 입력'],['.formula-fab','계산식 안내']]},
  {id:'s02_header',clip:'nth:.no-print|0',m:[['nth:.tab-bar-wrap button|0','① 데이터 입력'],['nth:.tab-bar-wrap button|1','② 계산 결과'],['nth:.tab-bar-wrap button|2','③ 계산서 출력'],['.tb-manual','📘 매뉴얼'],['.hdr-right','근거 · 공고 · 시행일']]},
  {id:'s03_project',clip:'box:Ⅰ-0',m:[['lab:공사명','공사명'],['lab:설계자','설계자'],['lab:작성일','작성일']]},
- {id:'s04_params',clip:'box:Ⅰ-1',m:[['lab:건축물 규모','건축물 규모 — 일반 · 고층 · 초고층'],['lab:옥상수조','옥상수조 — 설치 · 면제'],['lab:A. 최대구역','A. 소화전 수'],['lab:F. 실양정','실양정'],['lab:G. 호스 길이','호스 길이'],['lab:G-1. 호스 타입','호스 종류'],['lab:K. 펌프 토출구경','펌프 구경'],['lab:K-1. 펌프 효율','펌프 효율'],['lab:L. 동력 전달방식','전달방식'],['lab:배관 종류','배관 종류(C값)']]},
+ {id:'s04_params',clip:'box:Ⅰ-1',m:[['lab:건축물 규모','건축물 규모 — 일반 · 고층 · 초고층'],['lab:옥상수조','옥상수조 — 설치 · 면제'],['lab:A. 최대구역','A. 소화전 수'],['lab:F. 실양정','실양정'],['lab:G. 호스 길이','호스 길이'],['lab:G-1. 호스 타입','호스 종류'],['lab:K. 펌프 토출구경','펌프 구경'],['lab:K-1. 펌프 효율','펌프 효율'],['lab:L. 동력 전달방식','전달방식'],['lab:배관 종류','배관 종류(C값)'],['lab:F-1. 최저층','최저층 방수구 높이 — 감압 판정']]},
  {id:'s05_segments',clip:'box:Ⅰ-2',crop:1100,m:[['nth:#root table tbody tr|0','1구간 — 주배관 100A'],['nth:#root table tbody tr|1','2구간 — 수직배관 65A'],['nth:#root table tbody tr|2','3구간 — 가지배관 50A'],['nth:button|__ADD__','＋ 구간 추가']]},
  {id:'s06_source',pre:"__mmHyd.setTab(1)",wait:800,clip:'box:Ⅱ-1',m:[['card:A. 소화전 개수','A. 소화전 개수 — 최대 2개'],['card:C. 펌프 토출량','C. 펌프 토출량'],['card:D. 수원 용량','D. 유효수량'],['card:R. 옥상수조','R. 옥상수조 1/3'],['card:총 저수량','총 저수량 D + R']]},
- {id:'s07_head',clip:'box:Ⅱ-2',m:[['card:E. 실양정','h₁ 실양정'],['card:F. 배관 마찰손실','h₂ 배관 마찰손실'],['card:G. 호스 마찰손실','h₃ 호스 마찰손실'],['card:H. 노즐 환산수두','h₄ 노즐 17 m'],['nth:.g-2 > div|1','소계 · 안전율 · 전양정']]},
+ {id:'s07_head',clip:'box:Ⅱ-2',m:[['card:E. 실양정','h₁ 실양정'],['card:F. 배관 마찰손실','h₂ 배관 마찰손실'],['card:G. 호스 마찰손실','h₃ 호스 마찰손실'],['card:H. 노즐 환산수두','h₄ 노즐 17 m'],['nth:.g-2 > div|1','소계 · 안전율 · 전양정'],['card:S. 토출압력','S 토출압력 — 배관 사용압력'],['card:T. 최저층','T 최저층 노즐 방수압 — 감압']]},
  {id:'s08_power',clip:'box:Ⅱ-3',m:[['card:M. 토출량','Q 토출량'],['card:J. 전양정','H 전양정'],['card:O. 전달계수','K 전달계수'],['card:N. 펌프 효율','η 펌프 효율'],['card:P. 이론 출력','P 이론 출력']]},
  {id:'s09_b_source',pre:"__run('B',1)",wait:900,clip:'box:Ⅱ-1',m:[['card:A. 소화전 개수','고층 — 최대 5개'],['card:D. 수원 용량','5 × 130 × 40분 = 26 m³'],['card:R. 옥상수조','옥상수조 1/3'],['card:총 저수량','총 저수량']]},
- {id:'s10_b_head',clip:'box:Ⅱ-2',m:[['card:F. 배관 마찰손실','배관 마찰손실'],['nth:.g-2 > div|1','전양정']]},
+ {id:'s10_b_head',clip:'box:Ⅱ-2',m:[['card:F. 배관 마찰손실','배관 마찰손실'],['nth:.g-2 > div|1','전양정'],['card:S. 토출압력','1.706 MPa — KS D 3562 적합'],['card:T. 최저층','감압장치 필요']]},
  {id:'s11_c_source',pre:"__run('C',1)",wait:900,clip:'box:Ⅱ-1',m:[['card:R. 옥상수조','옥상수조 면제'],['card:총 저수량','총 저수량 = 유효수량']]},
  {id:'s12_c_head',clip:'box:Ⅱ-2',m:[['card:G. 호스 마찰손실','호스릴 14 m'],['nth:.g-2 > div|1','전양정']]},
  {id:'s13_formula',pre:"__run('A',0);setTimeout(()=>__mmHyd.setShowFormula(true),50)",wait:900,fixed:true,clip:'.fml-box',m:[]},
  {id:'s14_formula_src',pre:"[...document.querySelectorAll('.fml-itab')][1].click()",wait:500,fixed:true,clip:'.fml-box',m:[]},
  {id:'s15_formula_head',pre:"[...document.querySelectorAll('.fml-itab')][2].click()",wait:500,fixed:true,clip:'.fml-box',post:"__mmHyd.setShowFormula(false)",m:[]},
  {id:'s16_a4',pre:"__run('A',2)",wait:1500,clip:'viewport',m:[['#btn-jpg','JPG 저장'],['.mm-btn-pdf','인쇄 · PDF'],['#report-zone','A4 계산서']]},
- {id:'s17_a4page',clip:'#report-zone',crop:2600,m:[['row:A','Ⅱ-1 수원 — A ~ D+R'],['row:E','Ⅱ-2 양정 — E ~ J'],['row:K','Ⅱ-3 동력 — K ~ Q']]},
+ {id:'s17_a4page',clip:'#report-zone',crop:2600,m:[['row:A','Ⅱ-1 수원 — A ~ D+R'],['row:E','Ⅱ-2 양정 — E ~ J'],['row:K','Ⅱ-3 동력 — K ~ Q'],['row:S','S · T 압력 판정']]},
 ];
 (async()=>{
  const s=await server(repo,PORT);const b=await chromium.launch({args:['--lang=ko-KR'],env:{...process.env,LANG:'ko_KR.UTF-8',LANGUAGE:'ko',LC_ALL:'ko_KR.UTF-8'}});

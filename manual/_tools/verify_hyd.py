@@ -1,7 +1,8 @@
-# 옥내소화전 v5.1.0 독립 검증 — 앱 엔진(index.html <script id="hyd-engine"> hydCalc)과 따로 짠 파이썬 구현을 무작위 대조
+# 옥내소화전 v5.1.1 독립 검증 — 앱 엔진(index.html <script id="hyd-engine"> hydCalc)과 따로 짠 파이썬 구현을 무작위 대조
 # usage: python3 -I verify_hyd.py <index.html> [건수]
 #  · 원문: NFPC 102 제4조①② · 제5조①3·4호 / NFTC 102 2.1.1 · 2.1.2 · 2.2.1.3 · 2.2.1.4 / NFTC 604 2.1.1 · 2.1.2
 #  · KS 강관 내경 = 외경 − 2 × 두께 (KS D 3507 · KS D 3562 Sch40) — 이 파일에서 외경 · 두께로 다시 계산
+#  · v5.1.1 압력 판정: 배관 사용압력 = ρgJ(1.2 MPa 이상이면 KS D 3562 · 3583만 — NFTC 102 2.3.1.2) · 최저층 노즐압 = ρg(J − 최저층 높이 − h₃)(0.7 MPa 초과 → 감압장치, 2.2.1.3 단서)
 #  · 참고값(호스 손실률 · 관부속 상당길이 · K · 안전율 10 % · 올림 · HP 규격)은 앱과 같은 값을 따로 옮겨 적음
 import sys,json,math,random,subprocess,os,tempfile
 html=open(sys.argv[1],encoding='utf-8').read(); N=int(sys.argv[2]) if len(sys.argv)>2 else 50000
@@ -32,22 +33,29 @@ def py(sys_,segs):
     sub=sys_['actualHead']+F+G+17; J=math.ceil(sub*1.1)
     P=0.163*(Q/1000)*J*K[sys_['transType']]/(sys_['pumpEff']/100); hp=P*1.341
     Php=next((h for h in HP if h>=hp), math.ceil(hp/5)*5)
-    return dict(A=A,Clpm=Q,D=D,R=R,Dt=D+R,F=F,G=G,J=J,Pkw=P,Php=Php)
+    rg=1000*9.80665/1e6                                                  # MPa per m (ρ = 1,000 kg/m³ · g = 9.80665 m/s²)
+    Pdis=J*rg; ok=(Pdis<1.2) or sys_['pipeType']=='SCH40'                 # SCH40 = KS D 3562
+    Plow=(J-sys_['lowHead']-G)*rg; hStar=(J-G)-0.7/rg
+    return dict(A=A,Clpm=Q,D=D,R=R,Dt=D+R,F=F,G=G,J=J,Pkw=P,Php=Php,Pdis=Pdis,pipePressOK=ok,Plow=Plow,needPRV=Plow>0.7,hStar=hStar)
 random.seed(20261015); cases=[]
 for _ in range(N):
     sy=dict(hydrants=random.randint(1,10),actualHead=round(random.uniform(5,180),1),hoseLen=random.choice([15,30,45,60]),hoseType=random.randint(1,5),
             transType=random.randint(1,2),pumpDia=random.choice([40,50,65,80,100,125,150]),pumpEff=random.randint(10,80),
-            pipeType=random.choice(['SCH10','SCH40','STS','CPVC']),buildingType=random.randint(1,3),roofEx=random.randint(0,1))
+            pipeType=random.choice(['SCH10','SCH40','STS','CPVC']),buildingType=random.randint(1,3),roofEx=random.randint(0,1),
+            lowHead=round(random.uniform(-10,60),1))
     sg=[dict(flow=random.choice([130,260,390,520,650]),dia=random.choice([25,32,40,50,65,80,100,125,150,200]),len=round(random.uniform(0,120),1),
              **{k:random.randint(0,6) for k in FK}) for _ in range(random.randint(1,5))]
     cases.append((sy,sg))
 tf=os.path.join(tempfile.gettempdir(),'_hyd_cases.json'); json.dump(cases,open(tf,'w'))
 js=os.path.join(tempfile.gettempdir(),'_hyd_run.js')
-open(js,'w',encoding='utf-8').write("var window=globalThis;\n"+eng+"\nconst cs=require(process.argv[2]);process.stdout.write(JSON.stringify(cs.map(([s,g])=>{const c=hydCalc(s,g);return {A:c.A,Clpm:c.Clpm,D:c.D,R:c.R,Dt:c.Dt,F:c.F,G:c.G,J:c.J,Pkw:c.Pkw,Php:c.Php}})));")
+open(js,'w',encoding='utf-8').write("var window=globalThis;\n"+eng+"\nconst cs=require(process.argv[2]);process.stdout.write(JSON.stringify(cs.map(([s,g])=>{const c=hydCalc(s,g);return {A:c.A,Clpm:c.Clpm,D:c.D,R:c.R,Dt:c.Dt,F:c.F,G:c.G,J:c.J,Pkw:c.Pkw,Php:c.Php,Pdis:c.Pdis,pipePressOK:c.pipePressOK,Plow:c.Plow,needPRV:c.needPRV,hStar:c.hStar}})));")
 E=json.loads(subprocess.check_output(['node',js,tf]))
-bad=[];keys=['A','Clpm','D','R','Dt','F','G','J','Pkw','Php']
+bad=[];keys=['A','Clpm','D','R','Dt','F','G','J','Pkw','Php','Pdis','pipePressOK','Plow','needPRV','hStar']
 for i,((sy,sg),e) in enumerate(zip(cases,E)):
     p=py(sy,sg)
     for k in keys:
-        if abs(p[k]-e[k])>1e-9*max(1,abs(p[k])): bad.append((i,k,p[k],e[k])); break
+        if isinstance(p[k],bool):
+            if p[k]!=e[k]: bad.append((i,k,p[k],e[k])); break
+        elif abs(p[k]-e[k])>1e-9*max(1,abs(p[k])): bad.append((i,k,p[k],e[k])); break
 print(f'검사 {N}건 · 불일치 {len(bad)}건'); print(bad[:5])
+cnt=lambda k:sum(1 for e in E if e[k]); print(f'판정 분포 — 배관 부적합 {sum(1 for e in E if not e["pipePressOK"])}건 · 감압장치 필요 {cnt("needPRV")}건')

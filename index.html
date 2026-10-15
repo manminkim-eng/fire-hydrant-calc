@@ -316,7 +316,7 @@ var PIPE_CONFIG = {
          inner:{25:27.6,32:35.7,40:41.6,50:52.9,65:67.9,80:80.7,100:105.3,125:130.8,150:155.2,200:204.7}},
   SCH40:{label:"압력 배관용 탄소강관 KS D 3562 (흑관)",  shortLabel:"KS D3562",       C:120,
          inner:{25:27.2,32:35.5,40:41.2,50:52.7,65:65.9,80:78.1,100:102.3,125:126.6,150:151.0,200:199.9}},
-  STS:  {label:"배관용 스테인리스강관 KS D 3595",        shortLabel:"STS(스테인리스)",C:150,
+  STS:  {label:"배관용 스테인리스 강관 KS D 3576 · 3595",        shortLabel:"STS(스테인리스)",C:150,
          inner:{25:27.6,32:36.8,40:42.8,50:54.8,65:70.0,80:85.0,100:108.2,125:133.4,150:160.0,200:210.0}},
   CPVC: {label:"내식성 CPVC관 (소방용)",                shortLabel:"CPVC",           C:150,
          inner:{25:26.6,32:35.1,40:40.9,50:52.5,65:62.7,80:79.4,100:101.6,125:127.0,150:154.1,200:203.2}},
@@ -384,7 +384,15 @@ function hydCalc(sys,segs){
     const O=TRANS_TYPE[sys.transType]?.k||1.1;
     const Pkw=0.163*M*J*O/N;const Php=nextHP(Pkw);
     const pCfg=PIPE_CONFIG[sys.pipeType]||PIPE_CONFIG.SCH10;
-    return{R,Dt,roofEx,A,B:FLOW_PER_HYDRANT,Clpm,D,E,F,G,H4:NOZZLE_HEAD,I,Jraw,J,M,N,O,Pkw,Php,sdets,pCfg,hose,waterTime,maxN};
+    /* v5.1.1 — 압력 판정(표시 전용 · 계산값 불변)
+       ① 배관 사용압력: 정격 전양정 환산 Pdis = J × 0.00980665 MPa — 1.2 MPa 이상이면 KS D 3562 · 3583만(NFTC 102 2.3.1.2)
+       ② 감압장치: 최저층 노즐 방수압 추정 Plow = (J − hL − h₃) × 0.00980665 MPa(배관 마찰 미차감 — 보수적) — 0.7 MPa 초과 시 감압장치(2.2.1.3 단서)
+          hStar = J − h₃ − 0.7 ÷ 0.00980665 : 펌프 기준 이 높이 미만 방수구는 감압장치 검토 */
+    const MPA_M=0.00980665;
+    const Pdis=J*MPA_M; const hiPress=Pdis>=1.2; const pipePressOK=!hiPress||sys.pipeType==="SCH40";
+    const hL=+(sys.lowHead||0); const Plow=(J-hL-G)*MPA_M; const needPRV=Plow>0.7; const hStar=J-G-0.7/MPA_M;
+    return{R,Dt,roofEx,A,B:FLOW_PER_HYDRANT,Clpm,D,E,F,G,H4:NOZZLE_HEAD,I,Jraw,J,M,N,O,Pkw,Php,sdets,pCfg,hose,waterTime,maxN,
+           Pdis,hiPress,pipePressOK,hL,Plow,needPRV,hStar};
   }
 window.HYDENG={calc:hydCalc,PIPE_CONFIG:PIPE_CONFIG,HOSE_TYPES:HOSE_TYPES,FITTING_EQ:FITTING_EQ,TRANS_TYPE:TRANS_TYPE};
 </script>
@@ -584,6 +592,7 @@ function FormulaModal({onClose}){
                 <div style={{fontSize:12,fontWeight:900,color:"#dc2626",marginBottom:5}}>🟧 펌프 양정 조건 입력</div>
                 <div style={{fontSize:10.5,color:"#374151",lineHeight:1.85}}>
                   ① <strong>실양정(흡입+토출 m)</strong>을 입력합니다 — 펌프 설치 위치에서 최고 소화전까지의 높이.<br/>
+                  ①-1 <strong>최저층 방수구 높이</strong>(펌프 기준, 낮으면 음수)를 넣으면 감압장치(0.7 MPa 초과) 판정이 나옵니다.<br/>
                   ② <strong>호스 길이(m)·호스 종류</strong>를 선택합니다 — 관경별·재질별 마찰손실이 자동 적용됩니다.<br/>
                   ③ <strong>배관 세그먼트</strong>를 추가하여 관경·길이·관부속 수량을 입력하면 Hazen-Williams 공식으로 마찰손실이 자동 계산됩니다.<br/>
                   ④ 전양정 = (실양정 + 배관손실 + 호스손실 + 노즐압 17m) × 1.1(안전율 — MANMIN 참고값)로 자동 산출됩니다.
@@ -716,6 +725,14 @@ function FormulaModal({onClose}){
                   소계 합산 후 올림 적용: J = ceil(E + F + G + H + I)
                 </div>
               </div>
+              <div className="fml-card">
+                <div className="fml-card-title" style={{fontSize:12,fontWeight:700,color:"#374151",marginBottom:4}}>S · T. 압력 판정 (v5.1.1 — 표시 전용, 계산값 불변)</div>
+                <code className="fml-eq">S = J × 0.0098 [MPa] &nbsp;·&nbsp; T = (J − 최저층 방수구 높이 − h₃) × 0.0098 [MPa]</code>
+                <div className="fml-note">
+                  S: 배관 사용압력 1.2 MPa 이상이면 압력 배관용 탄소 강관(KS D 3562) · 배관용 아크용접 탄소강 강관(KS D 3583) — NFTC 102 2.3.1.1 · 2.3.1.2<br/>
+                  T: 하나의 소화전 노즐 방수압 0.7 MPa 초과 시 호스접결구 인입 측 감압장치 — NFTC 102 2.2.1.3 단서 · 배관 마찰을 빼지 않은 보수적 추정(성능곡선상 저유량 양정 상승은 미반영)
+                </div>
+              </div>
             </div>
           </div>
 
@@ -771,7 +788,7 @@ function App(){
   const[tab,setTab]=useState(window.__INITIAL_TAB__||0);
   const[showFormula,setShowFormula]=useState(false);
   const[proj,setProj]=useState({name:"만민 건축사 신사옥 신축공사 현장",designer:"김만민",date:new Date().toISOString().slice(0,10)});
-  const[sys,setSys]=useState({hydrants:3,actualHead:78,hoseLen:30,hoseType:2,transType:1,pumpDia:100,pumpEff:60,pipeType:"SCH10",buildingType:1,roofEx:0});
+  const[sys,setSys]=useState({hydrants:3,actualHead:78,hoseLen:30,hoseType:2,transType:1,pumpDia:100,pumpEff:60,pipeType:"SCH10",buildingType:1,roofEx:0,lowHead:0});
   const[segs,setSegs]=useState([
     {flow:390,dia:100,len:30,e90:3,e45:2,teeB:1,teeS:12,gate:2,ball:0,angle:2,check:1},
     {flow:260,dia:100,len:35,e90:0,e45:0,teeB:1,teeS:0, gate:0,ball:0,angle:0,check:0},
@@ -986,6 +1003,9 @@ function App(){
                 </div>
                 {/* F */}
                 <div><LabelEl>F. 실양정 (h₁)</LabelEl><InpNum val={sys.actualHead} onChange={v=>ss("actualHead",v)} unit="m"/></div>
+                {/* F-1 — v5.1.1 감압장치 판정용 */}
+                <div><LabelEl>F-1. 최저층 방수구 높이 (펌프 기준)</LabelEl><InpNum val={sys.lowHead} onChange={v=>ss("lowHead",v)} unit="m"/>
+                  <div style={{fontSize:10,color:"#9ca3af",marginTop:4}}>펌프보다 낮으면 음수 · 감압장치 판정(NFTC 102 2.2.1.3 단서)</div></div>
                 {/* G */}
                 <div><LabelEl>G. 호스 길이</LabelEl><Sel val={sys.hoseLen} onChange={v=>ss("hoseLen",parseInt(v))}><option value={15}>15 m</option><option value={30}>30 m</option></Sel></div>
                 {/* 호스 타입 (G 연관) */}
@@ -1036,6 +1056,11 @@ function App(){
                   {["STS","CPVC"].includes(sys.pipeType)&&(
                     <div style={{marginTop:5,fontSize:10,color:"#0891b2",fontWeight:600,padding:"4px 8px",background:"#ecfeff",borderRadius:6,border:"1px solid #cffafe"}}>
                       ✓ 내식성 배관 — C=150 적용
+                    </div>
+                  )}
+                  {!C.pipePressOK&&(
+                    <div className="mm-pipe-warn" style={{marginTop:5,fontSize:10,color:"#b91c1c",fontWeight:700,padding:"4px 8px",background:"#fef2f2",borderRadius:6,border:"1px solid #fecaca"}}>
+                      ⚠ 사용압력 {ff(C.Pdis,2)} MPa ≥ 1.2 MPa — KS D 3562 · KS D 3583 사용(NFTC 102 2.3.1.2)
                     </div>
                   )}
                 </div>
@@ -1184,6 +1209,14 @@ function App(){
                   </div>
                 </div>
               </div>
+              {/* v5.1.1 — 압력 판정(표시 전용) */}
+              <div className="g-2sm mm-press" style={{marginTop:14}}>
+                <Card label="S. 토출압력 환산 (배관 사용압력)" value={ff(C.Pdis,3)} unit="MPa" formula={`J × 0.0098 = ${C.J} × 0.0098 — ${C.hiPress?"1.2 MPa 이상: KS D 3562 · 3583":"1.2 MPa 미만"} (NFTC 102 2.3.1)`} badge={C.pipePressOK?"배관 적합":"배관 부적합"} bc={C.pipePressOK?"green":"red"}/>
+                <Card label="T. 최저층 노즐 방수압 (추정)" value={ff(C.Plow,3)} unit="MPa" formula={`(J − 최저층 ${ff(C.hL,1)} − h₃ ${f3(C.G)}) × 0.0098 — 배관 마찰 미차감`} badge={C.needPRV?"감압장치 필요":"0.7 MPa 이하"} bc={C.needPRV?"red":"green"}/>
+              </div>
+              <div className="mm-prv-note" style={{marginTop:8,fontSize:11,color:"#6b7280",lineHeight:1.6}}>
+                ※ 하나의 소화전 노즐 방수압이 0.7 MPa를 넘으면 호스접결구 인입 측에 감압장치(NFTC 102 2.2.1.3 단서) — {C.needPRV?<>펌프 기준 <b style={{color:"#b91c1c"}}>{ff(C.hStar,1)} m</b> 미만 높이의 방수구는 감압장치 검토.</>:<>최저층 방수구도 0.7 MPa 이하(추정) — 감압장치 불요.</>} 저유량 운전 시 양정 상승(성능곡선)은 반영하지 않은 추정값입니다.
+              </div>
             </Box>
 
             <Box title="Ⅱ-3. 전동기 동력 계산" accent="#991b1b">
@@ -1289,6 +1322,8 @@ function App(){
                 <RRow no="H" label="노즐선단 방수압력 환산수두 (h₄)"   value={f3(NOZZLE_HEAD)}       unit="m"  basis="0.17 MPa 이상 ⇒ 17 m  (NFPC 102 제5조①3호)"/>
                 <RRow no="I" label="안전율 (SF = 10%)"                  value={f3(C.I)}              unit="m"  basis={`I = (E+F+G+H) × 0.1 = ${f3(C.E+C.F+C.G+C.H4)} × 0.1`}/>
                 <RRow no="J" label="전  양  정"                         value={`${f3(C.Jraw)} → ${C.J}`} unit="m"  basis={`J = E+F+G+H+I = ${f3(C.Jraw)} m → ${C.J} m (올림 적용) — 안전율 10 % · 올림은 MANMIN 참고값(화재안전기준에 수치 없음)`} hi/>
+                <RRow no="S" label="토출압력 환산 (배관 사용압력)"      value={ff(C.Pdis,3)}          unit="MPa" basis={`S = J × 0.0098 — ${C.hiPress?"1.2 MPa 이상 → KS D 3562 · 3583":"1.2 MPa 미만"} (NFTC 102 2.3.1) · ${C.pCfg.shortLabel} ${C.pipePressOK?"적합":"부적합 ⚠"}`}/>
+                <RRow no="T" label="최저층 노즐 방수압 (추정)"          value={ff(C.Plow,3)}          unit="MPa" basis={`T = (J − 최저층 ${ff(C.hL,1)} m − h₃) × 0.0098 — ${C.needPRV?"0.7 MPa 초과 → 감압장치 필요":"0.7 MPa 이하"} (NFTC 102 2.2.1.3 단서)${C.needPRV?` · 펌프 기준 ${ff(C.hStar,1)} m 미만 방수구 감압 검토`:""}`}/>
               </RSection>
 
               {/* ─ Ⅱ-3 전동기 ─ */}
@@ -1382,7 +1417,7 @@ function App(){
                 ① 화재안전성능기준 NFPC 102 [소방청고시 제2025-25호, 2026. 3. 1. 시행]<br/>
                 &nbsp;&nbsp;- 제4조 (수원): 가장 많은 층 설치개수(2개 이상이면 2개) × 2.6 m³ 이상 · ② 옥상수조 1/3 이상<br/>
                 &nbsp;&nbsp;- 제5조 (가압송수장치): ①3호 방수압 0.17 MPa 이상(0.7 MPa 초과 시 감압장치) · 방수량 130 ℓ/min 이상 · ①4호 토출량<br/>
-                ② 화재안전기술기준 NFTC 102 [국립소방연구원공고 제2026-34호, 2026. 7. 1. 시행] — 2.1.1 · 2.1.2 · 2.2.1.3 · 2.2.1.4 · 2.3.5<br/>
+                ② 화재안전기술기준 NFTC 102 [국립소방연구원공고 제2026-34호, 2026. 7. 1. 시행] — 2.1.1 · 2.1.2 · 2.2.1.3 · 2.2.1.4 · 2.3.1 · 2.3.5<br/>
                 ③ 고층건축물 NFTC 604 [공고 제2023-44호] — 2.1.1 (5개 × 5.2 m³ · 50층 이상 7.8 m³) · 2.1.2<br/>
                 ④ 배관 마찰손실: Hazen-Williams 공식 — {C.pCfg.shortLabel}, C = {C.pCfg.C} 적용
                 {["STS","CPVC"].includes(sys.pipeType)&&" (내식성 배관 — C=150 적용)"}
