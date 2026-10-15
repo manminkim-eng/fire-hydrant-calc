@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ko"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>옥내소화전 펌프 용량 계산서 사용자 매뉴얼 Ver-5.1 · MANMIN</title>
+<meta name="description" content="옥내소화전 펌프 용량 계산서 MANMIN Ver-5.1 사용자 매뉴얼 — 화면 기능, NFPC 102 · NFTC 102 · NFTC 604 해설, 실무 작업 방법">
+<meta name="author" content="김만민 건축사 · ㈜대성건축사사무소">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&family=Orbitron:wght@700;900&display=swap">
+<link rel="stylesheet" href="./assets/fonts/manmin-fonts.css">
+<style>
+:root{
+  --navy:#2D3A8C;--navy-d:#1F2A6B;--navy-l:#E9ECF8;--accent:#F4A261;--accent-d:#C97A3A;--accent-l:#FDF1E7;
+  --bg:#F8F9FA;--card:#FFFFFF;--text:#1A1A2E;--text2:#4A4F66;--line:#DDE1EA;--ok:#0F766E;--ng:#B42318;
+  --r:12px;--pad:24px;--shadow:0 4px 20px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-sans);font-size:16px;line-height:1.75;word-break:keep-all;overflow-wrap:anywhere}
+a{color:var(--navy)}a:hover{color:var(--accent-d)}
+code,kbd,.mono{font-family:var(--font-mono);font-size:.9em}
+code{background:var(--navy-l);color:var(--navy-d);padding:1px 6px;border-radius:5px}
+kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;background:#fff}
+/* 상단 */
+.top{background:linear-gradient(135deg,var(--navy-d),var(--navy));color:#fff}
+.top-in{max-width:1240px;margin:0 auto;padding:44px 24px 36px}
+.eyebrow{font-family:var(--font-brand);font-weight:700;font-size:12px;letter-spacing:.18em;opacity:.85}
+.top h1{font-size:28px;font-weight:900;margin:8px 0 6px;line-height:1.35}
+.top .sub{opacity:.9;margin:0}
+.badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:4px 12px;font-size:13px}
+a.badge{color:#fff;text-decoration:none}a.badge:hover{background:rgba(255,255,255,.24);color:#fff}
+.badge.acc{background:var(--accent);border-color:var(--accent);color:#1A1A2E;font-weight:700}
+/* 레이아웃 */
+.wrap{max-width:1240px;margin:0 auto;padding:28px 24px 80px;display:grid;grid-template-columns:260px minmax(0,1fr);gap:32px}
+nav.toc{position:sticky;top:16px;align-self:start;max-height:calc(100vh - 32px);overflow:auto;background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:18px 16px;font-size:14px}
+nav.toc h2{font-size:13px;letter-spacing:.12em;color:var(--text2);margin:0 0 8px}
+nav.toc ol{list-style:none;margin:0;padding:0}
+nav.toc li a{display:block;padding:5px 8px;border-radius:8px;text-decoration:none;color:var(--text)}
+nav.toc li a:hover,nav.toc li a.on{background:var(--navy-l);color:var(--navy)}
+nav.toc li.sub a{padding-left:20px;font-size:13px;color:var(--text2)}
+main{min-width:0}
+section.ch{background:var(--card);border-radius:var(--r);box-shadow:var(--shadow);padding:var(--pad) calc(var(--pad) + 8px);margin-bottom:28px}
+section.ch>h2{font-size:24px;font-weight:700;color:var(--navy);margin:0 0 4px;display:flex;align-items:baseline;gap:10px}
+section.ch>h2 .n{font-family:var(--font-brand);font-weight:700;font-size:14px;color:#fff;background:var(--navy);border-radius:8px;padding:2px 9px}
+section.ch>.lead{color:var(--text2);margin:0 0 18px}
+h3{font-size:19px;color:var(--navy-d);margin:34px 0 10px;padding-top:6px;border-top:1px solid var(--line)}
+h3:first-of-type{border-top:0}
+h4{font-size:16px;margin:22px 0 8px}
+p{margin:8px 0}
+ul,ol{padding-left:22px}
+.note,.tip,.warn{border-radius:10px;padding:12px 16px;margin:14px 0;font-size:15px}
+.note{background:var(--navy-l);border-left:4px solid var(--navy)}
+.tip{background:var(--accent-l);border-left:4px solid var(--accent)}
+.warn{background:#FEF3F2;border-left:4px solid var(--ng)}
+.note b:first-child,.tip b:first-child,.warn b:first-child{margin-right:6px}
+/* 표 */
+.tbl{overflow-x:auto;margin:12px 0;border:1px solid var(--line);border-radius:10px}
+table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
+th,td{border-bottom:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--navy-l);color:var(--navy-d);font-weight:700;white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;font-family:var(--font-mono);white-space:nowrap}
+.ok{color:var(--ok);font-weight:700}.ng{color:var(--ng);font-weight:700}
+/* 그림 */
+figure.shot{margin:18px 0 26px}
+figure.shot .frame{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;cursor:zoom-in}
+figure.shot img{display:block;width:100%;height:auto}
+figure.narrow{max-width:420px}
+.pin{position:absolute;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;background:var(--accent);color:#1A1A2E;font:700 13px/26px var(--font-mono);text-align:center;box-shadow:0 0 0 3px #fff,0 2px 8px rgba(0,0,0,.35);pointer-events:none}
+figcaption{font-size:14px;color:var(--text2);margin-top:8px}
+.fno{font-family:var(--font-mono);font-size:11px;background:var(--navy);color:#fff;border-radius:6px;padding:1px 7px;margin-right:8px}
+ol.legend{list-style:none;padding:0;margin:10px 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:6px 16px;font-size:14px}
+ol.legend li{display:flex;gap:8px;align-items:flex-start}
+ol.legend b{flex:0 0 22px;height:22px;border-radius:50%;background:var(--accent);font:700 12px/22px var(--font-mono);text-align:center}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:start}
+/* 단계 */
+.steps{counter-reset:st;list-style:none;padding:0;margin:16px 0}
+.steps>li{counter-increment:st;position:relative;padding:4px 0 18px 54px;border-left:2px solid var(--line);margin-left:18px}
+.steps>li:last-child{border-left-color:transparent}
+.steps>li::before{content:counter(st);position:absolute;left:-19px;top:0;width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;font:700 15px/36px var(--font-mono);text-align:center;box-shadow:0 0 0 4px var(--bg)}
+.steps>li>b.t{display:block;font-size:17px;color:var(--navy-d);margin-bottom:2px}
+/* 수식 */
+.eq{font-family:var(--font-mono);background:#0F1630;color:#E8ECFF;border-radius:10px;padding:14px 18px;margin:12px 0;overflow-x:auto;font-size:14px;line-height:1.9;white-space:pre}
+.eq .c{color:#9AA6D6}
+.svgbox{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px;margin:14px 0;overflow-x:auto}
+.svgbox svg{display:block;width:100%;min-width:640px;height:auto}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin:14px 0}
+.card{border:1px solid var(--line);border-radius:var(--r);padding:16px;background:#fff}
+.card h5{margin:0 0 4px;font-size:15px;color:var(--navy)}
+.card p{margin:0;font-size:14px;color:var(--text2)}
+footer.foot{max-width:1240px;margin:0 auto;padding:0 24px 40px;color:var(--text2);font-size:13px}
+/* 라이트박스 */
+#lb{position:fixed;inset:0;background:rgba(10,14,30,.88);display:none;align-items:center;justify-content:center;z-index:99;cursor:zoom-out;padding:16px}
+#lb.open{display:flex}#lb img{max-width:100%;max-height:100%;border-radius:8px;background:#fff}
+.totop{position:fixed;right:18px;bottom:18px;width:44px;height:44px;border-radius:50%;background:var(--navy);color:#fff;border:0;font-size:18px;box-shadow:var(--shadow);cursor:pointer}
+/* 반응형 5단계 */
+@media (max-width:1240px){.wrap{grid-template-columns:230px minmax(0,1fr);gap:24px}}
+@media (max-width:1024px){.wrap{grid-template-columns:1fr}nav.toc{position:static;max-height:none}nav.toc ol{columns:2}}
+@media (max-width:760px){.pair{grid-template-columns:1fr}section.ch{padding:20px 18px}.top h1{font-size:24px}}
+@media (max-width:640px){nav.toc ol{columns:1}body{font-size:15px}}
+@media (max-width:480px){.wrap,.top-in{padding-left:16px;padding-right:16px}.pin{width:22px;height:22px;font-size:11px;line-height:22px}}
+@media (max-width:400px){section.ch>h2{font-size:20px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+/* A4 인쇄 */
+@page{size:A4;margin:14mm 12mm 14mm}
+@media print{
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:#fff;font-size:10.5pt}
+  nav.toc,.totop,#lb{display:none!important}
+  .wrap{display:block;padding:0}
+  section.ch{box-shadow:none;padding:0 0 8mm;margin:0;break-before:page}
+  main{padding-bottom:8mm}
+  section.ch:first-of-type{break-before:auto}
+  figure.shot,.tbl,.eq,.svgbox,.note,.tip,.warn,.steps>li{break-inside:avoid}
+  h3,h4{break-after:avoid}
+  .top{border-radius:0}
+  .pfoot{position:fixed;bottom:0;left:0;right:0;height:6mm;background:#fff;font-size:8pt;color:#666;border-top:1px solid #ccc;padding-top:1.5mm;display:flex;justify-content:space-between}
+}
+.pfoot{display:none}
+@media print{.pfoot{display:flex}}
+/* ── 좁은 화면 대응(r1 · 2026-10-12) : 화면 전용 — 인쇄·PDF에는 영향 없음 ── */
+@media screen and (max-width:640px){
+  .k1 td:first-child,.k1 th:first-child{white-space:normal}
+  /* 글 표(숫자 칸 없는 표) → 행마다 카드로 쌓기 */
+  .tbl.stack{border:0;border-radius:0;overflow:visible}
+  .tbl.stack table,.tbl.stack tbody,.tbl.stack tr,.tbl.stack td{display:block;width:auto}
+  .tbl.stack thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .tbl.stack table{background:transparent}
+  .tbl.stack tr{border:1px solid var(--line);border-radius:10px;background:#fff;margin:0 0 10px;overflow:hidden}
+  .tbl.stack td{border-bottom:1px solid var(--line);padding:8px 12px}
+  .tbl.stack tr td:last-child{border-bottom:0}
+  .tbl.stack td:first-child{background:var(--navy-l);color:var(--navy-d);font-weight:700}
+  .tbl.stack td[data-th]:not(:first-child)::before{content:attr(data-th);display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:2px}
+  .tbl.stack.c2 td[data-th]:not(:first-child)::before{display:none}
+  .tbl.stack td:empty{display:none}
+  /* 숫자 표 → 표 모양 유지, 글자·여백 축소, 넘치면 좌우로 밀기(오른쪽 그림자로 표시) */
+  .tbl:not(.stack){background:linear-gradient(to right,#fff 30%,rgba(255,255,255,0)) left/40px 100% no-repeat local,linear-gradient(to left,#fff 30%,rgba(255,255,255,0)) right/40px 100% no-repeat local,radial-gradient(farthest-side at 100% 50%,rgba(26,26,46,.22),transparent) right/12px 100% no-repeat scroll,#fff}
+  .tbl:not(.stack) table{font-size:13px;background:transparent}
+  .tbl:not(.stack) th,.tbl:not(.stack) td{padding:7px 8px}
+  /* 수식 → 줄바꿈 허용 */
+  .eq{white-space:pre-wrap;word-break:keep-all;font-size:13px;line-height:1.75;padding:12px 14px}
+  .eq .c{display:block;padding-left:1em}
+  .svgbox{position:relative}
+  .svgbox::after{content:"← 좌우로 밀어서 보기 →";display:block;text-align:center;font-size:12px;color:var(--text2);margin-top:6px;position:sticky;left:0}
+  ol.legend{grid-template-columns:1fr}
+  .steps>li{padding-left:34px;margin-left:14px}
+}
+.rev{white-space:nowrap}
+@media print{.rev{display:none}}
+</style>
+</head><body>
+<header class="top"><div class="top-in">
+<div class="eyebrow">MANMIN ENGINEERING · USER MANUAL</div>
+<h1>옥내소화전 펌프 용량 계산서 사용자 매뉴얼</h1>
+<p class="sub">수원 · 옥상수조 → 토출량 → 배관 · 호스 마찰손실 → 전양정 → 전동기 동력 → A4 계산서</p>
+<div class="badges"><span class="badge acc">매뉴얼 <span style="font-family:var(--font-brand)">Ver-5.1</span></span><a class="badge" href="../index.html">▶ 옥내소화전 펌프 용량 계산서 열기</a><a class="badge" href="옥내소화전_사용자매뉴얼_Ver-5.1.pdf" download>⤓ PDF</a><span class="badge">2026-10-15</span><span class="badge">김만민 건축사 · ㈜대성건축사사무소</span></div>
+</div></header>
+<div class="wrap"><nav class="toc" aria-label="목차"><h2>목차</h2><ol><li><a href="#ch0">0. 이 매뉴얼에 대하여</a></li><li><a href="#ch1">1. 한눈에 보기</a></li><li class="sub"><a href="#s1-1">화면 구성</a></li><li class="sub"><a href="#s1-2">작업 탭·근거 표시</a></li><li class="sub"><a href="#s1-3">설치·보관·매뉴얼</a></li><li><a href="#ch2">2. 1분 따라하기</a></li><li><a href="#ch3">3. 화면별 기능 상세</a></li><li class="sub"><a href="#s3-1">프로젝트 정보</a></li><li class="sub"><a href="#s3-2">시스템 파라미터</a></li><li class="sub"><a href="#s3-3">배관 구간 입력</a></li><li class="sub"><a href="#s3-4">수원 용량</a></li><li class="sub"><a href="#s3-5">펌프 양정</a></li><li class="sub"><a href="#s3-6">전동기 동력</a></li><li class="sub"><a href="#s3-7">사례 — 고층 40층</a></li><li class="sub"><a href="#s3-8">사례 — 호스릴 · 옥상수조 면제</a></li><li class="sub"><a href="#s3-9">계산식 안내 창</a></li><li class="sub"><a href="#s3-10">A4 계산서·출력</a></li><li class="sub"><a href="#s3-11">휴대전화 화면</a></li><li><a href="#ch4">4. 법령 해설</a></li><li class="sub"><a href="#s4-1">근거 체계</a></li><li class="sub"><a href="#s4-2">수원</a></li><li class="sub"><a href="#s4-3">옥상수조</a></li><li class="sub"><a href="#s4-4">가압송수장치</a></li><li class="sub"><a href="#s4-5">배관</a></li><li class="sub"><a href="#s4-6">마찰손실·강관 내경</a></li><li class="sub"><a href="#s4-7">MANMIN 참고값</a></li><li class="sub"><a href="#s4-8">v5.1.0 정정</a></li><li><a href="#ch5">5. 실무 작업 방법</a></li><li class="sub"><a href="#s5-1">단계별 절차</a></li><li class="sub"><a href="#s5-2">설계 · 승인 전 확인</a></li><li><a href="#ch6">6. 문제 해결·FAQ</a></li><li><a href="#ch7">부록</a></li><li class="sub"><a href="#a1">예제 입력값</a></li><li class="sub"><a href="#a2">예제 결과</a></li><li class="sub"><a href="#a3">버전 변경 내역</a></li><li class="sub"><a href="#a4">용어</a></li></ol></nav><main><style>
+#fig-s13_formula,#fig-s14_formula_src,#fig-s15_formula_head{max-width:560px}
+#fig-s17_a4page{max-width:560px}
+.k1 td:first-child,.k1 th:first-child{white-space:nowrap}
+@media (max-width:1240px){.eq{white-space:pre-wrap;word-break:keep-all}}
+.eq .c{display:block;margin-top:2px}
+.pair>div{min-width:0}
+.tri{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+@media (max-width:760px){.tri{grid-template-columns:1fr}}
+@media print{
+  figure.shot{max-width:none!important}
+  figure.shot .frame{width:fit-content;max-width:100%}
+  figure.shot img{width:auto;height:auto;max-width:100%;max-height:118mm}
+  #fig-s17_a4page img{max-height:200mm}
+  figure.narrow img{max-height:105mm}
+  .pair{grid-template-columns:1fr 1fr}.tri{grid-template-columns:repeat(3,1fr)}
+  .brk .tbl{break-inside:auto}.brk tr{break-inside:avoid}.brk thead{display:table-header-group}
+}
+</style><section class="ch" id="ch0"><h2><span class="n">00</span>이 매뉴얼에 대하여</h2>
+<p class="lead">옥내소화전 펌프 용량 계산서는 옥내소화전설비의 <b>수원(유효수량 · 옥상수조)</b>, <b>펌프 토출량 · 전양정</b>, <b>전동기 동력</b>을 한 화면에서 산정해 A4 계산서로 정리하는 도구입니다. 근거는 옥내소화전설비의 화재안전성능기준(NFPC 102) 소방청고시 제2025-25호(2026. 3. 1. 시행), 옥내소화전설비의 화재안전기술기준(NFTC 102) 국립소방연구원공고 제2026-34호(2026. 7. 1. 시행), 고층건축물의 화재안전기술기준(NFTC 604) 국립소방연구원공고 제2023-44호입니다.</p>
+<div class="k1"><div class="tbl"><table><thead><tr><th class="">항목</th><th class="">내용</th></tr></thead><tbody><tr><td class="">대상 프로그램</td><td class="">옥내소화전 펌프 용량 계산서 <b>MANMIN Ver-5.1</b>(v5.1.0) — 탭 막대 「📘 매뉴얼」 버튼으로 이 문서가 열립니다</td></tr><tr><td class="">접속 주소</td><td class=""><a href="https://manminkim-eng.github.io/fire-hydrant-calc/" target="_blank" rel="noopener">manminkim-eng.github.io/fire-hydrant-calc</a></td></tr><tr><td class="">매뉴얼 판</td><td class=""><b>Ver-5.1</b> (화면 표기와 같은 판 번호, 초판) · 2026-10-15 · 작성 김만민 건축사(㈜대성건축사사무소)</td></tr><tr><td class="">내려받기</td><td class=""><a href="옥내소화전_사용자매뉴얼_Ver-5.1.pdf" download>PDF(A4)</a> · <a href="../index.html">옥내소화전 펌프 용량 계산서 열기</a></td></tr><tr><td class="">예제</td><td class="">본문 그림은 예제 A(익산 업무시설 10층 — 소화전 3개 · 실양정 45 m)로 캡처했습니다 — <b>토출량 260 L/min · 수원 5.200 + 옥상 1.733 = 6.933 m³ · 전양정 75 m · 10 HP</b>. 예제 B(고층 40층) · C(지하주차장 호스릴 · 옥상수조 면제)는 <a href="#a2">부록 A2</a></td></tr><tr><td class="">근거 법령</td><td class="">옥내소화전설비의 화재안전성능기준(NFPC 102) 소방청고시 제2025-25호(2026. 3. 1. 시행), 옥내소화전설비의 화재안전기술기준(NFTC 102) 국립소방연구원공고 제2026-34호(2026. 7. 1. 시행), 고층건축물의 화재안전기술기준(NFTC 604) 국립소방연구원공고 제2023-44호 — LawMCP(국가법령정보센터) 원문 대조(2026-10-15)</td></tr><tr><td class="">읽는 순서</td><td class="">처음이면 1장 → 2장(따라하기) → 필요할 때 3장(화면별 상세). 설계도서 · 소방시설 착공신고에 쓰기 전에는 4장(법령 해설) · 5장(작업 방법)</td></tr></tbody></table></div></div>
+<div class="note"><b>표기</b>그림 위 주황색 번호(①②…)는 그림 아래 범례 번호와 같습니다. 그림을 누르면 크게 볼 수 있습니다. 「제4조」 · 「제5조」는 NFPC 102의 조문, 「2.1.1」처럼 점으로 이은 번호는 NFTC의 절입니다. 유량 단위는 L/min(화면 표기 ℓ/min), 수두 단위는 m입니다.</div>
+<div class="warn"><b>책임 한계</b>산정값은 입력값에 따른 예비 · 검토용 결과입니다. 펌프 양정 안전율 10 % · 올림, 호스 손실률, 관부속 상당길이, 전달계수 · 효율, Hazen-Williams C값은 화재안전기준에 수치가 없는 <b>MANMIN 참고값</b>입니다(<a href="#s4-7">4-7</a>). 실제 펌프 선정은 제조사 성능곡선과 소방시설 설계 기준에 따라 소방기술사 · 설계자가 확인하십시오.</div>
+</section>
+<section class="ch" id="ch1"><h2><span class="n">01</span>한눈에 보기</h2>
+<p class="lead">설치 없이 브라우저에서 바로 실행되는 단일 페이지 앱(PWA)입니다. 입력한 내용은 브라우저 안에서만 계산되며 서버로 전송되지 않습니다.</p>
+<div class="cards">
+<div class="card"><h5>무엇을 산정하나</h5><p>소화전 기준개수 · 펌프 토출량 · 수원(유효수량 + 옥상수조) · 전양정 · 전동기 동력(kW · HP)</p></div>
+<div class="card"><h5>고층 · 초고층</h5><p>30~49층은 5개 × 5.2 m³, 50층 이상은 5개 × 7.8 m³(NFTC 604 2.1.1)로 자동 전환</p></div>
+<div class="card"><h5>배관 마찰손실</h5><p>구간마다 유량 · 관경 · 길이 · 관부속을 넣으면 Hazen-Williams 식으로 손실 · 유속(4 m/s 점검)을 계산</p></div>
+</div>
+<h3 id="s1-1">1-1. 화면 구성</h3>
+<figure class="shot" id="fig-s01_overview"><div class="frame"><img src="images/s01_overview.webp" width="1440" height="900" loading="lazy" alt="전체 화면 — ① 데이터 입력 탭(예제 A)"><span class="pin" style="left:6.93%;top:13.38%">1</span><span class="pin" style="left:5.26%;top:19.82%">2</span><span class="pin" style="left:6.93%;top:27.80%">3</span><span class="pin" style="left:6.93%;top:45.24%">4</span><span class="pin" style="left:6.93%;top:79.13%">5</span><span class="pin" style="left:95.34%;top:81.83%">6</span></div><figcaption><span class="fno">S01</span>전체 화면 — ① 데이터 입력 탭(예제 A)</figcaption><ol class="legend"><li><b>1</b><span>작업 탭 · 매뉴얼</span></li><li><b>2</b><span>요약 바</span></li><li><b>3</b><span>프로젝트 정보</span></li><li><b>4</b><span>시스템 파라미터</span></li><li><b>5</b><span>배관 구간 입력</span></li><li><b>6</b><span>계산식 안내</span></li></ol></figure>
+<div class="k1"><div class="tbl"><table><thead><tr><th class="">영역</th><th class="">내용</th></tr></thead><tbody><tr><td class="">헤더 · 탭</td><td class="">「① 데이터 입력」 → 「② 계산 결과」 → 「③ 계산서 출력」, 오른쪽 끝 「📘 매뉴얼」</td></tr><tr><td class="">요약 바</td><td class="">어느 탭에 있든 토출량 · 수원(유효수량 + 옥상) · 전양정 · 전동기 · 배관 · 호스 마찰을 한 줄로 보여 줍니다</td></tr><tr><td class="">Ⅰ-0 · Ⅰ-1 · Ⅰ-2</td><td class="">프로젝트 정보 → 시스템 파라미터 → 배관 구간 — 값을 바꾸면 즉시 다시 계산됩니다</td></tr><tr><td class="">계산식 안내</td><td class="">오른쪽 「📐 계산식 안내」 — 이용방법 · 수원 · 양정 · 동력 · 상당직관 5개 탭 창</td></tr></tbody></table></div></div>
+<h3 id="s1-2">1-2. 작업 탭·근거 표시</h3>
+<figure class="shot" id="fig-s02_header"><div class="frame"><img src="images/s02_header.webp" width="1440" height="185" loading="lazy" alt="헤더 — 작업 탭과 근거 표시"><span class="pin" style="left:6.82%;top:66.28%">1</span><span class="pin" style="left:14.80%;top:66.28%">2</span><span class="pin" style="left:21.94%;top:66.28%">3</span><span class="pin" style="left:86.39%;top:66.28%">4</span><span class="pin" style="left:81.45%;top:13.80%">5</span></div><figcaption><span class="fno">S02</span>헤더 — 작업 탭과 근거 표시</figcaption><ol class="legend"><li><b>1</b><span>① 데이터 입력</span></li><li><b>2</b><span>② 계산 결과</span></li><li><b>3</b><span>③ 계산서 출력</span></li><li><b>4</b><span>📘 매뉴얼</span></li><li><b>5</b><span>근거 · 공고 · 시행일</span></li></ol></figure>
+<p>헤더 오른쪽에는 적용 기준 NFTC 102와 <b>[공고 제2026-34호 · 시행 2026. 7. 1.]</b>이 표시됩니다.</p>
+<h3 id="s1-3">1-3. 설치·보관·매뉴얼</h3>
+<div class="k1"><div class="tbl"><table><thead><tr><th class="">항목</th><th class="">내용</th></tr></thead><tbody><tr><td class="">설치</td><td class="">헤더의 「📲 설치」 또는 브라우저 「홈 화면에 추가」 — 설치하면 오프라인에서도 열립니다(앱 본체만 — 매뉴얼은 온라인 전용)</td></tr><tr><td class="">보관</td><td class="">계산 결과는 A4 계산서(인쇄 · PDF · JPG)로 남깁니다. 앱은 입력값을 서버에 저장하지 않습니다</td></tr><tr><td class="">매뉴얼</td><td class="">탭 막대 오른쪽 「📘 매뉴얼」 — 이 문서(HTML)와 PDF(A4)</td></tr></tbody></table></div></div>
+</section>
+<section class="ch" id="ch2"><h2><span class="n">02</span>1분 따라하기</h2>
+<p class="lead">예제 A — 익산 업무시설 10층, 가장 많은 층에 소화전 3개입니다. 아래 순서대로 넣으면 <b>토출량 260 L/min · 전양정 75 m · 전동기 10 HP</b>가 나옵니다.</p>
+<ol class="steps">
+<li><b class="t">① 프로젝트 정보</b>공사명 「익산시 ○○동 업무시설 신축공사」, 설계자, 작성일 — A4 계산서 표제에 들어갑니다(<a href="#s3-1">3-1</a>).</li>
+<li><b class="t">② 시스템 파라미터</b>건축물 규모 「일반(29층 이하)」 · 옥상수조 「설치 대상」 · 소화전 3개 · 실양정 45 m · 40 mm 고무내장호스 30 m · 100A · 효율 60 % · 전동기 직결 · KS D 3507(<a href="#s3-2">3-2</a>).</li>
+<li><b class="t">③ 배관 구간</b>주배관 100A 260 L/min 25 m · 수직배관 65A 260 L/min 40 m · 가지배관 50A 130 L/min 8 m와 관부속 수량 → 마찰손실 합계 <b>2.398 m</b>(<a href="#s3-3">3-3</a>).</li>
+<li><b class="t">④ 결과 — 전양정</b>「② 계산 결과」 → (45 + 2.398 + 3.600 + 17) × 1.1 = 74.798 → 올림 <b>75 m</b>(<a href="#s3-5">3-5</a>).</li>
+<li><b class="t">⑤ 수원 · 동력</b>2개 × 130 L/min = 260 L/min · 유효수량 5.200 m³ + 옥상수조 1.733 m³ = <b>6.933 m³</b> · 0.163 × 0.260 × 75 × 1.1 ÷ 0.6 = 5.827 kW → <b>10 HP</b>(<a href="#s3-4">3-4</a> · <a href="#s3-6">3-6</a>).</li>
+<li><b class="t">⑥ A4 계산서</b>「③ 계산서 출력」에서 「🖨️ 인쇄 · PDF」 또는 「🖼️ JPG 저장」(<a href="#s3-10">3-10</a>).</li>
+</ol>
+<div class="k1"><div class="tbl"><table><thead><tr><th class="">항목</th><th class="">예제 A</th></tr></thead><tbody><tr><td class="">소화전 기준개수</td><td class="">3개 설치 → 2개 적용(NFPC 102 제4조① · NFTC 102 2.1.1)</td></tr><tr><td class="">펌프 토출량</td><td class="">2 × 130 = <b>260 L/min</b>(제5조①4호)</td></tr><tr><td class="">수원</td><td class="">유효수량 2 × 2.6 = 5.200 m³ + 옥상수조 5.200 ÷ 3 = 1.733 m³ → <b>6.933 m³</b></td></tr><tr><td class="">배관 · 호스 마찰손실</td><td class="">2.398 m · 3.600 m(12 m/100 m × 30 m)</td></tr><tr><td class="">전양정</td><td class="">74.798 → <b>75 m</b>(안전율 10 % · 올림 — MANMIN 참고값)</td></tr><tr><td class="">전동기</td><td class="">5.827 kW = 7.814 HP → <b>10 HP</b></td></tr></tbody></table></div></div>
+<div class="tip"><b>확인</b>노즐선단 방수압력 0.17 MPa(17 m)는 「이상」 기준이고, 0.7 MPa를 넘는 층에는 호스접결구 인입 측에 감압장치를 둡니다(NFPC 102 제5조①3호 단서). 전양정이 크면 저층부 감압을 함께 검토하십시오.</div>
+</section>
+<section class="ch" id="ch3"><h2><span class="n">03</span>화면별 기능 상세</h2>
+<h3 id="s3-1">3-1. 프로젝트 정보</h3>
+<figure class="shot" id="fig-s03_project"><div class="frame"><img src="images/s03_project.webp" width="1276" height="163" loading="lazy" alt="Ⅰ-0. 프로젝트 정보"><span class="pin" style="left:2.83%;top:47.17%">1</span><span class="pin" style="left:50.40%;top:47.17%">2</span><span class="pin" style="left:74.73%;top:47.17%">3</span></div><figcaption><span class="fno">S03</span>Ⅰ-0. 프로젝트 정보</figcaption><ol class="legend"><li><b>1</b><span>공사명</span></li><li><b>2</b><span>설계자</span></li><li><b>3</b><span>작성일</span></li></ol></figure>
+<p>공사명 · 설계자 · 작성일은 A4 계산서 머리에 그대로 들어갑니다.</p>
+<h3 id="s3-2">3-2. 시스템 파라미터</h3>
+<figure class="shot" id="fig-s04_params"><div class="frame"><img src="images/s04_params.webp" width="1276" height="311" loading="lazy" alt="Ⅰ-1. 옥내소화전 시스템 파라미터 — 예제 A"><span class="pin" style="left:2.83%;top:26.15%">1</span><span class="pin" style="left:22.08%;top:26.15%">2</span><span class="pin" style="left:41.32%;top:26.15%">3</span><span class="pin" style="left:60.57%;top:26.15%">4</span><span class="pin" style="left:79.82%;top:26.15%">5</span><span class="pin" style="left:2.83%;top:63.45%">6</span><span class="pin" style="left:22.08%;top:63.45%">7</span><span class="pin" style="left:41.32%;top:63.45%">8</span><span class="pin" style="left:60.57%;top:63.45%">9</span><span class="pin" style="left:79.82%;top:63.45%">10</span></div><figcaption><span class="fno">S04</span>Ⅰ-1. 옥내소화전 시스템 파라미터 — 예제 A</figcaption><ol class="legend"><li><b>1</b><span>건축물 규모 — 일반 · 고층 · 초고층</span></li><li><b>2</b><span>옥상수조 — 설치 · 면제</span></li><li><b>3</b><span>A. 소화전 수</span></li><li><b>4</b><span>실양정</span></li><li><b>5</b><span>호스 길이</span></li><li><b>6</b><span>호스 종류</span></li><li><b>7</b><span>펌프 구경</span></li><li><b>8</b><span>펌프 효율</span></li><li><b>9</b><span>전달방식</span></li><li><b>10</b><span>배관 종류(C값)</span></li></ol></figure>
+<div class="k1"><div class="tbl"><table><thead><tr><th class="">항목</th><th class="">설명</th></tr></thead><tbody><tr><td class="">건축물 규모</td><td class="">일반(29층 이하) — 최대 2개 · 20분 / 고층(30~49층) — 최대 5개 · 40분 / 초고층(50층 이상) — 최대 5개 · 60분. 높이 120 m 이상이면 층수와 관계없이 고층건축물(NFTC 604 적용 대상)</td></tr><tr><td class="">옥상수조</td><td class="">「설치 대상」이면 유효수량의 1/3을 더하고, NFTC 102 2.1.2 단서에 해당하면 「면제」(<a href="#s4-3">4-3</a>)</td></tr><tr><td class="">A. 소화전 수</td><td class="">옥내소화전이 가장 많이 설치된 층의 개수 — 기준개수(2 · 5개)까지만 계산에 넣습니다</td></tr><tr><td class="">실양정</td><td class="">펌프(수원 수면)에서 최고층 소화전 방수구까지의 높이(흡입 + 토출)</td></tr><tr><td class="">호스 길이 · 타입</td><td class="">15 · 30 · 45 · 60 m · 40 / 50 mm 아마 · 고무내장 · 25 mm 호스릴</td></tr><tr><td class="">펌프 구경 · 효율 · 전달방식</td><td class="">효율은 직접 입력(입력란 아래 구경별 참고값) · 전동기 직결 K 1.1 / 그 밖의 원동기 1.15</td></tr><tr><td class="">배관 종류</td><td class="">KS D 3507(백관) · KS D 3562 Sch40(흑관) · STS · CPVC — 내경과 C값이 바뀝니다(<a href="#s4-6">4-6</a>)</td></tr></tbody></table></div></div>
+<h3 id="s3-3">3-3. 배관 구간 입력</h3>
+<figure class="shot" id="fig-s05_segments"><div class="frame"><img src="images/s05_segments.webp" width="1276" height="509" loading="lazy" alt="Ⅰ-2. 배관 구간 데이터 — 예제 A"><span class="pin" style="left:2.87%;top:29.44%">1</span><span class="pin" style="left:2.87%;top:35.33%">2</span><span class="pin" style="left:2.87%;top:41.22%">3</span><span class="pin" style="left:91.33%;top:14.93%">4</span></div><figcaption><span class="fno">S05</span>Ⅰ-2. 배관 구간 데이터 — 예제 A</figcaption><ol class="legend"><li><b>1</b><span>1구간 — 주배관 100A</span></li><li><b>2</b><span>2구간 — 수직배관 65A</span></li><li><b>3</b><span>3구간 — 가지배관 50A</span></li><li><b>4</b><span>＋ 구간 추가</span></li></ol></figure>
+<p>구간마다 유량 · 관경 · 직관 길이와 관부속(90° · 45° 엘보, 분류 · 직류 티, 게이트 · 볼 · 앵글 · 체크 밸브) 수량을 넣으면, 상당직관 = 직관 + Σ(수량 × 상당길이), 손실수두 = 마찰계수(m/100 m) × 상당직관 ÷ 100이 줄마다 계산되고 합계가 h₂가 됩니다. 유속이 4 m/s를 넘으면 ⚠ 표시가 납니다(NFTC 102 2.3.5 — 펌프 토출 측 주배관). 예제 A의 구간별 유속은 0.50, 1.20, 0.99 m/s입니다.</p>
+<h3 id="s3-4">3-4. 수원 용량</h3>
+<figure class="shot" id="fig-s06_source"><div class="frame"><img src="images/s06_source.webp" width="1276" height="293" loading="lazy" alt="Ⅱ-1. 수원 용량 산정 — 예제 A"><span class="pin" style="left:2.83%;top:27.54%">1</span><span class="pin" style="left:50.87%;top:27.54%">2</span><span class="pin" style="left:74.89%;top:27.54%">3</span><span class="pin" style="left:2.83%;top:62.03%">4</span><span class="pin" style="left:26.85%;top:62.03%">5</span></div><figcaption><span class="fno">S06</span>Ⅱ-1. 수원 용량 산정 — 예제 A</figcaption><ol class="legend"><li><b>1</b><span>A. 소화전 개수 — 최대 2개</span></li><li><b>2</b><span>C. 펌프 토출량</span></li><li><b>3</b><span>D. 유효수량</span></li><li><b>4</b><span>R. 옥상수조 1/3</span></li><li><b>5</b><span>총 저수량 D + R</span></li></ol></figure>
+<p>A = min(설치개수, 기준개수), C = A × 130 L/min, D = A × 130 × T ÷ 1,000(일반 20분 = 2.6 m³/개), R = D ÷ 3(옥상수조), 총 저수량 = D + R입니다. 예제 A: 2개 · 260 L/min · 5.200 + 1.733 = <b>6.933 m³</b>.</p>
+<h3 id="s3-5">3-5. 펌프 양정</h3>
+<figure class="shot" id="fig-s07_head"><div class="frame"><img src="images/s07_head.webp" width="1276" height="382" loading="lazy" alt="Ⅱ-2. 펌프 양정 계산 — 예제 A"><span class="pin" style="left:2.83%;top:21.85%">1</span><span class="pin" style="left:26.77%;top:21.85%">2</span><span class="pin" style="left:2.83%;top:59.94%">3</span><span class="pin" style="left:26.77%;top:59.94%">4</span><span class="pin" style="left:51.03%;top:21.85%">5</span></div><figcaption><span class="fno">S07</span>Ⅱ-2. 펌프 양정 계산 — 예제 A</figcaption><ol class="legend"><li><b>1</b><span>h₁ 실양정</span></li><li><b>2</b><span>h₂ 배관 마찰손실</span></li><li><b>3</b><span>h₃ 호스 마찰손실</span></li><li><b>4</b><span>h₄ 노즐 17 m</span></li><li><b>5</b><span>소계 · 안전율 · 전양정</span></li></ol></figure>
+<p>전양정 J = (h₁ 실양정 + h₂ 배관 마찰 + h₃ 호스 마찰 + h₄ 노즐 17 m) × 1.1 → 올림입니다. 안전율 10 %와 올림은 MANMIN 참고값입니다 — 화재안전기준에는 펌프 양정 식이 없고, 고가수조 낙차(NFTC 102 식 2.2.2.1 H = h₁ + h₂ + 17)와 압력수조 압력(식 2.2.3.1)만 같은 구성으로 정해져 있습니다.</p>
+<h3 id="s3-6">3-6. 전동기 동력</h3>
+<figure class="shot" id="fig-s08_power"><div class="frame"><img src="images/s08_power.webp" width="1276" height="370" loading="lazy" alt="Ⅱ-3. 전동기 동력 계산 — 예제 A"><span class="pin" style="left:2.83%;top:22.44%">1</span><span class="pin" style="left:26.85%;top:22.44%">2</span><span class="pin" style="left:50.87%;top:22.44%">3</span><span class="pin" style="left:74.89%;top:22.44%">4</span><span class="pin" style="left:3.93%;top:66.77%">5</span></div><figcaption><span class="fno">S08</span>Ⅱ-3. 전동기 동력 계산 — 예제 A</figcaption><ol class="legend"><li><b>1</b><span>Q 토출량</span></li><li><b>2</b><span>H 전양정</span></li><li><b>3</b><span>K 전달계수</span></li><li><b>4</b><span>η 펌프 효율</span></li><li><b>5</b><span>P 이론 출력</span></li></ol></figure>
+<p>P = 0.163 × Q(m³/min) × H(m) × K ÷ η [kW] — 0.163은 ρg ÷ 60,000(물 1,000 kg/m³ · 9.8 m/s²)입니다. 이론값을 HP(× 1.341)로 바꿔 3 · 5 · 7.5 · 10 · 15 · 20 … HP 표준 규격 중 바로 위 값을 고릅니다. 예제 A: 5.827 kW → <b>10 HP</b>.</p>
+<h3 id="s3-7">3-7. 사례 — 고층 40층</h3>
+<div class="pair"><div><figure class="shot" id="fig-s09_b_source"><div class="frame"><img src="images/s09_b_source.webp" width="1276" height="293" loading="lazy" alt="예제 B — 수원(고층 · 5개 · 40분)"><span class="pin" style="left:2.83%;top:27.54%">1</span><span class="pin" style="left:74.89%;top:27.54%">2</span><span class="pin" style="left:2.83%;top:62.03%">3</span><span class="pin" style="left:26.85%;top:62.03%">4</span></div><figcaption><span class="fno">S09</span>예제 B — 수원(고층 · 5개 · 40분)</figcaption><ol class="legend"><li><b>1</b><span>고층 — 최대 5개</span></li><li><b>2</b><span>5 × 130 × 40분 = 26 m³</span></li><li><b>3</b><span>옥상수조 1/3</span></li><li><b>4</b><span>총 저수량</span></li></ol></figure></div><div><figure class="shot" id="fig-s10_b_head"><div class="frame"><img src="images/s10_b_head.webp" width="1276" height="382" loading="lazy" alt="예제 B — 전양정"><span class="pin" style="left:26.77%;top:21.85%">1</span><span class="pin" style="left:51.03%;top:21.85%">2</span></div><figcaption><span class="fno">S10</span>예제 B — 전양정</figcaption><ol class="legend"><li><b>1</b><span>배관 마찰손실</span></li><li><b>2</b><span>전양정</span></li></ol></figure></div></div>
+<p>30~49층 고층건축물은 가장 많은 층의 설치개수를 <b>5개</b>까지, 개당 5.2 m³(130 L/min × 40분)로 계산합니다(NFTC 604 2.1.1). 6개 설치 → 5개 · 토출량 650 L/min · 유효수량 26.000 m³ + 옥상수조 8.667 m³ = 34.667 m³ · 실양정 135 m · 배관 KS D 3562 Sch40 → 전양정 <b>174 m</b> · 31.198 kW → <b>50 HP</b>입니다. 고층건축물은 예비펌프(NFTC 604 2.1.3) · 비상전원 40분(50층 이상 60분, 2.1.7)도 따로 확인합니다.</p>
+<h3 id="s3-8">3-8. 사례 — 호스릴 · 옥상수조 면제</h3>
+<div class="pair"><div><figure class="shot" id="fig-s11_c_source"><div class="frame"><img src="images/s11_c_source.webp" width="1276" height="293" loading="lazy" alt="예제 C — 수원(옥상수조 면제)"><span class="pin" style="left:2.83%;top:62.03%">1</span><span class="pin" style="left:26.85%;top:62.03%">2</span></div><figcaption><span class="fno">S11</span>예제 C — 수원(옥상수조 면제)</figcaption><ol class="legend"><li><b>1</b><span>옥상수조 면제</span></li><li><b>2</b><span>총 저수량 = 유효수량</span></li></ol></figure></div><div><figure class="shot" id="fig-s12_c_head"><div class="frame"><img src="images/s12_c_head.webp" width="1276" height="382" loading="lazy" alt="예제 C — 전양정(호스릴)"><span class="pin" style="left:2.83%;top:59.94%">1</span><span class="pin" style="left:51.03%;top:21.85%">2</span></div><figcaption><span class="fno">S12</span>예제 C — 전양정(호스릴)</figcaption><ol class="legend"><li><b>1</b><span>호스릴 14 m</span></li><li><b>2</b><span>전양정</span></li></ol></figure></div></div>
+<p>지하층만 있는 건축물은 옥상수조를 두지 않아도 됩니다(NFTC 102 2.1.2(1)). 「면제」를 고르면 총 저수량 = 유효수량 5.200 m³입니다. 25 mm 호스릴은 호스 손실을 14 m(MANMIN 참고값)로 넣어 전양정 <b>52 m</b> · <b>7.5 HP</b>입니다. 호스릴옥내소화전도 방수압 0.17 MPa · 130 L/min 기준은 같습니다(제5조①3호 괄호).</p>
+<h3 id="s3-9">3-9. 계산식 안내 창</h3>
+<div class="tri"><div><figure class="shot" id="fig-s13_formula"><div class="frame"><img src="images/s13_formula.webp" width="744" height="834" loading="lazy" alt="이용방법"></div><figcaption><span class="fno">S13</span>이용방법</figcaption></figure></div><div><figure class="shot" id="fig-s14_formula_src"><div class="frame"><img src="images/s14_formula_src.webp" width="744" height="611" loading="lazy" alt="수원 산정"></div><figcaption><span class="fno">S14</span>수원 산정</figcaption></figure></div><div><figure class="shot" id="fig-s15_formula_head"><div class="frame"><img src="images/s15_formula_head.webp" width="744" height="834" loading="lazy" alt="펌프 양정"></div><figcaption><span class="fno">S15</span>펌프 양정</figcaption></figure></div></div>
+<p>오른쪽 「📐 계산식 안내」는 이용방법 · 수원 산정 · 펌프 양정 · 전동기 동력 · 상당직관 5개 탭입니다. 식마다 근거 조문과 MANMIN 참고값 여부를 적어 두었습니다.</p>
+<h3 id="s3-10">3-10. A4 계산서·출력</h3>
+<figure class="shot" id="fig-s16_a4"><div class="frame"><img src="images/s16_a4.webp" width="1440" height="900" loading="lazy" alt="③ 계산서 출력 탭"><span class="pin" style="left:76.97%;top:25.60%">1</span><span class="pin" style="left:85.33%;top:25.60%">2</span><span class="pin" style="left:22.83%;top:36.02%">3</span></div><figcaption><span class="fno">S16</span>③ 계산서 출력 탭</figcaption><ol class="legend"><li><b>1</b><span>JPG 저장</span></li><li><b>2</b><span>인쇄 · PDF</span></li><li><b>3</b><span>A4 계산서</span></li></ol></figure>
+<figure class="shot" id="fig-s17_a4page"><div class="frame"><img src="images/s17_a4page.webp" width="818" height="1754" loading="lazy" alt="A4 옥내소화전 펌프 용량 계산서 — 예제 A"><span class="pin" style="left:8.64%;top:16.22%">1</span><span class="pin" style="left:8.64%;top:33.10%">2</span><span class="pin" style="left:8.64%;top:48.15%">3</span></div><figcaption><span class="fno">S17</span>A4 옥내소화전 펌프 용량 계산서 — 예제 A</figcaption><ol class="legend"><li><b>1</b><span>Ⅱ-1 수원 — A ~ D+R</span></li><li><b>2</b><span>Ⅱ-2 양정 — E ~ J</span></li><li><b>3</b><span>Ⅱ-3 동력 — K ~ Q</span></li></ol></figure>
+<p>계산서는 Ⅱ-1 수원(A ~ D+R) · Ⅱ-2 양정(E ~ J) · Ⅱ-3 동력(K ~ Q) · 배관 마찰손실 상세표 · Ⅱ-4 펌프 선정 결과 · 적용 법령 및 기준 순이며, 화면과 인쇄 · JPG가 같은 내용입니다.</p>
+<h3 id="s3-11">3-11. 휴대전화 화면</h3>
+<div class="tri"><div><figure class="shot narrow" id="fig-s18_mobile_main"><div class="frame"><img src="images/s18_mobile_main.webp" width="390" height="844" loading="lazy" alt="데이터 입력"></div><figcaption><span class="fno">S18</span>데이터 입력</figcaption></figure></div><div><figure class="shot narrow" id="fig-s19_mobile_result"><div class="frame"><img src="images/s19_mobile_result.webp" width="390" height="844" loading="lazy" alt="계산 결과"></div><figcaption><span class="fno">S19</span>계산 결과</figcaption></figure></div><div><figure class="shot narrow" id="fig-s20_mobile_a4"><div class="frame"><img src="images/s20_mobile_a4.webp" width="390" height="844" loading="lazy" alt="계산서 출력"></div><figcaption><span class="fno">S20</span>계산서 출력</figcaption></figure></div></div>
+<p>좁은 화면에서는 입력 칸이 한 줄로 쌓이고, 탭 막대는 좌우로 밀어서 봅니다(「📘 매뉴얼」은 오른쪽 끝). A4 계산서는 화면 폭에 맞춰 축소해 보여 주며 인쇄 · JPG는 원본 A4 크기로 나옵니다.</p>
+</section>
+<section class="ch" id="ch4"><h2><span class="n">04</span>법령 해설</h2>
+<h3 id="s4-1">4-1. 근거 체계</h3>
+<div class="brk"><div class="k1"><div class="tbl"><table><thead><tr><th class="">기준</th><th class="">내용</th></tr></thead><tbody><tr><td class="">소방시설법 시행령 별표 4 제1호 다목</td><td class="">옥내소화전설비를 설치해야 하는 특정소방대상물(NFTC 102 1.1.1이 적용 범위로 인용)</td></tr><tr><td class="">NFPC 102 (성능기준 · 고시)</td><td class="">제4조 수원 · 제5조 가압송수장치 — 소방청고시 제2025-25호(2026. 3. 1. 시행)</td></tr><tr><td class="">NFTC 102 (기술기준 · 공고)</td><td class="">2.1 수원 · 2.2 가압송수장치 · 2.3 배관 — 국립소방연구원공고 제2026-34호(2026. 7. 1. 시행)</td></tr><tr><td class="">NFTC 604 (고층건축물)</td><td class="">2.1 옥내소화전설비 — 5개 × 5.2 m³(50층 이상 7.8 m³) · 옥상수조 · 예비펌프 · 비상전원 40(60)분</td></tr><tr><td class="">경과조치</td><td class="">NFTC 102 1.5.1 — 시행 전 건축허가 등을 신청 · 신고했거나 착공신고한 대상은 종전 기준. 1.5.2 — 제정 기준이 유리하면 그에 따를 수 있음</td></tr></tbody></table></div></div></div>
+<p class="mono" style="font-size:13px;color:var(--text2)">LawMCP(국가법령정보센터 행정규칙) 원문 대조 2026-10-15</p>
+<h3 id="s4-2">4-2. 수원</h3>
+<div class="eq">수원 = 가장 많은 층의 설치개수(일반 2개 · 고층 5개 한도) × 2.6 m³ (30~49층 5.2 m³ · 50층 이상 7.8 m³)<span class="c">NFPC 102 제4조① · NFTC 102 2.1.1 · NFTC 604 2.1.1 — 호스릴옥내소화전설비 포함</span></div>
+<div class="k1"><div class="tbl"><table><thead><tr><th class="">구분</th><th class="">기준</th></tr></thead><tbody><tr><td class="">일반(29층 이하)</td><td class="">2개 × 2.6 m³ = 130 L/min × 20분 × 2</td></tr><tr><td class="">고층(30 ~ 49층)</td><td class="">5개 × 5.2 m³ = 130 L/min × 40분 × 5</td></tr><tr><td class="">초고층(50층 이상)</td><td class="">5개 × 7.8 m³ = 130 L/min × 60분 × 5</td></tr><tr><td class="">전용 · 유효수량</td><td class="">수원을 수조로 두면 소화설비 전용(제4조④) · 다른 설비와 겸용 수조는 풋밸브 · 흡수구 사이의 수량만 유효수량(제4조⑤) · 겸용 저수량은 각 설비 합계(제12조①)</td></tr></tbody></table></div></div>
+<h3 id="s4-3">4-3. 옥상수조</h3>
+<p>유효수량 외에 <b>유효수량의 3분의 1 이상</b>을 옥상(주된 옥상)에 둡니다(NFPC 102 제4조② · NFTC 102 2.1.2). 다만 다음의 어느 하나에 해당하면 그렇지 않습니다.</p>
+<div class="brk"><div class="k1"><div class="tbl"><table><thead><tr><th class="">NFTC 102 2.1.2 단서</th><th class="">면제 조건</th></tr></thead><tbody><tr><td class="">(1)</td><td class="">지하층만 있는 건축물</td></tr><tr><td class="">(2)</td><td class="">2.2.2에 따른 고가수조를 가압송수장치로 설치한 경우</td></tr><tr><td class="">(3)</td><td class="">수원이 건축물의 최상층에 설치된 방수구보다 높은 위치에 설치된 경우</td></tr><tr><td class="">(4)</td><td class="">건축물의 높이가 지표면으로부터 10 m 이하인 경우</td></tr><tr><td class="">(5)</td><td class="">주펌프와 동등 이상의 성능이 있는 별도의 펌프로서 내연기관의 기동과 연동하여 작동되거나 비상전원을 연결하여 설치한 경우</td></tr><tr><td class="">(6)</td><td class="">2.2.1.9의 단서에 해당하는 경우(학교 · 공장 · 창고시설 기동스위치)</td></tr><tr><td class="">(7)</td><td class="">2.2.4에 따라 가압수조를 가압송수장치로 설치한 경우</td></tr></tbody></table></div></div></div>
+<p>고층건축물은 (2) · (3)에 해당할 때만 면제됩니다(NFTC 604 2.1.2). 앱은 「면제」를 고르면 R = 0으로 계산하고, 고층 · 초고층을 고른 상태면 이 제한을 안내합니다.</p>
+<h3 id="s4-4">4-4. 가압송수장치</h3>
+<div class="k1"><div class="tbl"><table><thead><tr><th class="">항목</th><th class="">기준</th></tr></thead><tbody><tr><td class="">방수압 · 방수량</td><td class="">어느 층에서도 해당 층 소화전(2개 이상이면 2개)을 동시에 사용할 때 노즐선단 <b>0.17 MPa 이상 · 130 L/min 이상</b>. 하나의 소화전 방수압이 0.7 MPa를 넘으면 호스접결구 인입 측 감압장치(제5조①3호 · NFTC 102 2.2.1.3)</td></tr><tr><td class="">토출량</td><td class="">가장 많이 설치된 층의 설치개수(2개 이상이면 2개) × 130 L/min 이상(제5조①4호 · 2.2.1.4) — 고층건축물은 5개 기준(NFTC 604)</td></tr><tr><td class="">펌프 성능</td><td class="">체절운전 시 정격토출압력의 140 % 이하, 정격토출량 150 % 운전 시 정격토출압력의 65 % 이상 · 성능시험배관(제5조①7호 · 2.2.1.7)</td></tr><tr><td class="">주펌프</td><td class="">전동기에 따른 펌프(제5조① 단서) · 전용(2.2.1.5 — 다른 설비 성능에 지장 없으면 겸용 가능) · 고층은 예비펌프 추가(NFTC 604 2.1.3)</td></tr><tr><td class="">고가 · 압력수조</td><td class="">낙차 H = h₁ + h₂ + 17 m(식 2.2.2.1) · 압력 P = p₁ + p₂ + p₃ + 0.17 MPa(식 2.2.3.1) — 20분 이상 유지(제5조② · ③)</td></tr></tbody></table></div></div>
+<h3 id="s4-5">4-5. 배관</h3>
+<div class="k1"><div class="tbl"><table><thead><tr><th class="">항목</th><th class="">기준</th></tr></thead><tbody><tr><td class="">주배관 유속</td><td class="">펌프 토출 측 주배관 구경은 유속 4 m/s 이하(NFTC 102 2.3.5) — 앱은 구간마다 유속을 계산해 ⚠ 표시</td></tr><tr><td class="">최소 구경</td><td class="">방수구와 연결되는 가지배관 40 mm(호스릴 25 mm) 이상 · 주배관 중 수직배관 50 mm(호스릴 32 mm) 이상(2.3.5) — 앱은 점검하지 않으므로 입력 때 확인</td></tr><tr><td class="">합성수지배관</td><td class="">소방용 합성수지배관(CPVC)은 NFTC 102 2.3.2의 장소에만 설치 — 성능인증 · 제품검사 기술기준 적합품</td></tr><tr><td class="">고층 수직배관</td><td class="">50층 이상은 주배관 중 수직배관 2개 이상(NFTC 604 2.1.6)</td></tr></tbody></table></div></div>
+<h3 id="s4-6">4-6. 마찰손실·강관 내경</h3>
+<div class="eq">h = 10.67 × L × Q¹·⁸⁵² ÷ (C¹·⁸⁵² × D⁴·⁸⁷)   [m] — Q(m³/s) · D(m) · L 상당직관(m)<span class="c">Hazen-Williams 식(SI) — 화면은 100 m당 손실(m/100 m)로 표시</span></div>
+<div class="brk"><div class="tbl"><table><thead><tr><th class="">호칭</th><th class="num">KS D 3507 (백관)</th><th class="num">KS D 3562 Sch40 (흑관)</th><th class="num">STS (참고)</th><th class="num">CPVC (참고)</th></tr></thead><tbody><tr><td class="">25A</td><td class="num">27.6</td><td class="num">27.2</td><td class="num">27.6</td><td class="num">26.6</td></tr><tr><td class="">32A</td><td class="num">35.7</td><td class="num">35.5</td><td class="num">36.8</td><td class="num">35.1</td></tr><tr><td class="">40A</td><td class="num">41.6</td><td class="num">41.2</td><td class="num">42.8</td><td class="num">40.9</td></tr><tr><td class="">50A</td><td class="num">52.9</td><td class="num">52.7</td><td class="num">54.8</td><td class="num">52.5</td></tr><tr><td class="">65A</td><td class="num">67.9</td><td class="num">65.9</td><td class="num">70.0</td><td class="num">62.7</td></tr><tr><td class="">80A</td><td class="num">80.7</td><td class="num">78.1</td><td class="num">85.0</td><td class="num">79.4</td></tr><tr><td class="">100A</td><td class="num">105.3</td><td class="num">102.3</td><td class="num">108.2</td><td class="num">101.6</td></tr><tr><td class="">125A</td><td class="num">130.8</td><td class="num">126.6</td><td class="num">133.4</td><td class="num">127.0</td></tr><tr><td class="">150A</td><td class="num">155.2</td><td class="num">151.0</td><td class="num">160.0</td><td class="num">154.1</td></tr><tr><td class="">200A</td><td class="num">204.7</td><td class="num">199.9</td><td class="num">210.0</td><td class="num">203.2</td></tr></tbody></table></div></div>
+<p>강관 내경(mm)은 KS 외경 − 2 × 두께로 계산한 값입니다(v5.1.0 — 이전 판의 KS D 3562 소구경은 ASME 값이었음). STS · CPVC 내경은 제품마다 달라 MANMIN 참고값이며, 사용 제품의 규격표로 확인하십시오. C값은 강관 120 · STS · CPVC 150(MANMIN 참고값)입니다.</p>
+<h3 id="s4-7">4-7. MANMIN 참고값</h3>
+<div class="k1"><div class="tbl"><table><thead><tr><th class="">항목</th><th class="">내용</th></tr></thead><tbody><tr><td class="">펌프 전양정 안전율 · 올림</td><td class="">(h₁ + h₂ + h₃ + 17) × 1.1 → 올림 — 화재안전기준에 펌프 양정 식 · 안전율 수치 없음</td></tr><tr><td class="">호스 마찰손실</td><td class="">40mm 아마호스 26 m / 100 m · 40mm 고무내장호스 12 m / 100 m · 50mm 아마호스 7 m / 100 m · 50mm 고무내장호스 3 m / 100 m · 25mm 호스릴 14 m 고정 — 실무 교재 값</td></tr><tr><td class="">관부속 상당직관 길이</td><td class="">90° · 45° 엘보 · 분류 · 직류 티 · 게이트 · 볼 · 앵글 · 체크 밸브 — 관경별 표(계산식 안내 「상당직관」 탭)</td></tr><tr><td class="">전달계수 · 효율</td><td class="">K 전동기 직결 1.1 · 그 밖 1.15 · 효율은 사용자 입력(구경별 참고 40 ~ 70 %) — 제조사 성능곡선으로 확인</td></tr><tr><td class="">HP 규격</td><td class="">3 · 5 · 7.5 · 10 · 15 · 20 · 25 · 30 · 40 · 50 · 60 · 75 · 100 · 125 · 150 · 200 HP — 1 kW = 1.341 HP</td></tr></tbody></table></div></div>
+<h3 id="s4-8">4-8. v5.1.0 정정 (2026-10-15)</h3>
+<div class="brk"><div class="k1"><div class="tbl"><table><thead><tr><th class="">항목</th><th class="">기존</th><th class="">정정</th></tr></thead><tbody><tr><td class="">NFTC 102 판</td><td class="">[제2025-25호, 2026.03.01. 시행](NFPC 번호를 NFTC에 적음)</td><td class="">국립소방연구원공고 제2026-34호 · 2026. 7. 1. 시행 / NFPC 102 소방청고시 제2025-25호 · 2026. 3. 1. 시행</td></tr><tr><td class="">수원 조문 · 개수</td><td class="">「제5조(수원) · 최대 5개 · 최대 13 m³」</td><td class="">NFPC 102 제4조① · NFTC 102 2.1.1 — 2개 × 2.6 m³ / 5개는 NFTC 604 2.1.1</td></tr><tr><td class="">가압송수장치 조문</td><td class="">「제6조」</td><td class="">제5조①3호 · 4호 · NFTC 102 2.2.1.3 · 2.2.1.4</td></tr><tr><td class="">130 L/min</td><td class="">「고정」</td><td class="">「이상」 기준 — 계산은 130 L/min</td></tr><tr><td class="">옥상수조</td><td class="">계산하지 않음</td><td class="">유효수량의 1/3 이상 가산 · 면제(2.1.2 단서) 선택 · 총 저수량</td></tr><tr><td class="">강관 내경</td><td class="">KS D 3562 소구경 ASME 값(예: 65A 62.7 mm)</td><td class="">KS 외경 − 2 × 두께(65A 65.9 mm) — 예제 A 마찰손실 소폭 변화</td></tr><tr><td class="">참고값 표기</td><td class="">「법정기준 + 엔지니어링 안전율」</td><td class="">안전율 · 올림 · 호스 · 관부속 · K · η · C = MANMIN 참고값</td></tr><tr><td class="">이용방법 창</td><td class="">「⚙️ 조건 입력」 탭 · 펌프 구경으로 효율 자동 설정 등 실제 화면과 다름</td><td class="">실제 탭 이름 · 효율 직접 입력 · 옥상수조 단계로 정정</td></tr><tr><td class="">그리스 문자</td><td class="">라벨 대문자 변환으로 η가 「Η」, h₁이 「H₁」로 보임</td><td class="">대문자 변환 해제</td></tr><tr><td class="">엔진</td><td class="">계산이 화면 컴포넌트 안</td><td class=""><code>hyd-engine</code> hydCalc 단일화 — 화면 · A4 · 검증 공용, 독립 구현 50,000건 대조 불일치 0</td></tr></tbody></table></div></div></div>
+</section>
+<section class="ch" id="ch5"><h2><span class="n">05</span>실무 작업 방법</h2>
+<h3 id="s5-1">5-1. 단계별 절차</h3>
+<div class="svgbox"><svg viewBox="0 0 900 210" role="img" aria-label="옥내소화전 펌프 산정 흐름: 건축물 규모와 소화전 개수로 토출량과 수원을 정하고, 실양정과 배관 호스 마찰손실에 노즐 17 m를 더해 전양정을 구한 뒤 전동기 동력을 산정해 A4 계산서로 남긴다">
+<defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#2D3A8C"/></marker></defs>
+<style>.b{fill:#E9ECF8;stroke:#2D3A8C;stroke-width:1.5}.o{fill:#FDF1E7;stroke:#C97A3A;stroke-width:1.5}.t{font:600 14px 'Noto Sans KR','Noto Sans KR Local',sans-serif;fill:#1A1A2E}.s{font:12px 'Noto Sans KR','Noto Sans KR Local',sans-serif;fill:#4A4F66}.l{stroke:#2D3A8C;stroke-width:1.6;fill:none;marker-end:url(#ar)}</style>
+<rect class="b" x="10" y="20" width="200" height="72" rx="10"/><text class="t" x="22" y="48">① 수원 · 토출량</text><text class="s" x="22" y="72">2개(고층 5개) × 130 L/min</text>
+<rect class="b" x="240" y="20" width="200" height="72" rx="10"/><text class="t" x="252" y="48">② 전양정</text><text class="s" x="252" y="72">h₁ + h₂ + h₃ + 17 m</text>
+<rect class="b" x="470" y="20" width="200" height="72" rx="10"/><text class="t" x="482" y="48">③ 전동기 동력</text><text class="s" x="482" y="72">0.163 Q H K ÷ η → HP</text>
+<rect class="o" x="700" y="20" width="190" height="72" rx="10"/><text class="t" x="712" y="48">④ A4 계산서</text><text class="s" x="712" y="72">인쇄 · PDF · JPG</text>
+<path class="l" d="M210,56 L238,56"/><path class="l" d="M440,56 L468,56"/><path class="l" d="M670,56 L698,56"/>
+<rect class="b" x="10" y="122" width="430" height="66" rx="10"/><text class="t" x="22" y="148">옥상수조 — 유효수량 외 1/3 이상</text><text class="s" x="22" y="171">NFPC 102 제4조② · NFTC 102 2.1.2 단서 7가지는 면제</text>
+<path class="l" d="M110,92 L110,120"/>
+</svg></div>
+<div class="k1"><div class="tbl"><table><thead><tr><th class="">단계</th><th class="">내용</th></tr></thead><tbody><tr><td class="">① 설치 대상 · 규모</td><td class="">소방시설법 시행령 별표 4로 설치 대상 확인 · 층수 · 높이(120 m)로 일반 / 고층 / 초고층 판정</td></tr><tr><td class="">② 개수 · 수원</td><td class="">층별 소화전 배치에서 가장 많은 층의 개수 → 수원 · 옥상수조 · 겸용 설비 합산(제12조)</td></tr><tr><td class="">③ 배관 경로</td><td class="">펌프 → 주배관 → 수직배관 → 최원 · 최고층 가지배관까지 구간을 나누고 관부속 수량 집계</td></tr><tr><td class="">④ 전양정 · 동력</td><td class="">실양정 · 마찰손실 · 호스 · 17 m → 전양정 · 동력 · 표준 HP · 저층부 0.7 MPa 초과 시 감압장치</td></tr><tr><td class="">⑤ 기록</td><td class="">A4 계산서를 PDF · JPG로 남겨 소방설계도서 · 착공신고 서류에 첨부</td></tr></tbody></table></div></div>
+<h3 id="s5-2">5-2. 설계 · 승인 전 확인</h3>
+<div class="k1"><div class="tbl"><table><thead><tr><th class="">항목</th><th class="">확인</th></tr></thead><tbody><tr><td class="">기준 시점</td><td class="">건축허가 등 신청일 · 착공신고일에 따라 종전 기준 적용 여부(NFTC 102 1.5.1)</td></tr><tr><td class="">펌프 선정</td><td class="">정격점 · 체절 140 % · 150 % 유량 65 % — 제조사 성능곡선으로 확인</td></tr><tr><td class="">고층건축물</td><td class="">예비펌프 · 비상전원 40(60)분 · 50층 이상 수직배관 2개(NFTC 604)</td></tr><tr><td class="">참고값</td><td class="">호스 손실 · 관부속 상당길이 · 효율 · 안전율은 사용 제품 · 사무소 기준으로 바꿔 넣기</td></tr></tbody></table></div></div>
+</section>
+<section class="ch" id="ch6"><h2><span class="n">06</span>문제 해결·FAQ</h2>
+<div class="k1"><div class="tbl"><table><thead><tr><th class="">증상</th><th class="">해결</th></tr></thead><tbody><tr><td class="">소화전 수를 5개 넣었는데 2개로 계산돼요</td><td class="">일반 건축물은 2개가 한도입니다(제4조① · 2.1.1). 30층 이상(또는 120 m 이상)이면 건축물 규모를 고층으로 바꾸십시오</td></tr><tr><td class="">수원이 예전 판보다 커졌어요</td><td class="">v5.1.0부터 옥상수조 1/3을 더합니다 — 면제 조건(2.1.2 단서)에 해당하면 「면제」를 고르십시오</td></tr><tr><td class="">배관 마찰손실이 조금 달라졌어요</td><td class="">KS 강관 내경을 KS 외경 · 두께로 다시 계산했습니다(<a href="#s4-6">4-6</a>)</td></tr><tr><td class="">유속 ⚠ 표시가 떠요</td><td class="">그 구간 유속이 4 m/s를 넘었습니다 — 관경을 키우십시오(2.3.5)</td></tr><tr><td class="">안전율 10 %는 꼭 넣어야 하나요</td><td class="">기준에 없는 MANMIN 참고값입니다. 사무소 기준에 맞게 해석하되 계산서의 「참고값」 표기를 함께 남기십시오</td></tr><tr><td class="">화면이 예전 판이에요</td><td class="">새로 고침(Ctrl+F5) 또는 앱을 닫았다 다시 여십시오</td></tr></tbody></table></div></div>
+</section>
+<section class="ch" id="ch7"><h2><span class="n">부록</span></h2>
+<h3 id="a1">A1. 예제 입력값</h3>
+<div class="brk"><div class="k1"><div class="tbl"><table><thead><tr><th class="">예제</th><th class="">조건</th><th class="">배관 구간</th></tr></thead><tbody><tr><td class="">예제 A</td><td class="">일반 · 소화전 3개 · 실양정 45 m · 40mm 고무내장호스 30 m · KS D3507 · 100A · η 60 % · 옥상수조 설치</td><td class="">100A 260L/min 25 m · 65A 260L/min 40 m · 50A 130L/min 8 m</td></tr><tr><td class="">예제 B</td><td class="">고층 30~49층 · 소화전 6개 · 실양정 135 m · 40mm 고무내장호스 30 m · KS D3562 · 125A · η 65 % · 옥상수조 설치</td><td class="">150A 650L/min 30 m · 125A 650L/min 125 m · 50A 130L/min 6 m</td></tr><tr><td class="">예제 C</td><td class="">일반 · 소화전 4개 · 실양정 12 m · 25mm 호스릴 30 m · KS D3507 · 65A · η 55 % · 옥상수조 면제</td><td class="">65A 260L/min 30 m · 40A 130L/min 15 m</td></tr></tbody></table></div></div></div>
+<h3 id="a2">A2. 예제 결과</h3>
+<div class="brk"><div class="tbl"><table><thead><tr><th class="">예제</th><th class="num">개수</th><th class="num">토출량(L/min)</th><th class="num">유효수량(m³)</th><th class="num">옥상(m³)</th><th class="num">총 저수량(m³)</th><th class="num">h₂(m)</th><th class="num">전양정(m)</th><th class="num">HP</th></tr></thead><tbody><tr><td class="">예제 A</td><td class="num">2</td><td class="num">260</td><td class="num">5.200</td><td class="num">1.733</td><td class="num">6.933</td><td class="num">2.398</td><td class="num">75</td><td class="num">10</td></tr><tr><td class="">예제 B</td><td class="num">5</td><td class="num">650</td><td class="num">26.000</td><td class="num">8.667</td><td class="num">34.667</td><td class="num">2.358</td><td class="num">174</td><td class="num">50</td></tr><tr><td class="">예제 C</td><td class="num">2</td><td class="num">260</td><td class="num">5.200</td><td class="num">면제</td><td class="num">5.200</td><td class="num">3.593</td><td class="num">52</td><td class="num">7.5</td></tr></tbody></table></div></div>
+<h3 id="a3">A3. 버전 변경 내역</h3>
+<div class="k1"><div class="tbl"><table><thead><tr><th class="">버전</th><th class="">내용</th></tr></thead><tbody><tr><td class="">Ver-5.1 · v5.1.0 (2026-10-15)</td><td class="">NFPC 102 · NFTC 102(제2026-34호) · NFTC 604 원문 대조 근거 정정, 옥상수조 1/3, KS 강관 내경, MANMIN 참고값 표기, 계산 엔진 단일화, 탭 막대 「📘 매뉴얼」 · 사용자 매뉴얼(<a href="#s4-8">4-8</a>)</td></tr><tr><td class="">Ver-5.0 (2026-09)</td><td class="">MANMIN 디자인 통일 마스터(헤더 · 탭 · 요약 바 · A4 · JPG 저장), PWA</td></tr></tbody></table></div></div>
+<h3 id="a4">A4. 용어</h3>
+<div class="brk"><div class="k1"><div class="tbl"><table><thead><tr><th class="">용어</th><th class="">뜻</th></tr></thead><tbody><tr><td class="">유효수량</td><td class="">풋밸브 · 흡수구 위의 실제로 쓸 수 있는 수량(제4조⑤)</td></tr><tr><td class="">옥상수조</td><td class="">유효수량의 1/3 이상을 옥상에 둔 수조(제4조③)</td></tr><tr><td class="">전양정</td><td class="">펌프가 내야 하는 전체 수두 — 실양정 + 마찰손실 + 노즐 방수압 환산수두</td></tr><tr><td class="">상당직관</td><td class="">관부속의 손실을 같은 지름 직관 길이로 바꾼 값</td></tr><tr><td class="">체절운전</td><td class="">토출 측 밸브를 닫고 펌프를 돌리는 성능시험(제3조8호)</td></tr><tr><td class="">고층건축물</td><td class="">30층 이상이거나 높이 120 m 이상인 건축물(건축법 제2조제1항제19호) — NFTC 604 적용</td></tr></tbody></table></div></div></div>
+</section></main></div>
+<footer class="foot">© 2026 김만민 건축사 · ㈜대성건축사사무소 · 옥내소화전 펌프 용량 계산서 사용자 매뉴얼 Ver-5.1 · NFPC 102 (소방청고시 제2025-25호) · NFTC 102 (국립소방연구원공고 제2026-34호) · NFTC 604 <span class="rev">· 화면 대응 개정 2026-10-15</span></footer>
+<div class="pfoot"><span>옥내소화전 펌프 용량 계산서 사용자 매뉴얼 Ver-5.1</span><span>2026-10-15</span></div>
+<div id="lb" role="dialog" aria-label="그림 확대"><img alt=""></div>
+<button class="totop" aria-label="맨 위로">↑</button>
+<script>
+(function(){
+  var lb=document.getElementById('lb'),li=lb.querySelector('img');
+  document.querySelectorAll('figure.shot .frame').forEach(function(f){f.addEventListener('click',function(){li.src=f.querySelector('img').src;li.alt=f.querySelector('img').alt;lb.classList.add('open');});});
+  lb.addEventListener('click',function(){lb.classList.remove('open');li.removeAttribute('src');});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')lb.classList.remove('open');});
+  document.querySelector('.totop').addEventListener('click',function(){window.scrollTo(0,0);});
+  var links=[].slice.call(document.querySelectorAll('nav.toc a'));
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){links.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id);});}});},{rootMargin:'0px 0px -70% 0px'});
+    document.querySelectorAll('section.ch,h3[id]').forEach(function(s){io.observe(s);});
+  }
+})();
+/* 좁은 화면 표 쌓기 준비: 숫자 칸이 없는 표에 stack 표시, 각 칸에 머리글(data-th) 복사 */
+(function(){document.querySelectorAll('.tbl').forEach(function(t){var tb=t.querySelector('table');if(!tb||!tb.tHead)return;
+ if(tb.querySelector('td.num,th.num'))return;var hs=[].map.call(tb.tHead.rows[0].cells,function(c){return c.textContent.trim()});
+ [].forEach.call(tb.tBodies[0].rows,function(r){[].forEach.call(r.cells,function(c,i){if(hs[i])c.setAttribute('data-th',hs[i])})});t.classList.add('stack');if(hs.length===2)t.classList.add('c2')})})();
+</script>
+</body></html>
