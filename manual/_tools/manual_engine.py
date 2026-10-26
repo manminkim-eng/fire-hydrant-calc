@@ -44,7 +44,7 @@ code,kbd,.mono{font-family:var(--font-mono);font-size:.9em}
 code{background:var(--navy-l);color:var(--navy-d);padding:1px 6px;border-radius:5px}
 kbd{border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 6px;background:#fff}
 /* 상단 */
-.top{position:relative;background:linear-gradient(135deg,var(--mh-a),var(--mh-b),var(--mh-c));color:#fff;box-shadow:0 2px 20px var(--mh-shadow)}
+.top{position:relative;background:linear-gradient(135deg,var(--mh-a),var(--mh-b) var(--mh-bp),var(--mh-c));color:#fff;box-shadow:0 2px 20px var(--mh-shadow)}
 .top::before{content:"";position:absolute;inset:0;background:rgba(0,0,0,var(--mh-veil));pointer-events:none}
 .top-in{position:relative;max-width:1240px;margin:0 auto;display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;padding:40px 24px 32px}
 .eyebrow{font-family:var(--font-brand);font-weight:700;font-size:12px;letter-spacing:.18em;color:var(--mh-accent)}
@@ -266,7 +266,7 @@ def render(*, title, desc, eyebrow, h1, sub, ver, date, app_name, pdf, toc, sect
 <meta name="author" content="김만민 건축사 · ㈜대성건축사사무소">
 <meta name="theme-color" content="__MHB__"><meta name="color-scheme" content="light dark">
 <link rel="stylesheet" href="./assets/fonts/manmin-fonts.css">
-<style>:root{--mh-a:__MHA__;--mh-b:__MHB__;--mh-c:__MHC__;--mh-accent:__MHACC__;--mh-shadow:__MHSH__;--mh-btn-ink:__MHINK__;--mh-veil:__MHVEIL__}
+<style>:root{--mh-a:__MHA__;--mh-b:__MHB__;--mh-c:__MHC__;--mh-accent:__MHACC__;--mh-shadow:__MHSH__;--mh-btn-ink:__MHINK__;--mh-veil:__MHVEIL__;--mh-bp:__MHBP__}
 __CSS__</style>
 </head><body>
 <div class="mh-prog" aria-hidden="true"><i></i></div>
@@ -288,6 +288,6 @@ __CSS__</style>
 </body></html>"""
     rep = {'__TITLE__':title,'__DESC__':desc,'__EYEBROW__':eyebrow,'__H1__':h1,'__SUB__':sub,'__VER__':ver,'__APP__':app_name,'__PDF__':pdf,'__DATE__':date,'__FOOT__':foot_note,'__CSS__':CSS,'__TOC__':toc_html(toc),'__BODY__':'\n'.join(sections),'__JS__':JS,
            '__MHA__':HDR['a'],'__MHB__':HDR['b'],'__MHC__':HDR['c'],'__MHACC__':HDR['accent'],'__MHSH__':HDR['shadow'],
-           '__MHINK__':HDR['btn_ink'],'__MHVEIL__':str(HDR['veil']),'__OPEN_LABEL__':HDR['open_label'],'__META_LAW__':HDR['meta_law']}
+           '__MHINK__':HDR['btn_ink'],'__MHVEIL__':str(HDR['veil']),'__MHBP__':HDR.get('bp','50%'),'__OPEN_LABEL__':HDR['open_label'],'__META_LAW__':HDR['meta_law']}
     for k,v in rep.items(): tpl = tpl.replace(k, v)
     return tpl
