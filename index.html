@@ -25,7 +25,7 @@
 
 <!-- ═══ PWA 설정 ═══ -->
 <link rel="manifest" href="manifest.json"/>
-<meta name="theme-color" content="#DC2626"/>
+<meta name="theme-color" content="#15803d"/>
 <meta name="description" content="옥내소화전 펌프 용량 계산서 - 소방시설 설계 전용 · MANMIN Ver-5.1"/>
 <!-- iOS Safari 지원 -->
 <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -38,11 +38,12 @@
 <link rel="icon" href="icons/favicon.ico" sizes="any"/>
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png"/>
 <link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png"/>
-<meta name="msapplication-TileColor" content="#DC2626"/>
+<meta name="msapplication-TileColor" content="#15803d"/>
 <meta name="msapplication-TileImage" content="icons/icon-144x144.png"/>
 
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css"/>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet"/>
 <link rel="stylesheet" href="./assets/fonts/manmin-fonts.css"/><!-- 로컬 폴백 폰트 -->
 <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js"></script>
@@ -50,14 +51,15 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.7/babel.min.js"></script>
 <!-- v5.0 — 모바일 JPG 저장. SW가 첫 온라인 로드 시 캐시하므로 이후 오프라인에서도 동작 -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<style>
+<style>:root{--d:#22c55e;--d-deep:#15803d;--d-lt:#86efac;--d-tint:#dcfce7;--d-rgb:34,197,94;--fs-badge:11px;--fs-cap:11.5px;--fs-sm:12.5px;--fs-desc:13px;--fs-body:14px;--fs-sec:16px;--fs-card:17px;--fs-stat:20px;}
+
 /* ═══ MANMIN 출력 버튼 규격 v5.1 — 전 39종 공통 ═══════════════
    주(主) 인쇄·PDF = 남색 채움 / 보조 JPG = 남색 선
    색상 #1E3A5F 는 분야색이 아닌 뼈대색이므로 39종 전부 동일하다. */
 .mm-out{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-bottom:14px;}
 .mm-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;
   height:40px;padding:0 20px;border-radius:10px;border:1.5px solid transparent;
-  font-family:'Noto Sans KR','Noto Sans KR Local',sans-serif;
+  font-family:'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif;
   font-size:13px;font-weight:700;letter-spacing:-0.01em;line-height:1;
   white-space:nowrap;cursor:pointer;
   transition:filter .15s ease,transform .15s ease,box-shadow .15s ease;}
@@ -74,8 +76,8 @@
 }
 
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Noto Sans KR','Noto Sans KR Local',sans-serif;background:#f1f5f9;-webkit-font-smoothing:antialiased;}
-input,select,button,td,th,div,span,p,h1,h2,label{font-family:'Noto Sans KR','Noto Sans KR Local',sans-serif !important;}
+body{font-family:'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif;background:#f1f5f9;-webkit-font-smoothing:antialiased;}
+input,select,button,td,th,div,span,p,h1,h2,label{font-family:'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif !important;}
 /* v5.0-HDR (2026-09-02) — 각인은 클래스 특이성으로 태그목록 규칙을 이긴다(§3-7). 태그목록·계산서는 손대지 않는다 */
 .hdr-manmin{font-family:'Orbitron',sans-serif !important;}
 input[type=number]::-webkit-inner-spin-button{opacity:0.5;}
@@ -107,11 +109,11 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.5;}
 #dev-stamp{
   display:block;
   text-align:right;
-  font-size:10px;
+  font-size:11px;
   color:#9ca3af;
   letter-spacing:0.05em;
   padding-top:14px;
-  font-family:'Noto Sans KR','Noto Sans KR Local',sans-serif;
+  font-family:'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif;
 }
 
 /* ── 반응형 그리드 클래스 ── */
@@ -132,25 +134,25 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.5;}
 /* 계산식 안내 floating button */
 .formula-fab{
   position:fixed;bottom:80px;right:16px;z-index:1000;
-  background:linear-gradient(135deg,#450a0a,#991b1b,#b91c1c);
+  background:linear-gradient(135deg,#052e16,#14532d,#15803d);
   color:white;border:none;border-radius:14px;
   padding:10px 14px;font-size:11px;font-weight:800;
-  cursor:pointer;box-shadow:0 4px 18px rgba(153,27,27,0.50);
+  cursor:pointer;box-shadow:0 4px 18px rgba(22,101,52,0.50);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  line-height:1.3;gap:2px;font-family:'Noto Sans KR','Noto Sans KR Local',sans-serif;
+  line-height:1.3;gap:2px;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif;
   transition:transform 0.15s,box-shadow 0.15s;
 }
-.formula-fab:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(153,27,27,0.68);}
+.formula-fab:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(22,101,52,0.68);}
 
 /* ══ PWA 설치 FAB ══ */
 .pwa-install-fab{
   position:fixed;bottom:18px;right:18px;z-index:1100;
-  background:linear-gradient(135deg,#DC2626 0%,#991B1B 100%);
+  background:linear-gradient(135deg,#16a34a 0%,#166534 100%);
   color:white;border:none;border-radius:14px;
   padding:10px 14px;cursor:pointer;
-  box-shadow:0 4px 20px rgba(220,38,38,0.60);
+  box-shadow:0 4px 20px rgba(22,163,74,0.60);
   display:flex;flex-direction:column;align-items:center;gap:2px;
-  font-family:'Noto Sans KR','Noto Sans KR Local',sans-serif;line-height:1.3;
+  font-family:'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif;line-height:1.3;
   transition:transform 0.15s,box-shadow 0.15s;
   animation:pwaFabIn 0.55s cubic-bezier(0.34,1.56,0.64,1) forwards;
 }
@@ -158,11 +160,11 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.5;}
   from{opacity:0;transform:scale(0.3) rotate(-25deg);}
   to{opacity:1;transform:scale(1) rotate(0deg);}
 }
-.pwa-install-fab:hover{transform:translateY(-3px) scale(1.06);box-shadow:0 8px 28px rgba(220,38,38,0.75);}
+.pwa-install-fab:hover{transform:translateY(-3px) scale(1.06);box-shadow:0 8px 28px rgba(22,163,74,0.75);}
 .pwa-install-fab:active{transform:scale(0.97);}
 .pwa-install-fab-badge{
   position:absolute;top:-7px;right:-7px;
-  background:#f59e0b;color:#fff;font-size:8px;font-weight:900;
+  background:#f59e0b;color:#fff;font-size:11px;font-weight:900;
   width:19px;height:19px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;
   border:2px solid white;
@@ -175,20 +177,20 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.5;}
 /* 계산식 안내 모달 */
 .fml-overlay{position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:12px;}
 .fml-box{position:relative;background:white;border-radius:18px;padding:0;max-width:720px;width:100%;max-height:90vh;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,0.3);display:flex;flex-direction:column;}
-.fml-head{background:linear-gradient(135deg,#450a0a,#991b1b,#b91c1c);color:white;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.fml-head{background:linear-gradient(135deg,#052e16,#14532d,#15803d);color:white;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .fml-body{overflow-y:auto;padding:20px 22px;-webkit-overflow-scrolling:touch;}
 .fml-body::-webkit-scrollbar{width:6px;}
-.fml-body::-webkit-scrollbar-thumb{background:#fca5a5;border-radius:3px;}
+.fml-body::-webkit-scrollbar-thumb{background:#86efac;border-radius:3px;}
 .fml-sec{margin-bottom:22px;}
-.fml-sec-title{font-size:12px;font-weight:800;color:#991b1b;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;display:flex;align-items:center;gap:6px;border-left:3px solid #b91c1c;padding-left:8px;}
+.fml-sec-title{font-size:12px;font-weight:800;color:#166534;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;display:flex;align-items:center;gap:6px;border-left:3px solid #15803d;padding-left:8px;}
 .fml-card{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px;margin-bottom:8px;}
-.fml-eq{font-family:'JetBrains Mono','Noto Sans KR',monospace;font-size:13px;font-weight:700;color:#7f1d1d;background:#fef2f2;border-radius:6px;padding:6px 10px;margin:6px 0;display:block;word-break:break-all;}
-.fml-note{font-size:10px;color:#6b7280;margin-top:4px;line-height:1.7;}
+.fml-eq{font-family:'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace;font-size:13px;font-weight:700;color:#14532d;background:#f0fdf4;border-radius:6px;padding:6px 10px;margin:6px 0;display:block;word-break:break-all;}
+.fml-note{font-size:11px;color:#6b7280;margin-top:4px;line-height:1.7;}
 .fml-itabs{display:flex;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;flex-shrink:0;background:rgba(0,0,0,.25);}
 .fml-itabs::-webkit-scrollbar{display:none;}
 .fml-itab{padding:9px 15px;border:none;background:transparent;color:rgba(255,255,255,.6);font-size:11.5px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .15s;flex-shrink:0;}
 .fml-itab:hover:not(.on){color:rgba(255,255,255,.88);}
-.fml-itab.on{color:#fff;border-bottom-color:#fca5a5;}
+.fml-itab.on{color:#fff;border-bottom-color:#86efac;}
 .fml-panel{display:none;}
 .fml-panel.on{display:block;}
 /* 반응형 브레이크포인트 */
@@ -219,7 +221,7 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.5;}
 
 /* PWA 설치 배너 */
 .pwa-install-banner{
-  background:linear-gradient(135deg,#DC2626 0%,#991B1B 100%);
+  background:linear-gradient(135deg,#16a34a 0%,#166534 100%);
   border:1px solid rgba(255,255,255,0.2);
   animation:slideUp 0.4s ease-out;
 }
@@ -297,19 +299,19 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.5;}
 /* ── PWA 헤더 설치 버튼 ── */
 #pwa-hdr-btn{
   display:none;align-items:center;gap:6px;
-  background:linear-gradient(135deg,#f97316,#ea580c);
+  background:linear-gradient(135deg,#22c55e,#16a34a);
   color:#fff;border:none;padding:8px 14px;border-radius:8px;
   font-size:12px;font-weight:800;cursor:pointer;
-  font-family:'Noto Sans KR','Noto Sans KR Local',sans-serif;
+  font-family:'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif;
   white-space:nowrap;flex-shrink:0;
   transition:all .15s;animation:hdr-pulse 2.2s ease-in-out infinite;
   position:relative;z-index:10;
 }
 #pwa-hdr-btn.visible{display:flex;}
-#pwa-hdr-btn:hover{background:linear-gradient(135deg,#ea580c,#c2410c);transform:translateY(-1px);}
+#pwa-hdr-btn:hover{background:linear-gradient(135deg,#16a34a,#15803d);transform:translateY(-1px);}
 @keyframes hdr-pulse{
-  0%,100%{box-shadow:0 2px 8px rgba(249,115,22,.5);}
-  50%{box-shadow:0 2px 20px rgba(249,115,22,.85);}
+  0%,100%{box-shadow:0 2px 8px rgba(34,197,94,.5);}
+  50%{box-shadow:0 2px 20px rgba(34,197,94,.85);}
 }
 @media(max-width:520px){#pwa-hdr-btn .pwa-hdr-txt{display:none;}}
 @media print{#pwa-hdr-btn{display:none!important;}}
@@ -317,6 +319,19 @@ input[type=number]::-webkit-inner-spin-button{opacity:0.5;}
 <style id="mm-r1">/* R1 (2026-09-04 · 지시서 §20-1 · S10 소급) — 인쇄 PDF 하단 각인 MANMIN · Ver 비표시. 버전은 A4 푸터 [MANMIN-Ver5.1] 이 담당 */
 #dev-stamp,#dev-stamp-print,#mm-print-stamp,.dev-stamp{display:none!important;}
 @media print{#dev-stamp,#dev-stamp-print,#mm-print-stamp,.dev-stamp{display:none!important;}}</style>
+<style id="mm-foot-css">/* 하단 버전 표시 — 건축 도구와 같은 형식 · 화면 폭 전체 (2026-10-31) */
+footer.mm-foot{position:relative;z-index:1;border-top:1px solid #e4e9f0;background:#fff;padding:20px;margin-top:10px;width:100%;box-sizing:border-box;align-self:stretch;font-family:'Pretendard Variable',Pretendard,'Noto Sans KR',sans-serif}
+.mm-foot .foot-inner{max-width:1320px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.mm-foot .foot-nm{font-weight:900;font-size:13px;color:#15803d;letter-spacing:.06em}
+.mm-foot .foot-desc{font-size:11px;color:#64748b;line-height:1.6}
+.mm-foot .foot-copy{font-size:11px;color:#64748b;font-family:'DM Mono',ui-monospace,monospace}
+/* Pretendard 전환 후 헤더 높이를 종전(Noto 기본 줄 높이 1.45)과 같게 */
+.hdr-pad>div:first-child>div:first-child>div:first-child,.hdr-row>div:first-child>div:first-child,.hdr-eyebrow,.tab-bar-wrap>button,.tab-bar-wrap>a,.tab-bar-scroll>button,.tab-bar-scroll>a,.tab-btn,.tb-manual{line-height:1.45}
+.hdr-pad>div:first-child>div:first-child>div:last-child,.hdr-row>div:first-child>div:last-child,.hdr-sub{line-height:1.45}
+.hdr-manmin{line-height:1.3}
+@media(max-width:640px){.hdr-manmin{line-height:1.45}}
+@media print{footer.mm-foot{display:none!important}}
+</style>
 </head>
 <body>
 <div id="root"></div>
@@ -428,14 +443,14 @@ const mkSeg=()=>({flow:130,dia:100,len:0,e90:0,e45:0,teeB:0,teeS:0,gate:0,ball:0
 const BD="1px solid #d1d5db";
 const S={
   border:BD,
-  cell:{border:BD,padding:"4px 6px",textAlign:"center",fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif",fontSize:11},
+  cell:{border:BD,padding:"4px 6px",textAlign:"center",fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif",fontSize:11},
 };
 
 /* 섹션 헤더 공통 스타일 (Ⅱ-1~4 통일) */
 const SEC_TITLE_STYLE={
   background:"#1e3a5f",color:"white",padding:"7px 14px",
   fontWeight:800,fontSize:13,borderRadius:"6px 6px 0 0",
-  letterSpacing:"0.04em",fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif",
+  letterSpacing:"0.04em",fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif",
 };
 
 /* ═══ 컴포넌트 ═══════════════════════════════════════════════ */
@@ -449,7 +464,7 @@ function Box({title,accent,children}){
         color:"white",padding:"10px 18px",
         fontSize:12,fontWeight:800,letterSpacing:"0.04em",
         display:"flex",alignItems:"center",gap:8,
-        fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"
+        fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"
       }}>
         <span style={{fontSize:15,opacity:0.85}}>◆</span>{title}
       </div>
@@ -460,12 +475,12 @@ function Box({title,accent,children}){
   );
 }
 function LabelEl({children}){return <label style={{display:"block",fontSize:11,fontWeight:700,color:"#6b7280",textTransform:"none",letterSpacing:"0.06em",marginBottom:5}}>{children}</label>;}
-function InpText({val,onChange,placeholder}){return <input type="text" value={val} placeholder={placeholder||""} onChange={e=>onChange(e.target.value)} style={{width:"100%",padding:"8px 12px",borderRadius:8,border:BD,background:"white",fontSize:13,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif",outline:"none"}}/>;}
+function InpText({val,onChange,placeholder}){return <input type="text" value={val} placeholder={placeholder||""} onChange={e=>onChange(e.target.value)} style={{width:"100%",padding:"8px 12px",borderRadius:8,border:BD,background:"white",fontSize:13,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif",outline:"none"}}/>;}
 function InpNum({val,onChange,unit,min,max}){
   return(
     <div style={{display:"flex",alignItems:"center",gap:6}}>
       <input type="number" value={val} min={min} max={max} onChange={e=>onChange(parseFloat(e.target.value)||0)}
-        style={{width:"100%",padding:"8px 12px",borderRadius:8,border:BD,background:"white",fontSize:13,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif",outline:"none"}}/>
+        style={{width:"100%",padding:"8px 12px",borderRadius:8,border:BD,background:"white",fontSize:13,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif",outline:"none"}}/>
       {unit&&<span style={{fontSize:12,color:"#6b7280",whiteSpace:"nowrap"}}>{unit}</span>}
     </div>
   );
@@ -473,7 +488,7 @@ function InpNum({val,onChange,unit,min,max}){
 function Sel({val,onChange,children}){
   return(
     <select value={val} onChange={e=>onChange(isNaN(+e.target.value)?e.target.value:+e.target.value)}
-      style={{width:"100%",padding:"8px 12px",borderRadius:8,border:BD,background:"white",fontSize:13,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif",outline:"none"}}>
+      style={{width:"100%",padding:"8px 12px",borderRadius:8,border:BD,background:"white",fontSize:13,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif",outline:"none"}}>
       {children}
     </select>
   );
@@ -481,22 +496,22 @@ function Sel({val,onChange,children}){
 function Card({label,value,unit,formula,badge,bc}){
   const colors={
     blue:  ["#eff6ff","#1d4ed8","#bfdbfe"],
-    orange:["#fff7ed","#c2410c","#fed7aa"],
-    red:   ["#fef2f2","#b91c1c","#fecaca"],
+    orange:["#f0fdf4","#15803d","#bbf7d0"],
+    red:   ["#f0fdf4","#15803d","#bbf7d0"],
     green: ["#f0fdf4","#15803d","#bbf7d0"],
     default:["#f9fafb","#374151","#e5e7eb"],
   };
   const [bg,tc,bc2]=colors[bc]||colors.default;
   return(
     <div style={{background:bg,border:`1.5px solid ${bc2}`,borderRadius:12,padding:"12px 14px"}}>
-      <div style={{fontSize:10,fontWeight:700,color:"#9ca3af",textTransform:"none",letterSpacing:"0.08em",marginBottom:4,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+      <div style={{fontSize:11,fontWeight:700,color:"#9ca3af",textTransform:"none",letterSpacing:"0.08em",marginBottom:4,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
         <span>{label}</span>
-        {badge&&<span style={{background:tc,color:"white",borderRadius:4,padding:"1px 6px",fontSize:9,fontWeight:700}}>{badge}</span>}
+        {badge&&<span style={{background:tc,color:"white",borderRadius:4,padding:"1px 6px",fontSize:11,fontWeight:700}}>{badge}</span>}
       </div>
-      <div style={{fontSize:22,fontWeight:900,color:tc,fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",lineHeight:1.1}}>
-        {value}<span style={{fontSize:12,color:"#9ca3af",marginLeft:4,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>{unit}</span>
+      <div style={{fontSize:22,fontWeight:900,color:tc,fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",lineHeight:1.1}}>
+        {value}<span style={{fontSize:12,color:"#9ca3af",marginLeft:4,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>{unit}</span>
       </div>
-      {formula&&<div style={{fontSize:10,color:"#6b7280",marginTop:5,fontFamily:"'JetBrains Mono','Noto Sans KR',monospace"}}>{formula}</div>}
+      {formula&&<div style={{fontSize:11,color:"#6b7280",marginTop:5,fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace"}}>{formula}</div>}
     </div>
   );
 }
@@ -506,7 +521,7 @@ function RSection({title,children}){
   return(
     <div style={{marginBottom:18,border:"1.5px solid #1e3a5f",borderRadius:8,overflow:"hidden"}}>
       <div style={{...SEC_TITLE_STYLE,borderRadius:0}}>{title}</div>
-      <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
+      <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
         <thead>
           <tr style={{background:"#f8fafc"}}>
             {["기호","항목","수치","단위","산출 근거"].map(h=>(
@@ -529,9 +544,9 @@ function RSection({title,children}){
 function RRow({no,label,value,unit,basis,hi}){
   return(
     <tr style={{background:hi?"#fefce8":"white"}}>
-      <td style={{border:BD,padding:"5px 10px",textAlign:"center",fontWeight:700,color:hi?"#a16207":"#374151",fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",width:36}}>{no}</td>
+      <td style={{border:BD,padding:"5px 10px",textAlign:"center",fontWeight:700,color:hi?"#a16207":"#374151",fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",width:36}}>{no}</td>
       <td style={{border:BD,padding:"5px 12px",color:"#374151",whiteSpace:"nowrap"}}>{label}</td>
-      <td style={{border:BD,padding:"5px 12px",textAlign:"right",fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",fontWeight:hi?900:600,color:hi?"#a16207":"#111827",fontSize:hi?13:12,whiteSpace:"nowrap"}}>{value}</td>
+      <td style={{border:BD,padding:"5px 12px",textAlign:"right",fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",fontWeight:hi?900:600,color:hi?"#a16207":"#111827",fontSize:hi?13:12,whiteSpace:"nowrap"}}>{value}</td>
       <td style={{border:BD,padding:"5px 8px",textAlign:"center",color:"#6b7280",whiteSpace:"nowrap"}}>{unit}</td>
       <td style={{border:BD,padding:"5px 12px",color:"#6b7280",fontSize:11}}>{basis}</td>
     </tr>
@@ -566,22 +581,22 @@ function FormulaModal({onClose}){
           <div className={`fml-panel${itab==='howto'?' on':''}`}>
 
             {/* 상단 배너 */}
-            <div style={{background:"linear-gradient(135deg,#450a0a,#991b1b,#b91c1c)",borderRadius:13,padding:"16px 18px",marginBottom:16}}>
+            <div style={{background:"linear-gradient(135deg,#052e16,#14532d,#15803d)",borderRadius:13,padding:"16px 18px",marginBottom:16}}>
               <div style={{fontSize:13,fontWeight:900,color:"#fbbf24",marginBottom:5,display:"flex",alignItems:"center",gap:8}}>
                 <span style={{fontSize:20}}>🚒</span> 옥내소화전 펌프 용량 계산서 이용방법
               </div>
-              <div style={{fontSize:10.5,color:"rgba(255,255,255,.7)",lineHeight:1.65}}>
+              <div style={{fontSize:11,color:"rgba(255,255,255,.7)",lineHeight:1.65}}>
                 NFPC 102 / NFTC 102·604 · Hazen-Williams Formula · MANMIN Ver-5.1<br/>
                 아래 순서대로 입력하면 수원·양정·동력이 자동으로 산출됩니다.
               </div>
             </div>
 
             {/* STEP 1 */}
-            <div style={{display:"flex",gap:11,alignItems:"flex-start",background:"#f8fafc",border:"1.5px solid #e2e8f0",borderLeft:"4px solid #991b1b",borderRadius:10,padding:"13px 14px",marginBottom:9}}>
-              <div style={{minWidth:30,height:30,background:"linear-gradient(135deg,#991b1b,#450a0a)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:900,color:"#fff",flexShrink:0,boxShadow:"0 2px 8px rgba(153,27,27,.35)"}}>1</div>
+            <div style={{display:"flex",gap:11,alignItems:"flex-start",background:"#f8fafc",border:"1.5px solid #e2e8f0",borderLeft:"4px solid #166534",borderRadius:10,padding:"13px 14px",marginBottom:9}}>
+              <div style={{minWidth:30,height:30,background:"linear-gradient(135deg,#166534,#052e16)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:900,color:"#fff",flexShrink:0,boxShadow:"0 2px 8px rgba(22,101,52,.35)"}}>1</div>
               <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:12,fontWeight:900,color:"#991b1b",marginBottom:5}}>📋 프로젝트 기본 정보 입력</div>
-                <div style={{fontSize:10.5,color:"#374151",lineHeight:1.85}}>
+                <div style={{fontSize:12,fontWeight:900,color:"#166534",marginBottom:5}}>📋 프로젝트 기본 정보 입력</div>
+                <div style={{fontSize:11,color:"#374151",lineHeight:1.85}}>
                   ① <strong>공사명·설계자·날짜</strong>를 입력합니다 — 출력 계산서 상단에 표기됩니다.<br/>
                   ② 상단 <strong>「① 데이터 입력」</strong> 탭에서 시스템 기본 조건을 설정합니다.<br/>
                   ③ 입력한 내용은 실시간으로 계산서에 자동 반영됩니다.
@@ -590,11 +605,11 @@ function FormulaModal({onClose}){
             </div>
 
             {/* STEP 2 */}
-            <div style={{display:"flex",gap:11,alignItems:"flex-start",background:"#fef2f2",border:"1.5px solid #fecaca",borderLeft:"4px solid #b91c1c",borderRadius:10,padding:"13px 14px",marginBottom:9}}>
-              <div style={{minWidth:30,height:30,background:"linear-gradient(135deg,#b91c1c,#991b1b)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:900,color:"#fff",flexShrink:0,boxShadow:"0 2px 8px rgba(185,28,28,.35)"}}>2</div>
+            <div style={{display:"flex",gap:11,alignItems:"flex-start",background:"#f0fdf4",border:"1.5px solid #bbf7d0",borderLeft:"4px solid #15803d",borderRadius:10,padding:"13px 14px",marginBottom:9}}>
+              <div style={{minWidth:30,height:30,background:"linear-gradient(135deg,#15803d,#166534)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:900,color:"#fff",flexShrink:0,boxShadow:"0 2px 8px rgba(21,128,61,.35)"}}>2</div>
               <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:12,fontWeight:900,color:"#b91c1c",marginBottom:5}}>🟦 수원 용량 조건 설정</div>
-                <div style={{fontSize:10.5,color:"#374151",lineHeight:1.85}}>
+                <div style={{fontSize:12,fontWeight:900,color:"#15803d",marginBottom:5}}>🟦 수원 용량 조건 설정</div>
+                <div style={{fontSize:11,color:"#374151",lineHeight:1.85}}>
                   ① <strong>건축물 규모</strong>를 고릅니다 — 일반(29층↓) / 고층(30~49층) / 초고층(50층↑) (NFTC 604 — 높이 120 m 이상도 고층건축물).<br/>
                   ② <strong>가장 많은 층의 소화전 수</strong>를 입력하면 기준개수(일반 2개·고층 5개)가 자동 제한됩니다.<br/>
                   ③ 수원 용량(m³) = 기준개수 × 130 ℓ/min × 방수시간(T) ÷ 1,000이 자동 계산됩니다.<br/>
@@ -604,11 +619,11 @@ function FormulaModal({onClose}){
             </div>
 
             {/* STEP 3 */}
-            <div style={{display:"flex",gap:11,alignItems:"flex-start",background:"#fff1f2",border:"1.5px solid #fecdd3",borderLeft:"4px solid #dc2626",borderRadius:10,padding:"13px 14px",marginBottom:9}}>
-              <div style={{minWidth:30,height:30,background:"linear-gradient(135deg,#dc2626,#b91c1c)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:900,color:"#fff",flexShrink:0,boxShadow:"0 2px 8px rgba(220,38,38,.35)"}}>3</div>
+            <div style={{display:"flex",gap:11,alignItems:"flex-start",background:"#f0fdf4",border:"1.5px solid #bbf7d0",borderLeft:"4px solid #16a34a",borderRadius:10,padding:"13px 14px",marginBottom:9}}>
+              <div style={{minWidth:30,height:30,background:"linear-gradient(135deg,#16a34a,#15803d)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:900,color:"#fff",flexShrink:0,boxShadow:"0 2px 8px rgba(22,163,74,.35)"}}>3</div>
               <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:12,fontWeight:900,color:"#dc2626",marginBottom:5}}>🟧 펌프 양정 조건 입력</div>
-                <div style={{fontSize:10.5,color:"#374151",lineHeight:1.85}}>
+                <div style={{fontSize:12,fontWeight:900,color:"#16a34a",marginBottom:5}}>🟧 펌프 양정 조건 입력</div>
+                <div style={{fontSize:11,color:"#374151",lineHeight:1.85}}>
                   ① <strong>실양정(흡입+토출 m)</strong>을 입력합니다 — 펌프 설치 위치에서 최고 소화전까지의 높이.<br/>
                   ①-1 <strong>최저층 방수구 높이</strong>(펌프 기준, 낮으면 음수)를 넣으면 감압장치(0.7 MPa 초과) 판정이 나옵니다.<br/>
                   ② <strong>호스 길이(m)·호스 종류</strong>를 선택합니다 — 관경별·재질별 마찰손실이 자동 적용됩니다.<br/>
@@ -619,11 +634,11 @@ function FormulaModal({onClose}){
             </div>
 
             {/* STEP 4 */}
-            <div style={{display:"flex",gap:11,alignItems:"flex-start",background:"#fef2f2",border:"1.5px solid #fecaca",borderLeft:"4px solid #dc2626",borderRadius:10,padding:"13px 14px",marginBottom:9}}>
-              <div style={{minWidth:30,height:30,background:"linear-gradient(135deg,#dc2626,#b91c1c)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:900,color:"#fff",flexShrink:0,boxShadow:"0 2px 8px rgba(220,38,38,.35)"}}>4</div>
+            <div style={{display:"flex",gap:11,alignItems:"flex-start",background:"#f0fdf4",border:"1.5px solid #bbf7d0",borderLeft:"4px solid #16a34a",borderRadius:10,padding:"13px 14px",marginBottom:9}}>
+              <div style={{minWidth:30,height:30,background:"linear-gradient(135deg,#16a34a,#15803d)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:900,color:"#fff",flexShrink:0,boxShadow:"0 2px 8px rgba(22,163,74,.35)"}}>4</div>
               <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:12,fontWeight:900,color:"#b91c1c",marginBottom:5}}>🟥 전동기 동력 조건 설정</div>
-                <div style={{fontSize:10.5,color:"#374151",lineHeight:1.85}}>
+                <div style={{fontSize:12,fontWeight:900,color:"#15803d",marginBottom:5}}>🟥 전동기 동력 조건 설정</div>
+                <div style={{fontSize:11,color:"#374151",lineHeight:1.85}}>
                   ① <strong>펌프 토출구경</strong>을 고르고 <strong>펌프 효율(η)</strong>을 입력합니다 — 입력란 아래 구경별 참고 효율(MANMIN 참고값) · 제조사 성능곡선으로 확인.<br/>
                   ② <strong>전달 방식</strong>(전동기 직결·이외 원동기)을 선택합니다 — 전달계수 K가 자동 적용됩니다.<br/>
                   ③ 이론 출력(kW) 계산 후 HP로 환산하여 <strong>상위 표준 규격</strong>이 자동 선정됩니다.
@@ -632,11 +647,11 @@ function FormulaModal({onClose}){
             </div>
 
             {/* STEP 5 */}
-            <div style={{display:"flex",gap:11,alignItems:"flex-start",background:"#fff1f2",border:"1.5px solid #fca5a5",borderLeft:"4px solid #450a0a",borderRadius:10,padding:"13px 14px",marginBottom:16}}>
-              <div style={{minWidth:30,height:30,background:"linear-gradient(135deg,#450a0a,#7f1d1d)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:900,color:"#fff",flexShrink:0,boxShadow:"0 2px 8px rgba(69,10,10,.4)"}}>5</div>
+            <div style={{display:"flex",gap:11,alignItems:"flex-start",background:"#f0fdf4",border:"1.5px solid #86efac",borderLeft:"4px solid #052e16",borderRadius:10,padding:"13px 14px",marginBottom:16}}>
+              <div style={{minWidth:30,height:30,background:"linear-gradient(135deg,#052e16,#14532d)",borderRadius:"50%",display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:900,color:"#fff",flexShrink:0,boxShadow:"0 2px 8px rgba(5,46,22,.4)"}}>5</div>
               <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:12,fontWeight:900,color:"#7f1d1d",marginBottom:5}}>🖨️ 결과 확인 및 출력</div>
-                <div style={{fontSize:10.5,color:"#374151",lineHeight:1.85}}>
+                <div style={{fontSize:12,fontWeight:900,color:"#14532d",marginBottom:5}}>🖨️ 결과 확인 및 출력</div>
+                <div style={{fontSize:11,color:"#374151",lineHeight:1.85}}>
                   ① <strong>「② 계산 결과」</strong> 탭에서 결과를, <strong>「③ 계산서 출력」</strong> 탭에서 A4 계산서를 확인합니다.<br/>
                   ② 계산서 위 <strong>🖨️ 인쇄 · PDF</strong> 버튼으로 A4 출력 · PDF 저장합니다.<br/>
                   ③ <strong>🖼️ JPG 저장</strong> 버튼으로 A4 쪽 그림을 저장합니다.<br/>
@@ -648,28 +663,28 @@ function FormulaModal({onClose}){
             {/* 주요 기능 */}
             <div className="fml-sec-title" style={{marginTop:0}}>💡 주요 기능 안내</div>
             <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8,marginBottom:10}}>
-              <div className="fml-card" style={{borderLeft:"3px solid #991b1b"}}>
-                <div style={{fontSize:11,fontWeight:800,color:"#991b1b",marginBottom:4}}>📐 계산식 안내 버튼</div>
+              <div className="fml-card" style={{borderLeft:"3px solid #166534"}}>
+                <div style={{fontSize:11,fontWeight:800,color:"#166534",marginBottom:4}}>📐 계산식 안내 버튼</div>
                 <div className="fml-note">우측 하단 플로팅 버튼(FAB)을 클릭하면 이 창이 열립니다. 탭을 전환하여 수원·양정·동력·상당직관 계산식을 확인하세요.</div>
               </div>
-              <div className="fml-card" style={{borderLeft:"3px solid #b91c1c"}}>
-                <div style={{fontSize:11,fontWeight:800,color:"#b91c1c",marginBottom:4}}>⚡ 실시간 자동 계산</div>
+              <div className="fml-card" style={{borderLeft:"3px solid #15803d"}}>
+                <div style={{fontSize:11,fontWeight:800,color:"#15803d",marginBottom:4}}>⚡ 실시간 자동 계산</div>
                 <div className="fml-note">모든 입력값 변경 즉시 수원·양정·동력이 실시간 재산출됩니다. 별도 계산 버튼 없이 값만 변경하면 됩니다.</div>
               </div>
-              <div className="fml-card" style={{borderLeft:"3px solid #dc2626"}}>
-                <div style={{fontSize:11,fontWeight:800,color:"#dc2626",marginBottom:4}}>🔩 배관 세그먼트 추가</div>
+              <div className="fml-card" style={{borderLeft:"3px solid #16a34a"}}>
+                <div style={{fontSize:11,fontWeight:800,color:"#16a34a",marginBottom:4}}>🔩 배관 세그먼트 추가</div>
                 <div className="fml-note">「+ 세그먼트 추가」 버튼으로 구간별 배관을 등록합니다. 관경·길이·관부속 수량을 입력하면 상당직관 및 마찰손실이 자동 계산됩니다.</div>
               </div>
-              <div className="fml-card" style={{borderLeft:"3px solid #7f1d1d"}}>
-                <div style={{fontSize:11,fontWeight:800,color:"#7f1d1d",marginBottom:4}}>📋 법적 기준 자동 적용</div>
+              <div className="fml-card" style={{borderLeft:"3px solid #14532d"}}>
+                <div style={{fontSize:11,fontWeight:800,color:"#14532d",marginBottom:4}}>📋 법적 기준 자동 적용</div>
                 <div className="fml-note">층수 입력 시 NFTC 102 기준에 따라 소화전 기준개수·방수시간·최소 수원이 자동 분기 적용됩니다.</div>
               </div>
             </div>
 
             {/* 법적 근거 */}
-            <div style={{border:"1.5px solid #fca5a5",background:"#fef2f2",borderRadius:10,padding:"12px 13px"}}>
-              <div style={{fontSize:11,fontWeight:800,color:"#991b1b",marginBottom:6}}>📌 주요 법적 근거</div>
-              <div className="fml-note" style={{fontSize:10.5,lineHeight:2.1}}>
+            <div style={{border:"1.5px solid #86efac",background:"#f0fdf4",borderRadius:10,padding:"12px 13px"}}>
+              <div style={{fontSize:11,fontWeight:800,color:"#166534",marginBottom:6}}>📌 주요 법적 근거</div>
+              <div className="fml-note" style={{fontSize:11,lineHeight:2.1}}>
                 <strong>NFPC 102</strong> — 옥내소화전설비의 화재안전성능기준 [소방청고시 제2025-25호 · 2026. 3. 1. 시행] (제4조 수원 · 제5조 가압송수장치)<br/>
                 <strong>NFTC 102</strong> — 옥내소화전설비의 화재안전기술기준 [국립소방연구원공고 제2026-34호 · 2026. 7. 1. 시행] (2.1 수원 · 2.2 가압송수장치 · 2.3 배관)<br/>
                 <strong>NFTC 604</strong> — 고층건축물의 화재안전기술기준 [공고 제2023-44호] (2.1.1 수원 5.2 · 7.8 m³ · 2.1.2 옥상수조)<br/>
@@ -735,8 +750,8 @@ function FormulaModal({onClose}){
                 <code className="fml-eq">H = 17 m &nbsp;(고정) &nbsp;← 0.17 MPa = 1.7 kgf/cm² = 17 m</code>
                 <div className="fml-note">NFPC 102 제5조①3호 · NFTC 102 2.2.1.3: 노즐선단 방수압력 0.17 MPa 이상(0.7 MPa 초과 시 감압장치) → 수두 17 m 적용</div>
               </div>
-              <div className="fml-card" style={{border:"1.5px solid #fed7aa",background:"#fff7ed"}}>
-                <div style={{fontSize:12,fontWeight:700,color:"#c2410c",marginBottom:4}}>J. 전양정 — 최종 결과값</div>
+              <div className="fml-card" style={{border:"1.5px solid #bbf7d0",background:"#f0fdf4"}}>
+                <div style={{fontSize:12,fontWeight:700,color:"#15803d",marginBottom:4}}>J. 전양정 — 최종 결과값</div>
                 <code className="fml-eq" style={{background:"#fef3c7",color:"#92400e"}}>J = (E + F + G + H) × 1.1 &nbsp;→ 올림(ceil) [m]</code>
                 <div className="fml-note">
                   안전율 10% 가산: I = (E+F+G+H) × 0.1 — <b>MANMIN 참고값</b>(화재안전기준에 펌프 양정 식 · 안전율 수치 없음. 참고: 고가수조 낙차 NFTC 102 식 2.2.2.1 H = h₁ + h₂ + 17)<br/>
@@ -758,9 +773,9 @@ function FormulaModal({onClose}){
           <div className={`fml-panel${itab==='power'?' on':''}`}>
             <div className="fml-sec">
               <div className="fml-sec-title">🟥 Ⅱ-3. 전동기 동력 계산</div>
-              <div className="fml-card" style={{border:"1.5px solid #fecaca",background:"#fef2f2"}}>
-                <div style={{fontSize:12,fontWeight:700,color:"#b91c1c",marginBottom:4}}>P. 전동기 이론 출력 (kW)</div>
-                <code className="fml-eq" style={{background:"#fee2e2",color:"#7f1d1d"}}>P = 0.163 × M × J × K ÷ η &nbsp;[kW]</code>
+              <div className="fml-card" style={{border:"1.5px solid #bbf7d0",background:"#f0fdf4"}}>
+                <div style={{fontSize:12,fontWeight:700,color:"#15803d",marginBottom:4}}>P. 전동기 이론 출력 (kW)</div>
+                <code className="fml-eq" style={{background:"#dcfce7",color:"#14532d"}}>P = 0.163 × M × J × K ÷ η &nbsp;[kW]</code>
                 <div className="fml-note">
                   0.163 : 단위환산 상수 (ρ×g/60,000)<br/>
                   M : 토출량 (m³/min) = C ÷ 1,000<br/>
@@ -793,7 +808,7 @@ function FormulaModal({onClose}){
             </div>
           </div>
 
-          <div style={{textAlign:"center",fontSize:10,color:"#9ca3af",paddingTop:8,borderTop:"1px solid #f1f5f9"}}>
+          <div style={{textAlign:"center",fontSize:11,color:"#9ca3af",paddingTop:8,borderTop:"1px solid #f1f5f9"}}>
             NFPC 102 / NFTC 102·604 · Hazen-Williams Formula · MANMIN Ver-5.1
           </div>
         </div>
@@ -908,10 +923,10 @@ function App(){
 
   return(
     <>
-    <div style={{minHeight:"100vh",background:"linear-gradient(135deg,#fff7f0 0%,#f1f5f9 100%)",fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
+    <div style={{minHeight:"100vh",background:"linear-gradient(135deg,#fff7f0 0%,#f1f5f9 100%)",fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
 
       {/* ── 헤더 ── */}
-      <div className="no-print" style={{background:"linear-gradient(135deg,#450a0a,#991b1b,#b91c1c)",color:"white",padding:"20px 0 0",boxShadow:"0 2px 20px rgba(153,27,27,.35)"}}>
+      <div className="no-print" style={{background:"linear-gradient(135deg,#052e16,#14532d,#15803d)",color:"white",padding:"20px 0 0",boxShadow:"0 2px 20px rgba(21,128,61,.35)"}}>
         <div className="hdr-pad" style={{maxWidth:1300,margin:"0 auto",padding:"0 24px"}}>
           <div className="hdr-row">
             <div>
@@ -921,9 +936,9 @@ function App(){
               <h1 className="hdr-h1" style={{fontSize:26,fontWeight:900,letterSpacing:"0.04em",lineHeight:1.2}}>
                 옥내소화전 펌프 용량 계산서
               </h1>
-              <div style={{fontSize:11,marginTop:8,opacity:0.85,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif",letterSpacing:"0.02em"}}>
+              <div style={{fontSize:11,marginTop:8,opacity:0.85,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif",letterSpacing:"0.02em"}}>
                 Indoor Fire Hydrant Pump Capacity Calculator · NFPC/NFTC 102 적용&nbsp;
-                <span className="hdr-manmin" style={{fontFamily:"'Orbitron',sans-serif",fontWeight:900,fontSize:12,color:"#fca5a5",letterSpacing:"0.08em",textShadow:"0 0 8px rgba(252,165,165,0.6)"}}>
+                <span className="hdr-manmin" style={{fontFamily:"'Orbitron',sans-serif",fontWeight:900,fontSize:12,color:"#86efac",letterSpacing:"0.08em",textShadow:"0 0 8px rgba(134,239,172,0.6)"}}>
                   MANMIN · Ver-5.1
                 </span>
               </div>
@@ -936,7 +951,7 @@ function App(){
               <div style={{fontWeight:700,fontSize:13}}>NFTC 102</div>
               <div>옥내소화전설비의</div>
               <div>화재안전기술기준</div>
-              <div style={{marginTop:4,fontSize:10,color:"#fca5a5"}}>[공고 제2026-34호 · 시행 2026. 7. 1.]</div>
+              <div style={{marginTop:4,fontSize:11,color:"#86efac"}}>[공고 제2026-34호 · 시행 2026. 7. 1.]</div>
             </div>
             </div>
           </div>
@@ -945,16 +960,16 @@ function App(){
             {TABS.map((t,i)=>(
               <button key={i} onClick={()=>setTab(i)} style={{
                 padding:"11px 16px",cursor:"pointer",border:"none",fontWeight:700,fontSize:13,
-                fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif",letterSpacing:"0.02em",
-                background:tab===i?"#c2410c":"transparent",
+                fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif",letterSpacing:"0.02em",
+                background:tab===i?"#15803d":"transparent",
                 color:tab===i?"white":"rgba(255,255,255,0.75)",
-                borderBottom:tab===i?"3px solid #fb923c":"3px solid transparent",
+                borderBottom:tab===i?"3px solid #4ade80":"3px solid transparent",
                 transition:"all 0.15s",
               }}>{t}</button>
             ))}
             <a className="tb-manual" href="https://manminkim-eng.github.io/fire-hydrant-calc/manual/" target="_blank" rel="noopener"
                onClick={e=>{if(navigator.onLine===false){e.preventDefault();const t=document.createElement('div');t.textContent='매뉴얼은 인터넷 연결 시 열립니다';t.style.cssText='position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0f172a;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;z-index:9999';document.body.appendChild(t);setTimeout(()=>t.remove(),2200);}}}
-               style={{marginLeft:"auto",padding:"11px 16px",fontWeight:700,fontSize:13,color:"rgba(255,255,255,0.85)",textDecoration:"none",borderBottom:"3px solid transparent",fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>📘 매뉴얼</a>
+               style={{marginLeft:"auto",padding:"11px 16px",fontWeight:700,fontSize:13,color:"rgba(255,255,255,0.85)",textDecoration:"none",borderBottom:"3px solid transparent",fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>📘 매뉴얼</a>
           </div>
         </div>
       </div>
@@ -964,8 +979,8 @@ function App(){
         <div style={{maxWidth:1300,margin:"0 auto",padding:"0 24px"}} className="sum-bar">
           {[["📌 토출량",`${C.Clpm} ℓ/min`],["💧 수원",`${f3(C.D)}${C.roofEx?"":" + 옥상 "+f3(C.R)} m³`],["📏 전양정",`${C.J} m`],
             ["⚡ 전동기",`${C.Php} HP`],["🔧 배관마찰",`${f3(C.F)} m`],["🌊 호스마찰",`${f3(C.G)} m`]].map(([l,v])=>(
-            <span key={l} style={{fontSize:12,color:"#94a3b8",fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
-              {l}: <b style={{color:"#fb923c",fontFamily:"'JetBrains Mono','Noto Sans KR',monospace"}}>{v}</b>
+            <span key={l} style={{fontSize:12,color:"#94a3b8",fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
+              {l}: <b style={{color:"#4ade80",fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace"}}>{v}</b>
             </span>
           ))}
         </div>
@@ -983,12 +998,12 @@ function App(){
                 <div>
                   <LabelEl>작성일</LabelEl>
                   <input type="date" value={proj.date} onChange={e=>sp("date",e.target.value)}
-                    style={{width:"100%",padding:"8px 12px",borderRadius:8,border:BD,fontSize:13,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif",outline:"none"}}/>
+                    style={{width:"100%",padding:"8px 12px",borderRadius:8,border:BD,fontSize:13,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif",outline:"none"}}/>
                 </div>
               </div>
             </Box>
 
-            <Box title="Ⅰ-1. 옥내소화전 시스템 파라미터 (NFTC 102 · 604 기준)" accent="#991b1b">
+            <Box title="Ⅰ-1. 옥내소화전 시스템 파라미터 (NFTC 102 · 604 기준)" accent="#166534">
               <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(210px,1fr))",gap:14}}>
                 {/* 건축물 규모 */}
                 <div>
@@ -998,7 +1013,7 @@ function App(){
                     <option value={2}>고층 건축물 (30층 ~ 49층)</option>
                     <option value={3}>초고층 건축물 (50층 이상)</option>
                   </Sel>
-                  <div style={{fontSize:10,color:"#0891b2",marginTop:4,fontWeight:600,padding:"3px 8px",background:"#ecfeff",borderRadius:6,border:"1px solid #cffafe"}}>
+                  <div style={{fontSize:11,color:"#0891b2",marginTop:4,fontWeight:600,padding:"3px 8px",background:"#ecfeff",borderRadius:6,border:"1px solid #cffafe"}}>
                     {sys.buildingType==1?"⏱ 방수시간 20분 · 기준개수 최대 2개":sys.buildingType==2?"⏱ 방수시간 40분 · 기준개수 최대 5개":"⏱ 방수시간 60분 · 기준개수 최대 5개"}
                   </div>
                 </div>
@@ -1009,7 +1024,7 @@ function App(){
                     <option value={0}>설치 대상 — 1/3 이상 가산</option>
                     <option value={1}>면제 — NFTC 102 2.1.2 단서 해당</option>
                   </Sel>
-                  <div style={{fontSize:10,color:"#0891b2",marginTop:4,fontWeight:600,padding:"3px 8px",background:"#ecfeff",borderRadius:6,border:"1px solid #cffafe"}}>
+                  <div style={{fontSize:11,color:"#0891b2",marginTop:4,fontWeight:600,padding:"3px 8px",background:"#ecfeff",borderRadius:6,border:"1px solid #cffafe"}}>
                     {sys.roofEx==1?(sys.buildingType==1?"단서 (1) 지하층만 · (2) 고가수조 · (3) 수원이 최상층 방수구보다 높음 · (4) 높이 10 m 이하 · (5) 예비펌프 · (6) 기동스위치 · (7) 가압수조":"⚠ 고층건축물은 NFTC 102 2.1.2 (2) · (3)만 면제 (NFTC 604 2.1.2)"):"NFPC 102 제4조② · NFTC 102 2.1.2 · NFTC 604 2.1.2"}
                   </div>
                 </div>
@@ -1017,13 +1032,13 @@ function App(){
                 <div>
                   <LabelEl>A. 최대구역 소화전 수</LabelEl>
                   <InpNum val={sys.hydrants} min={1} max={10} onChange={v=>ss("hydrants",v)} unit={`개 (최대 ${C.maxN})`}/>
-                  <div style={{fontSize:10,color:"#9ca3af",marginTop:4}}>개당 방수량 130 ℓ/min 이상(계산 130)</div>
+                  <div style={{fontSize:11,color:"#9ca3af",marginTop:4}}>개당 방수량 130 ℓ/min 이상(계산 130)</div>
                 </div>
                 {/* F */}
                 <div><LabelEl>F. 실양정 (h₁)</LabelEl><InpNum val={sys.actualHead} onChange={v=>ss("actualHead",v)} unit="m"/></div>
                 {/* F-1 — v5.1.1 감압장치 판정용 */}
                 <div><LabelEl>F-1. 최저층 방수구 높이 (펌프 기준)</LabelEl><InpNum val={sys.lowHead} onChange={v=>ss("lowHead",v)} unit="m"/>
-                  <div style={{fontSize:10,color:"#9ca3af",marginTop:4}}>펌프보다 낮으면 음수 · 감압장치 판정(NFTC 102 2.2.1.3 단서)</div></div>
+                  <div style={{fontSize:11,color:"#9ca3af",marginTop:4}}>펌프보다 낮으면 음수 · 감압장치 판정(NFTC 102 2.2.1.3 단서)</div></div>
                 {/* G */}
                 <div><LabelEl>G. 호스 길이</LabelEl><Sel val={sys.hoseLen} onChange={v=>ss("hoseLen",parseInt(v))}><option value={15}>15 m</option><option value={30}>30 m</option></Sel></div>
                 {/* 호스 타입 (G 연관) */}
@@ -1051,10 +1066,10 @@ function App(){
                     <input type="number" value={sys.pumpEff} min={10} max={80} step={1}
                       onChange={e=>{const v=Math.min(80,Math.max(10,parseInt(e.target.value)||10));ss("pumpEff",v);}}
                       style={{width:"100%",padding:"8px 12px",borderRadius:8,border:"1px solid #d1d5db",
-                        background:"white",fontSize:13,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif",outline:"none"}}/>
+                        background:"white",fontSize:13,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif",outline:"none"}}/>
                     <span style={{fontSize:12,color:"#6b7280",whiteSpace:"nowrap"}}>%</span>
                   </div>
-                  <div style={{fontSize:10,color:"#6b7280",marginTop:4}}>
+                  <div style={{fontSize:11,color:"#6b7280",marginTop:4}}>
                     참고 구경별 표준: 40A=40% / 50A=45% / 65A=55% / 80A=55% / 100A=60% / 125A=65% / 150A=70%
                   </div>
                 </div>
@@ -1072,12 +1087,12 @@ function App(){
                     {Object.entries(PIPE_CONFIG).map(([k,v])=><option key={k} value={k}>{v.label} (C={v.C})</option>)}
                   </Sel>
                   {["STS","CPVC"].includes(sys.pipeType)&&(
-                    <div style={{marginTop:5,fontSize:10,color:"#0891b2",fontWeight:600,padding:"4px 8px",background:"#ecfeff",borderRadius:6,border:"1px solid #cffafe"}}>
+                    <div style={{marginTop:5,fontSize:11,color:"#0891b2",fontWeight:600,padding:"4px 8px",background:"#ecfeff",borderRadius:6,border:"1px solid #cffafe"}}>
                       ✓ 내식성 배관 — C=150 적용
                     </div>
                   )}
                   {!C.pipePressOK&&(
-                    <div className="mm-pipe-warn" style={{marginTop:5,fontSize:10,color:"#b91c1c",fontWeight:700,padding:"4px 8px",background:"#fef2f2",borderRadius:6,border:"1px solid #fecaca"}}>
+                    <div className="mm-pipe-warn" style={{marginTop:5,fontSize:11,color:"#b91c1c",fontWeight:700,padding:"4px 8px",background:"#fef2f2",borderRadius:6,border:"1px solid #fecaca"}}>
                       ⚠ 사용압력 {ff(C.Pdis,2)} MPa ≥ 1.2 MPa — KS D 3562 · KS D 3583 사용(NFTC 102 2.3.1.2)
                     </div>
                   )}
@@ -1088,7 +1103,7 @@ function App(){
             <Box title="Ⅰ-2. 배관 구간 데이터 입력 (마찰손실 자동 계산)" accent="#1e3a5f">
               <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:10}}>
                 <p style={{fontSize:12,color:"#6b7280"}}>각 구간 유량·관경·직관 길이·관부속 수량 입력 → 손실수두 자동 계산</p>
-                <button onClick={add} style={{padding:"6px 14px",background:"#f97316",color:"white",border:"none",borderRadius:8,cursor:"pointer",fontWeight:700,fontSize:12,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif",flexShrink:0}}>+ 구간 추가</button>
+                <button onClick={add} style={{padding:"6px 14px",background:"#22c55e",color:"white",border:"none",borderRadius:8,cursor:"pointer",fontWeight:700,fontSize:12,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif",flexShrink:0}}>+ 구간 추가</button>
               </div>
               {/* 모바일 스크롤 힌트 */}
               <div className="seg-hint">
@@ -1111,7 +1126,7 @@ function App(){
                         "Gate\nV/V","Ball\nV/V","Angle\nV/V","Check\nV/V",
                         "상당직관\n(m)","마찰계수\n(m/100m)","손실수두\n(m)","유속\n(m/s)",""
                       ].map((h,i)=>(
-                        <th key={i} style={{border:BD,padding:"5px 2px",textAlign:"center",whiteSpace:"pre-line",lineHeight:1.3,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif",fontSize:9,fontWeight:700}}>{h}</th>
+                        <th key={i} style={{border:BD,padding:"5px 2px",textAlign:"center",whiteSpace:"pre-line",lineHeight:1.3,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif",fontSize:11,fontWeight:700}}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -1123,14 +1138,14 @@ function App(){
                       const bg=i%2===0?"white":"#f9fafb";
                       const inp=(k)=>(<input type="number" min="0" value={s[k]||""} placeholder="0"
                         onChange={e=>upd(i,k,parseFloat(e.target.value)||0)}
-                        style={{width:"100%",padding:"2px 2px",textAlign:"center",fontSize:10,border:"1px solid #e5e7eb",borderRadius:4,fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",background:"white"}}/>);
+                        style={{width:"100%",padding:"2px 2px",textAlign:"center",fontSize:11,border:"1px solid #e5e7eb",borderRadius:4,fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",background:"white"}}/>);
                       return(
                         <tr key={i} style={{background:bg}}>
                           <td style={S.cell}><b style={{color:"#374151"}}>{i+1}</b></td>
                           <td style={S.cell}>
                             <select value={s.flow} onChange={e=>upd(i,"flow",+e.target.value)}
-                              style={{width:"100%",padding:"2px 1px",fontSize:10,border:"none",background:"transparent",
-                                fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",textAlign:"center",outline:"none"}}>
+                              style={{width:"100%",padding:"2px 1px",fontSize:11,border:"none",background:"transparent",
+                                fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",textAlign:"center",outline:"none"}}>
                               {[130,260,390,520,650].map(q=>(
                                 <option key={q} value={q}>{q}</option>
                               ))}
@@ -1138,7 +1153,7 @@ function App(){
                           </td>
                           <td style={S.cell}>
                             <select value={s.dia} onChange={e=>upd(i,"dia",+e.target.value)}
-                              style={{width:"100%",padding:"2px 1px",fontSize:10,border:"none",background:"transparent",fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif",outline:"none"}}>
+                              style={{width:"100%",padding:"2px 1px",fontSize:11,border:"none",background:"transparent",fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif",outline:"none"}}>
                               {PIPE_SIZES.map(d=><option key={d} value={d}>{d}</option>)}
                             </select>
                           </td>
@@ -1147,28 +1162,28 @@ function App(){
                           <td style={S.cell}>{inp("teeB")}</td><td style={S.cell}>{inp("teeS")}</td>
                           <td style={S.cell}>{inp("gate")}</td><td style={S.cell}>{inp("ball")}</td>
                           <td style={S.cell}>{inp("angle")}</td><td style={S.cell}>{inp("check")}</td>
-                          <td style={{...S.cell,fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",color:"#374151"}}>{f3(d.fl)}</td>
-                          <td style={{...S.cell,fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",color:"#c2410c",fontWeight:700}}>{f3(d.fric)}</td>
-                          <td style={{...S.cell,fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",color:"#1d4ed8",fontWeight:700}}>{f3(d.hl)}</td>
-                          <td style={{...S.cell,fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",color:vW?"#dc2626":"#374151",fontWeight:vW?700:400}}>{f2(v)}{vW?" ⚠":""}</td>
+                          <td style={{...S.cell,fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",color:"#374151"}}>{f3(d.fl)}</td>
+                          <td style={{...S.cell,fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",color:"#15803d",fontWeight:700}}>{f3(d.fric)}</td>
+                          <td style={{...S.cell,fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",color:"#1d4ed8",fontWeight:700}}>{f3(d.hl)}</td>
+                          <td style={{...S.cell,fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",color:vW?"#dc2626":"#374151",fontWeight:vW?700:400}}>{f2(v)}{vW?" ⚠":""}</td>
                           <td style={S.cell}><button onClick={()=>rem(i)} style={{color:"#ef4444",background:"none",border:"none",cursor:"pointer",fontWeight:700,fontSize:15,lineHeight:1}}>×</button></td>
                         </tr>
                       );
                     })}
-                    <tr style={{background:"#fff7ed",fontWeight:700}}>
-                      <td colSpan={14} style={{...S.cell,textAlign:"right",paddingRight:14,color:"#7c2d12",fontWeight:700,whiteSpace:"nowrap"}}>배관 마찰손실 합계 (h₂) →</td>
-                      <td style={{...S.cell,fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",color:"#c2410c",fontWeight:900,fontSize:13}}>{f3(C.F)}</td>
+                    <tr style={{background:"#f0fdf4",fontWeight:700}}>
+                      <td colSpan={14} style={{...S.cell,textAlign:"right",paddingRight:14,color:"#14532d",fontWeight:700,whiteSpace:"nowrap"}}>배관 마찰손실 합계 (h₂) →</td>
+                      <td style={{...S.cell,fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",color:"#15803d",fontWeight:900,fontSize:13}}>{f3(C.F)}</td>
                       <td colSpan={2} style={{...S.cell,fontSize:11,color:"#9ca3af"}}>m</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-              <div style={{marginTop:8,padding:"8px 14px",background:"#fef2f2",border:"1.5px solid #fca5a5",borderRadius:8,fontSize:11,color:"#991b1b",fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif",fontWeight:600}}>
+              <div style={{marginTop:8,padding:"8px 14px",background:"#f0fdf4",border:"1.5px solid #86efac",borderRadius:8,fontSize:11,color:"#166534",fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif",fontWeight:600}}>
                 ⚠️ <b>유속 제한 (NFTC 102 §2.3.5):</b> 펌프 토출 측 주배관 유속 ≤ 4 m/s — 초과 시 ⚠ 표시
               </div>
-              <div style={{marginTop:8,padding:"10px 14px",background:"#f8fafc",border:"1px solid #e2e8f0",borderRadius:8,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
+              <div style={{marginTop:8,padding:"10px 14px",background:"#f8fafc",border:"1px solid #e2e8f0",borderRadius:8,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
                 <div style={{fontSize:11,fontWeight:700,color:"#374151",marginBottom:6}}>【 관부속 상당직관 적용 참고사항 】</div>
-                <ol style={{margin:0,paddingLeft:18,fontSize:10,color:"#6b7280",lineHeight:2}}>
+                <ol style={{margin:0,paddingLeft:18,fontSize:11,color:"#6b7280",lineHeight:2}}>
                   <li>Elbow, Tee는 <b>나사접합</b>을 기준으로 한 것임.&nbsp;&nbsp;(용접의 경우 손실을 더 적게 적용)</li>
                   <li>Reducer는 <b>45°Elbow</b>와 같다.&nbsp;&nbsp;(다만, 관경이 작은 쪽에 따른다.)</li>
                   <li>Coupling은 <b>직류 Tee</b>와 같다.</li>
@@ -1179,7 +1194,7 @@ function App(){
               </div>
             </Box>
             {/* ── TAB 0 하단 우측 개발자 표기 ── */}
-            <div style={{textAlign:"right",fontFamily:"'Orbitron',sans-serif",fontSize:10,fontWeight:700,color:"#94a3b8",letterSpacing:"0.08em",paddingRight:4}}>
+            <div style={{textAlign:"right",fontFamily:"'Orbitron',sans-serif",fontSize:11,fontWeight:700,color:"#94a3b8",letterSpacing:"0.08em",paddingRight:4}}>
               MANMIN · Ver-5.1
             </div>
           </div>
@@ -1205,24 +1220,24 @@ function App(){
                   <Card label="G. 호스 마찰손실 (h₃)" value={f3(C.G)} unit="m" formula={`${HOSE_TYPES[sys.hoseType]?.rate}×${sys.hoseLen}/100`}/>
                   <Card label="H. 노즐 환산수두 (h₄)" value={NOZZLE_HEAD} unit="m" formula="1.7 kgf/㎠ = 17 m" badge="최소압력" bc="red"/>
                 </div>
-                <div style={{background:"linear-gradient(135deg,#1c0a0a,#450a0a)",borderRadius:14,padding:20}}>
-                  <div style={{color:"#94a3b8",fontSize:10,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:12,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>전양정 계산 과정</div>
+                <div style={{background:"linear-gradient(135deg,#052e16,#052e16)",borderRadius:14,padding:20}}>
+                  <div style={{color:"#94a3b8",fontSize:11,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:12,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>전양정 계산 과정</div>
                   {[["h₁ 실양정",f1(C.E)+" m"],["h₂ 배관마찰",f3(C.F)+" m"],["h₃ 호스마찰",f3(C.G)+" m"],["h₄ 노즐압력",NOZZLE_HEAD+" m"]].map(([l,v])=>(
-                    <div key={l} style={{display:"flex",justifyContent:"space-between",fontSize:13,color:"#cbd5e1",padding:"3px 0",fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
-                      <span>{l}</span><span style={{fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",color:"white"}}>{v}</span>
+                    <div key={l} style={{display:"flex",justifyContent:"space-between",fontSize:13,color:"#cbd5e1",padding:"3px 0",fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
+                      <span>{l}</span><span style={{fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",color:"white"}}>{v}</span>
                     </div>
                   ))}
-                  <div style={{borderTop:"1px solid #334155",padding:"6px 0 0",display:"flex",justifyContent:"space-between",fontSize:13,color:"#94a3b8",fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
-                    <span>소계</span><span style={{fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",color:"white"}}>{f3(C.E+C.F+C.G+C.H4)} m</span>
+                  <div style={{borderTop:"1px solid #334155",padding:"6px 0 0",display:"flex",justifyContent:"space-between",fontSize:13,color:"#94a3b8",fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
+                    <span>소계</span><span style={{fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",color:"white"}}>{f3(C.E+C.F+C.G+C.H4)} m</span>
                   </div>
-                  <div style={{display:"flex",justifyContent:"space-between",fontSize:13,color:"#fbbf24",padding:"2px 0",fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
-                    <span>+ 안전율 (×10%)</span><span style={{fontFamily:"'JetBrains Mono','Noto Sans KR',monospace"}}>{f3(C.I)} m</span>
+                  <div style={{display:"flex",justifyContent:"space-between",fontSize:13,color:"#fbbf24",padding:"2px 0",fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
+                    <span>+ 안전율 (×10%)</span><span style={{fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace"}}>{f3(C.I)} m</span>
                   </div>
-                  <div style={{borderTop:"1px solid #f97316",marginTop:8,paddingTop:10,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-                    <span style={{color:"#fb923c",fontWeight:800,fontSize:14,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>전양정 (J)</span>
+                  <div style={{borderTop:"1px solid #22c55e",marginTop:8,paddingTop:10,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+                    <span style={{color:"#4ade80",fontWeight:800,fontSize:14,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>전양정 (J)</span>
                     <div style={{textAlign:"right"}}>
-                      <div style={{fontSize:11,color:"#64748b",fontFamily:"'JetBrains Mono','Noto Sans KR',monospace"}}>{f3(C.Jraw)} m</div>
-                      <div style={{fontSize:28,fontWeight:900,color:"#fb923c",fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",lineHeight:1}}>{C.J} m</div>
+                      <div style={{fontSize:11,color:"#64748b",fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace"}}>{f3(C.Jraw)} m</div>
+                      <div style={{fontSize:28,fontWeight:900,color:"#4ade80",fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",lineHeight:1}}>{C.J} m</div>
                     </div>
                   </div>
                 </div>
@@ -1237,7 +1252,7 @@ function App(){
               </div>
             </Box>
 
-            <Box title="Ⅱ-3. 전동기 동력 계산" accent="#991b1b">
+            <Box title="Ⅱ-3. 전동기 동력 계산" accent="#166534">
               <div className="g-4" style={{marginBottom:14}}>
                 <Card label="M. 토출량 (Q)" value={f3(C.M)} unit="m³/min" formula={`${C.Clpm} ÷ 1000`}/>
                 <Card label="J. 전양정 (H)" value={C.J} unit="m" formula="앞 계산 결과"/>
@@ -1245,8 +1260,8 @@ function App(){
                 <Card label="N. 펌프 효율 (η)" value={ff(C.N*100,0)} unit="%" formula={`${sys.pumpDia}A — η = ${(C.N*100).toFixed(0)}%`}/>
               </div>
               <div style={{background:"#f8fafc",borderRadius:12,padding:14}}>
-                <div style={{fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",fontSize:12,color:"#475569",marginBottom:12,padding:"8px 12px",background:"white",borderRadius:8,border:BD}}>
-                  P = 0.163 × Q × H × K ÷ η = 0.163 × {f3(C.M)} × {C.J} × {TRANS_TYPE[sys.transType]?.k} ÷ {C.N}{" "}= <b style={{color:"#c2410c"}}>{f3(C.Pkw)} kW</b>
+                <div style={{fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",fontSize:12,color:"#475569",marginBottom:12,padding:"8px 12px",background:"white",borderRadius:8,border:BD}}>
+                  P = 0.163 × Q × H × K ÷ η = 0.163 × {f3(C.M)} × {C.J} × {TRANS_TYPE[sys.transType]?.k} ÷ {C.N}{" "}= <b style={{color:"#15803d"}}>{f3(C.Pkw)} kW</b>
                 </div>
                 <div className="g-motor">
                   <Card label="P. 이론 출력" value={f3(C.Pkw)} unit="kW" formula="0.163×Q×H×K÷η"/>
@@ -1256,29 +1271,29 @@ function App(){
               </div>
             </Box>
 
-            <div style={{background:"linear-gradient(135deg,#1c0a0a,#7f1d1d)",borderRadius:14,padding:22}}>
-              <div style={{color:"#94a3b8",fontSize:10,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:12,display:"flex",alignItems:"center",gap:8,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
-                <span style={{background:"#f97316",color:"white",borderRadius:"50%",width:22,height:22,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:900}}>Ⅱ-4</span>
+            <div style={{background:"linear-gradient(135deg,#052e16,#14532d)",borderRadius:14,padding:22}}>
+              <div style={{color:"#94a3b8",fontSize:11,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.1em",marginBottom:12,display:"flex",alignItems:"center",gap:8,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
+                <span style={{background:"#22c55e",color:"white",borderRadius:"50%",width:22,height:22,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:900}}>Ⅱ-4</span>
                 펌프 선정 결과
               </div>
               <div style={{background:"rgba(255,255,255,0.07)",borderRadius:12,padding:16}}>
-                <div style={{color:"#fb923c",fontSize:14,fontWeight:700,marginBottom:12,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>주 펌프 사양</div>
+                <div style={{color:"#4ade80",fontSize:14,fontWeight:700,marginBottom:12,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>주 펌프 사양</div>
                 <div className="g-pump">
                   {[["토출량 (Q)",`${f3(C.M)} m³/min`],["전 양 정 (H)",`${C.J} m`],["전동기 출력",`${C.Php} HP`],
                     ["토출구경",`${sys.pumpDia} A`],["수원 용량",`${f3(C.Dt)} m³`],["작동 소화전",`${C.A} 개`]].map(([l,v])=>(
                     <div key={l} style={{background:"rgba(255,255,255,0.05)",borderRadius:8,padding:"8px 12px"}}>
-                      <div style={{color:"#64748b",fontSize:11,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>{l}</div>
-                      <div style={{color:"white",fontSize:15,fontWeight:700,fontFamily:"'JetBrains Mono','Noto Sans KR',monospace"}}>{v}</div>
+                      <div style={{color:"#64748b",fontSize:11,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>{l}</div>
+                      <div style={{color:"white",fontSize:15,fontWeight:700,fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace"}}>{v}</div>
                     </div>
                   ))}
                 </div>
-                <div style={{borderTop:"1px solid rgba(255,255,255,0.15)",marginTop:14,paddingTop:14,textAlign:"center",fontSize:17,fontWeight:900,color:"#fb923c",letterSpacing:"0.05em",fontFamily:"'JetBrains Mono','Noto Sans KR',monospace"}}>
+                <div style={{borderTop:"1px solid rgba(255,255,255,0.15)",marginTop:14,paddingTop:14,textAlign:"center",fontSize:17,fontWeight:900,color:"#4ade80",letterSpacing:"0.05em",fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace"}}>
                   Q = {f3(C.M)} ㎥/min &nbsp;×&nbsp; H = {C.J} m &nbsp;×&nbsp; P = {C.Php} HP
                 </div>
               </div>
             </div>
             {/* ── TAB 1 하단 우측 개발자 표기 ── */}
-            <div style={{textAlign:"right",fontFamily:"'Orbitron',sans-serif",fontSize:10,fontWeight:700,color:"#94a3b8",letterSpacing:"0.08em",marginTop:6,paddingRight:4}}>
+            <div style={{textAlign:"right",fontFamily:"'Orbitron',sans-serif",fontSize:11,fontWeight:700,color:"#94a3b8",letterSpacing:"0.08em",marginTop:6,paddingRight:4}}>
               MANMIN · Ver-5.1
             </div>
           </div>
@@ -1303,17 +1318,17 @@ function App(){
             <div id="rpt-outer" className="rpt-outer">
               <div id="rpt-inner" className="rpt-inner">
 
-            <div id="report-zone" style={{background:"white",borderRadius:14,boxShadow:"0 1px 3px rgba(0,0,0,0.1)",border:"1px solid #e5e7eb",padding:"14mm 12mm 22mm 14mm",fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
+            <div id="report-zone" style={{background:"white",borderRadius:14,boxShadow:"0 1px 3px rgba(0,0,0,0.1)",border:"1px solid #e5e7eb",padding:"14mm 12mm 22mm 14mm",fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
 
               {/* 제목 */}
               <div style={{textAlign:"center",marginBottom:28,borderBottom:"3px double #334155",paddingBottom:16}}>
-                <div style={{fontSize:22,fontWeight:900,letterSpacing:"0.06em",fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>옥내소화전 펌프 용량 계산서</div>
-                <div style={{fontSize:12,color:"#64748b",marginTop:6,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>화재안전성능기준(NFPC 102) · 화재안전기술기준(NFTC 102) 적용</div>
+                <div style={{fontSize:22,fontWeight:900,letterSpacing:"0.06em",fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>옥내소화전 펌프 용량 계산서</div>
+                <div style={{fontSize:12,color:"#64748b",marginTop:6,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>화재안전성능기준(NFPC 102) · 화재안전기술기준(NFTC 102) 적용</div>
                 <table style={{margin:"12px auto 0",borderCollapse:"collapse"}}>
                   <tbody>
                     <tr>
                       {[["공사명",proj.name||"(미입력)"],["설계자",proj.designer||"(미입력)"],["작성일",proj.date],["배관종류",`${C.pCfg.shortLabel} (C=${C.pCfg.C})`]].map(([k,v])=>(
-                        <td key={k} style={{border:BD,padding:"5px 14px",fontSize:12,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif",whiteSpace:"nowrap"}}>
+                        <td key={k} style={{border:BD,padding:"5px 14px",fontSize:12,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif",whiteSpace:"nowrap"}}>
                           <b>{k}:</b> {v}
                         </td>
                       ))}
@@ -1357,17 +1372,17 @@ function App(){
 
               {/* ─ 배관 마찰손실 명세표 ─ */}
               <div className="page-break" style={{marginBottom:20}}>
-                <div style={{fontWeight:700,fontSize:11,marginBottom:7,color:"#374151",borderLeft:"3px solid #1e40af",paddingLeft:10,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
+                <div style={{fontWeight:700,fontSize:11,marginBottom:7,color:"#374151",borderLeft:"3px solid #1e40af",paddingLeft:10,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
                   ※ 배관 및 관부속 마찰손실 수두 상세표 &nbsp;[ h₂ = {f3(C.F)} m &nbsp;|&nbsp; 배관종류 : {C.pCfg.shortLabel}, C = {C.pCfg.C} ]
                 </div>
-                <table style={{width:"100%",borderCollapse:"collapse",fontSize:11,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
+                <table style={{width:"100%",borderCollapse:"collapse",fontSize:11,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
                   <thead>
                     <tr style={{background:"#1e3a5f",color:"white"}}>
                       {["NO","유량\n(ℓ/min)","관경\n(A)","직관\n(m)",
                         "90°Elbow\n수량(상당직관)","45°Elbow\n수량(상당직관)","분류Tee\n수량(상당직관)","직류Tee\n수량(상당직관)",
                         "Gate V/V\n수량(상당직관)","Ball V/V\n수량(상당직관)","Angle V/V\n수량(상당직관)","Check V/V\n수량(상당직관)",
                         "상당직관\n합계(m)","마찰계수\n(m/100m)","손실수두\n(m)"].map((h,i)=>(
-                        <th key={i} style={{border:BD,padding:"5px 4px",textAlign:"center",whiteSpace:"pre-line",lineHeight:1.4,fontSize:9,fontWeight:700,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>{h}</th>
+                        <th key={i} style={{border:BD,padding:"5px 4px",textAlign:"center",whiteSpace:"pre-line",lineHeight:1.4,fontSize:9,fontWeight:700,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>{h}</th>
                       ))}
                     </tr>
                   </thead>
@@ -1379,58 +1394,58 @@ function App(){
                       const counts=[s.e90,s.e45,s.teeB,s.teeS,s.gate,s.ball,s.angle,s.check];
                       return(
                         <tr key={i} style={{background:i%2===0?"white":"#f9fafb"}}>
-                          <td style={{border:BD,padding:"4px 5px",textAlign:"center",fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",fontSize:11,whiteSpace:"nowrap"}}>{i+1}</td>
-                          <td style={{border:BD,padding:"4px 5px",textAlign:"center",fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",fontSize:11,whiteSpace:"nowrap"}}>{s.flow}</td>
-                          <td style={{border:BD,padding:"4px 5px",textAlign:"center",fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",fontSize:11,whiteSpace:"nowrap"}}>{s.dia}</td>
-                          <td style={{border:BD,padding:"4px 5px",textAlign:"center",fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",fontSize:11,whiteSpace:"nowrap"}}>{s.len}</td>
+                          <td style={{border:BD,padding:"4px 5px",textAlign:"center",fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",fontSize:11,whiteSpace:"nowrap"}}>{i+1}</td>
+                          <td style={{border:BD,padding:"4px 5px",textAlign:"center",fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",fontSize:11,whiteSpace:"nowrap"}}>{s.flow}</td>
+                          <td style={{border:BD,padding:"4px 5px",textAlign:"center",fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",fontSize:11,whiteSpace:"nowrap"}}>{s.dia}</td>
+                          <td style={{border:BD,padding:"4px 5px",textAlign:"center",fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",fontSize:11,whiteSpace:"nowrap"}}>{s.len}</td>
                           {counts.map((cnt,j)=>(
                             <td key={j} style={{border:BD,padding:"3px 4px",textAlign:"center",fontSize:10,whiteSpace:"nowrap",lineHeight:1.4}}>
-                              <div style={{fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",fontWeight:700,fontSize:11}}>{cnt}</div>
-                              <div style={{fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",fontSize:9,color:"#6b7280"}}>({f3(eq[j])})</div>
+                              <div style={{fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",fontWeight:700,fontSize:11}}>{cnt}</div>
+                              <div style={{fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",fontSize:9,color:"#6b7280"}}>({f3(eq[j])})</div>
                             </td>
                           ))}
-                          <td style={{border:BD,padding:"4px 5px",textAlign:"center",fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",fontSize:11,whiteSpace:"nowrap"}}>{f3(d.fl)}</td>
-                          <td style={{border:BD,padding:"4px 5px",textAlign:"center",fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",fontSize:11,whiteSpace:"nowrap"}}>{f3(d.fric)}</td>
-                          <td style={{border:BD,padding:"4px 5px",textAlign:"center",fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",fontSize:11,whiteSpace:"nowrap"}}>{f3(d.hl)}</td>
+                          <td style={{border:BD,padding:"4px 5px",textAlign:"center",fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",fontSize:11,whiteSpace:"nowrap"}}>{f3(d.fl)}</td>
+                          <td style={{border:BD,padding:"4px 5px",textAlign:"center",fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",fontSize:11,whiteSpace:"nowrap"}}>{f3(d.fric)}</td>
+                          <td style={{border:BD,padding:"4px 5px",textAlign:"center",fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",fontSize:11,whiteSpace:"nowrap"}}>{f3(d.hl)}</td>
                         </tr>
                       );
                     })}
                     <tr style={{background:"#fef3c7",fontWeight:700}}>
-                      <td colSpan={14} style={{border:BD,padding:"5px 10px",textAlign:"right",color:"#92400e",fontSize:11,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif",whiteSpace:"nowrap"}}>합계 (h₂)</td>
-                      <td style={{border:BD,padding:"5px 6px",textAlign:"right",fontFamily:"'JetBrains Mono','Noto Sans KR',monospace",color:"#b45309",fontWeight:900,fontSize:12,paddingRight:8}}>{f3(C.F)}</td>
+                      <td colSpan={14} style={{border:BD,padding:"5px 10px",textAlign:"right",color:"#92400e",fontSize:11,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif",whiteSpace:"nowrap"}}>합계 (h₂)</td>
+                      <td style={{border:BD,padding:"5px 6px",textAlign:"right",fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace",color:"#b45309",fontWeight:900,fontSize:12,paddingRight:8}}>{f3(C.F)}</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
 
               {/* ─ Ⅱ-4 펌프 선정 결과 ─ */}
-              <div style={{border:"2px solid #b91c1c",borderRadius:8,overflow:"hidden",marginBottom:18}}>
+              <div style={{border:"2px solid #15803d",borderRadius:8,overflow:"hidden",marginBottom:18}}>
                 <div style={{...SEC_TITLE_STYLE,borderRadius:0}}>Ⅱ-4. 펌프 선정 결과</div>
-                <div style={{background:"#fef2f2",padding:"14px 16px"}}>
-                  <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
+                <div style={{background:"#f0fdf4",padding:"14px 16px"}}>
+                  <table style={{width:"100%",borderCollapse:"collapse",fontSize:12,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>
                     <thead>
-                      <tr style={{background:"#b91c1c",color:"white"}}>
+                      <tr style={{background:"#15803d",color:"white"}}>
                         {["구분","구경(A)","유량(m³/min)","동력(HP)","양정(m)","수원(m³)","전달방식","소화전 수(N)"].map(h=>(
-                          <th key={h} style={{border:BD,padding:"7px 10px",textAlign:"center",fontWeight:700,whiteSpace:"nowrap",fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>{h}</th>
+                          <th key={h} style={{border:BD,padding:"7px 10px",textAlign:"center",fontWeight:700,whiteSpace:"nowrap",fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif"}}>{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
                       <tr style={{fontWeight:700,background:"white"}}>
                         {["주  펌  프",`${sys.pumpDia}×${sys.pumpDia}`,f3(C.M),C.Php,C.J,f3(C.Dt),TRANS_TYPE[sys.transType]?.label,`${C.A} 개`].map((v,i)=>(
-                          <td key={i} style={{border:BD,padding:"7px 10px",textAlign:"center",fontFamily:"'JetBrains Mono','Noto Sans KR','Noto Sans KR Local',monospace",fontSize:12,whiteSpace:"nowrap"}}>{v}</td>
+                          <td key={i} style={{border:BD,padding:"7px 10px",textAlign:"center",fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',monospace",fontSize:12,whiteSpace:"nowrap"}}>{v}</td>
                         ))}
                       </tr>
                     </tbody>
                   </table>
-                  <div style={{textAlign:"center",marginTop:12,fontSize:16,fontWeight:900,color:"#b91c1c",letterSpacing:"0.04em",borderTop:"1px solid #fca5a5",paddingTop:12,fontFamily:"'JetBrains Mono','Noto Sans KR','Noto Sans KR Local',monospace"}}>
+                  <div style={{textAlign:"center",marginTop:12,fontSize:16,fontWeight:900,color:"#15803d",letterSpacing:"0.04em",borderTop:"1px solid #86efac",paddingTop:12,fontFamily:"'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',monospace"}}>
                     Q = {f3(C.M)} ㎥/min &nbsp;×&nbsp; H = {C.J} m &nbsp;×&nbsp; P = {C.Php} HP
                   </div>
                 </div>
               </div>
 
               {/* ─ 적용 법령 ─ */}
-              <div style={{padding:13,background:"#f8fafc",borderRadius:8,fontSize:11,color:"#6b7280",border:BD,fontFamily:"'Noto Sans KR','Noto Sans KR Local',sans-serif",lineHeight:1.9}}>
+              <div style={{padding:13,background:"#f8fafc",borderRadius:8,fontSize:11,color:"#6b7280",border:BD,fontFamily:"'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif",lineHeight:1.9}}>
                 <b style={{color:"#374151"}}>▣ 적용 법령 및 기준</b><br/>
                 ① 화재안전성능기준 NFPC 102 [소방청고시 제2025-25호, 2026. 3. 1. 시행]<br/>
                 &nbsp;&nbsp;- 제4조 (수원): 가장 많은 층 설치개수(2개 이상이면 2개) × 2.6 m³ 이상 · ② 옥상수조 1/3 이상<br/>
@@ -1456,8 +1471,8 @@ function App(){
     {/* ═══ 계산식 안내 FAB 버튼 ═══ */}
     <button className="formula-fab no-print" style={{bottom:102}} onClick={()=>setShowFormula(true)}>
       <span style={{fontSize:20,lineHeight:1}}>📐</span>
-      <span style={{fontSize:10,fontWeight:800,letterSpacing:"0.04em"}}>계산식</span>
-      <span style={{fontSize:9,opacity:0.8}}>안내</span>
+      <span style={{fontSize:11,fontWeight:800,letterSpacing:"0.04em"}}>계산식</span>
+      <span style={{fontSize:11,opacity:0.8}}>안내</span>
     </button>
 
     {/* ═══ PWA 설치 FAB ═══ */}
@@ -1465,8 +1480,8 @@ function App(){
       <button className="pwa-install-fab no-print" onClick={handleInstall} aria-label="앱 설치 바로가기">
         <div className="pwa-install-fab-badge">NEW</div>
         <span style={{fontSize:20,lineHeight:1}}>📲</span>
-        <span style={{fontSize:10,fontWeight:800,letterSpacing:"0.04em"}}>앱 설치</span>
-        <span style={{fontSize:9,opacity:0.8}}>바로가기</span>
+        <span style={{fontSize:11,fontWeight:800,letterSpacing:"0.04em"}}>앱 설치</span>
+        <span style={{fontSize:11,opacity:0.8}}>바로가기</span>
       </button>
     )}
 
@@ -1481,11 +1496,11 @@ function App(){
           <img src="icons/icon-192.png" style={{width:48,height:48,borderRadius:12,flexShrink:0,boxShadow:"0 4px 12px rgba(0,0,0,0.3)"}} alt="옥내소화전 앱 아이콘"/>
           <div style={{flex:1,minWidth:0}}>
             <div style={{color:"white",fontSize:13,fontWeight:800}}>홈 화면에 설치하시겠습니까?</div>
-            <div style={{color:"#fca5a5",fontSize:10,fontWeight:600,marginTop:4}}>오프라인에서도 사용 가능합니다</div>
+            <div style={{color:"#86efac",fontSize:11,fontWeight:600,marginTop:4}}>오프라인에서도 사용 가능합니다</div>
           </div>
           <div style={{display:"flex",gap:8,flexShrink:0}}>
             <button onClick={()=>setShowInstallBanner(false)} style={{color:"rgba(255,255,255,0.6)",fontSize:11,fontWeight:700,padding:"8px 12px",border:"none",background:"transparent",cursor:"pointer",borderRadius:8}}>닫기</button>
-            <button onClick={handleInstall} style={{background:"white",color:"#DC2626",fontSize:11,fontWeight:900,padding:"8px 16px",border:"none",borderRadius:8,cursor:"pointer",boxShadow:"0 2px 8px rgba(0,0,0,0.2)"}}>설치</button>
+            <button onClick={handleInstall} style={{background:"white",color:"#16a34a",fontSize:11,fontWeight:900,padding:"8px 16px",border:"none",borderRadius:8,cursor:"pointer",boxShadow:"0 2px 8px rgba(0,0,0,0.2)"}}>설치</button>
           </div>
         </div>
       </div>
@@ -1571,7 +1586,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
     b.id = 'sw-update-banner';
     b.style.cssText = [
       'position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:99999',
-      'background:#DC2626;color:white;border-radius:14px;padding:12px 18px',
+      'background:#16a34a;color:white;border-radius:14px;padding:12px 18px',
       'display:flex;align-items:center;gap:12px;box-shadow:0 8px 32px rgba(0,0,0,.45)',
       'font-family:"Noto Sans KR",sans-serif;font-size:13px;white-space:nowrap',
       'animation:slideUp .35s ease-out',
@@ -1584,7 +1599,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
         'navigator.serviceWorker.ready.then(function(r){' +
           'if(r.waiting) r.waiting.postMessage({type:\'SKIP_WAITING\'});' +
         '});' +
-      '})()" style="background:white;color:#DC2626;border:none;border-radius:8px;' +
+      '})()" style="background:white;color:#16a34a;border:none;border-radius:8px;' +
         'padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;">업데이트</button>' +
       '<button onclick="document.getElementById(\'sw-update-banner\').remove()" ' +
         'style="background:rgba(255,255,255,.15);color:white;border:none;border-radius:8px;' +
@@ -1729,7 +1744,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
     ov.id = 'mm-save-ov';
     ov.style.cssText = 'position:fixed;inset:0;z-index:99999;background:rgba(15,23,42,.62);' +
       'display:flex;align-items:center;justify-content:center;padding:16px;' +
-      "font-family:'Noto Sans KR','Noto Sans KR Local',sans-serif;";
+      "font-family:'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif;";
     var bx = document.createElement('div');
     bx.style.cssText = 'background:#fff;border-radius:14px;width:100%;max-width:680px;max-height:88vh;' +
       'display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.32);';
@@ -1808,7 +1823,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
       'color:' + (this.base.color || '#111827') + ';' +          /* 흐린 글자 방지 */
       'font-size:' + (this.base.fontSize || '13px') + ';' +
       'line-height:' + (this.base.lineHeight || '1.7') + ';' +
-      'font-family:' + (this.base.fontFamily || "'Noto Sans KR','Noto Sans KR Local',sans-serif") + ';';
+      'font-family:' + (this.base.fontFamily || "'Pretendard Variable',Pretendard,'Noto Sans KR','Noto Sans KR Local',sans-serif") + ';';
     var b = document.createElement('div');
     b.style.cssText = 'display:flow-root;';                     /* 마진 상쇄 방지 */
     p.appendChild(b); this.stage.appendChild(p);
@@ -1871,7 +1886,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
       if(t > 1){                                 /* 2매 이상일 때만 쪽번호 */
         this.pages[i].appendChild(stampEl(
           'left:' + PL + 'px;bottom:' + MM(9) + 'px;' +
-          "font-family:'JetBrains Mono','Noto Sans KR',monospace;" +
+          "font-family:'JetBrains Mono','Pretendard Variable',Pretendard,'Noto Sans KR',monospace;" +
           'font-size:8pt;color:#9ca3af;letter-spacing:0.04em;', (i+1) + ' / ' + t));
       }
     }
@@ -1968,5 +1983,15 @@ ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 <style>#mm-ios-tip{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:99999;display:none;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:#0B1B2E;color:#F4F1EA;border:1px solid rgba(255,255,255,.18);box-shadow:0 8px 28px rgba(0,0,0,.35);font:600 13px/1.5 'Pretendard','Noto Sans KR',system-ui,sans-serif;max-width:560px;margin:0 auto}#mm-ios-tip b{color:#86efac}#mm-ios-tip button{flex:none;margin-left:auto;padding:7px 12px;border-radius:9px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#F4F1EA;font:inherit;cursor:pointer}@media print{#mm-ios-tip{display:none!important}}</style>
 <div id="mm-ios-tip" role="dialog" aria-label="홈 화면에 앱 설치 안내"><span style="font-size:20px">📲</span><span>홈 화면에 앱으로 설치 — Safari <b>공유</b> 단추 → <b>홈 화면에 추가</b></span><button type="button" aria-label="설치 안내 닫기">닫기</button></div>
 <script>(function(){try{var n=navigator,ios=/iphone|ipad|ipod/i.test(n.userAgent)||(n.platform==='MacIntel'&&n.maxTouchPoints>1),sa=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||n.standalone===true;if(!ios||sa)return;try{if(sessionStorage.getItem('mm-ios-tip'))return}catch(e){}var t=document.getElementById('mm-ios-tip');if(!t)return;t.querySelector('button').addEventListener('click',function(){t.style.display='none';try{sessionStorage.setItem('mm-ios-tip','1')}catch(e){}});setTimeout(function(){t.style.display='flex'},2500)}catch(e){}})();</script>
+<!-- ══ FOOTER (하단 버전 표시) ══ -->
+<footer class="mm-foot no-print">
+  <div class="foot-inner">
+    <div>
+      <div class="foot-nm">MANMIN Ver-5.1</div>
+      <div class="foot-desc">옥내소화전 펌프 용량 계산서 | NFPC · NFTC 102</div>
+    </div>
+    <div class="foot-copy">ARCHITECT KIM MANMIN © 2026</div>
+  </div>
+</footer>
 </body>
 </html>
