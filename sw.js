@@ -1,4 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
+   v6.1.2 (2026-11-12) — React 18.3.1 · Babel 7.29.7 주소 unpkg → cdnjs(같은 파일 · 해시 일치) · SRI(integrity) · Pretendard CSS SRI(정밀검토 C2) — 화면 · 계산 · 인쇄 불변 · 작업지시서 §25-6-82 · 캐시명 v6.1.2 (종전 v6.1.1)
    v6.1.1 (2026-11-12) — 건물개요 공통 원본 MM-PROJECT v1.2 → v1.3(불러오기 창 표 칸 모양 고정 — 도구 CSS 가 새지 않음 · 저장값 같음, 정밀검토 C10) · 쓰지 않는 Noto Sans KR 구글 글꼴 불러오기 제거(실측으로 글자 하나도 안 쓰임 — 글꼴 지정은 그대로, 정밀검토 C4) · 작업지시서 §25-6-80 · 판 6.1 · 캐시명 v6.1.1 (종전 v6.1.0)
    v6.1.0 (2026-11-12) — 입력값 경고 표시: A. 소화전 수(0 · 음수 · 최대 초과 · 소수) · F. 실양정 음수 · 배관 구간표 음수 — 계산 값 불변 · 계산서 끝 「입력 확인」 줄(정밀검토 B10 · 작업지시서 §25-6-79) · 판 6.1 · 캐시명 v6.1.0 (종전 CACHE_VER 'v5.1.12')
    v5.1.4 2026-10-31 — 휴대전화 · 터치 화면 단추 · 입력칸 최소 높이 32px · 캐시명 v5.1.4
@@ -36,7 +37,7 @@ const mmMatch = (req, opt) => caches.keys()
   .then((ks) => ks.reduce((p, k) => p.then((r) => r || caches.open(k).then((c) => c.match(req, opt))), Promise.resolve(undefined)))
   .then((r) => (r && r.type === 'opaque' && req && req.mode === 'cors') ? undefined : r);
 
-const CACHE_VER    = 'v6.1.1';
+const CACHE_VER    = 'v6.1.2';
 const CACHE_NAME   = `manmin-indoor-hydrant-${CACHE_VER}`;
 const STATIC_CACHE = `manmin-indoor-hydrant-static-${CACHE_VER}`;
 
