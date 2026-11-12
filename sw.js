@@ -1,4 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
+   v6.1.0 (2026-11-12) — 입력값 경고 표시: A. 소화전 수(0 · 음수 · 최대 초과 · 소수) · F. 실양정 음수 · 배관 구간표 음수 — 계산 값 불변 · 계산서 끝 「입력 확인」 줄(정밀검토 B10 · 작업지시서 §25-6-79) · 판 6.1 · 캐시명 v6.1.0 (종전 CACHE_VER 'v5.1.12')
    v5.1.4 2026-10-31 — 휴대전화 · 터치 화면 단추 · 입력칸 최소 높이 32px · 캐시명 v5.1.4
    v5.1.1 회차 2026-10-15 — 압력 판정 표시: 배관 사용압력 1.2 MPa(NFTC 102 2.3.1.2) · 감압장치 0.7 MPa(2.2.1.3 단서) · 최저층 방수구 높이 입력
    v5.1.0 회차 2026-10-15 — NFPC 102(제2025-25호) · NFTC 102(제2026-34호) 원문 대조 근거 정정 · 옥상수조 1/3 · KS 강관 내경 · 계산 엔진 단일화 · 매뉴얼(/manual/) 캐시 제외 · 캐시명 v5.1.0
@@ -8,7 +9,7 @@
    S2 회차 2026-09-04 — index 소급(R1·R21·R26 등) 동반 캐시명 v5.0.3
    R25 회차 2026-09-04 — 자기 접두어 캐시 조회 · cors 프리캐시 · opaque 가드 · 캐시명 v5.0.2 (S10)
    Service Worker — 옥내소화전 펌프 용량 계산서
-   Developer MANMIN · Ver-5.1
+   Developer MANMIN · Ver-6.1
 
    ▣ Ver 3.2 핵심 개선 — 재설치 문제 원천 차단
    ① INSTALL  : skipWaiting() 즉시 호출 → 대기 없이 바로 활성화
@@ -34,7 +35,7 @@ const mmMatch = (req, opt) => caches.keys()
   .then((ks) => ks.reduce((p, k) => p.then((r) => r || caches.open(k).then((c) => c.match(req, opt))), Promise.resolve(undefined)))
   .then((r) => (r && r.type === 'opaque' && req && req.mode === 'cors') ? undefined : r);
 
-const CACHE_VER    = 'v5.1.12';
+const CACHE_VER    = 'v6.1.0';
 const CACHE_NAME   = `manmin-indoor-hydrant-${CACHE_VER}`;
 const STATIC_CACHE = `manmin-indoor-hydrant-static-${CACHE_VER}`;
 
