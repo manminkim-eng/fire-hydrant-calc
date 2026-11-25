@@ -1,4 +1,5 @@
 /* ═══════════════════════════════════════════════════════════════
+   v6.1.6 (2026-11-26) — 하단 단추 통일 — 공통 원본 MM-FAB v1.0 주입(오른쪽 아래 안내 · 초기화 · 앱 설치 · 건물개요 단추를 한 기둥으로 — 단추 72×76 · 건물개요 72×28 · 간격 8px · z-index 1200 · 숨은 단추는 자리 없음 · 설치 뒤 · 앱 실행 중 설치 단추 숨김 · 설치 띠가 뜨면 기둥을 그 위로 · 휴대폰 가로 60×60) — 계산 불변 · 인쇄는 설치 · 업데이트 띠만 숨김 · MIN 「권장안대로 승인」 · 캐시명 v6.1.6 (종전 v6.1.5)
    v6.1.5 (2026-11-25) — 헤더 고정 — 공통 원본 MM-HEADER v1.1 주입(태블릿 · 데스크톱만 — 폭 768px · 높이 600px 이상, 휴대폰은 고정 없음 · 머리+탭 sticky · 내리면 제목 한 줄+탭으로 접힘 · 다른 sticky 패널 top 보정) — 계산 · 인쇄 불변 · MIN 「추천안대로 승인」 · 「추천안대로 진행해줘」(모바일 제외) · 캐시명 v6.1.5 (종전 v6.1.4)
    v6.1.4 (2026-11-23) — 교차검증(Claude × Gemini) 반영: ① 배관 사용압력 1.2 MPa 판정을 체절압력 기준으로(입력 · 없으면 정격 × 1.4, 소방청 법령해석 412390 · NFPC 102 제5조①7호) · S-1 체절압력 입력칸(선택) ② 감압장치 안내에 체절 상한 참고값 ③ 건축물 규모 「고층 (30~49층 또는 높이 120 m 이상)」 ④ 효율 근거 「입력값 η」 — 수원 · 전양정 · 동력 불변 · 캐시명 v6.1.4 (종전 v6.1.3)
    v6.1.3 (2026-11-12) — html2canvas 1.4.1 머리 태그 SRI(integrity sha384 · crossorigin) · 공통 인쇄 원본 MM-PRINT v1.0 → v1.1(지연 로더도 SRI)(정밀검토 B8 · html2canvas SRI) — 화면 · 계산 · 인쇄 불변 · 작업지시서 §25-6-87 · 캐시명 v6.1.3 (종전 v6.1.2)
@@ -40,7 +41,7 @@ const mmMatch = (req, opt) => caches.keys()
   .then((ks) => ks.reduce((p, k) => p.then((r) => r || caches.open(k).then((c) => c.match(req, opt))), Promise.resolve(undefined)))
   .then((r) => (r && r.type === 'opaque' && req && req.mode === 'cors') ? undefined : r);
 
-const CACHE_VER    = 'v6.1.5';
+const CACHE_VER    = 'v6.1.6';
 const CACHE_NAME   = `manmin-indoor-hydrant-${CACHE_VER}`;
 const STATIC_CACHE = `manmin-indoor-hydrant-static-${CACHE_VER}`;
 
