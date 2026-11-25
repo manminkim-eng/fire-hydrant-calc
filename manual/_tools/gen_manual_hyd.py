@@ -7,7 +7,7 @@
      고층건축물의 화재안전기술기준(NFTC 604) 공고 제2023-44호 2.1
    예제 수치는 캡처 때 앱 엔진(window.HYDENG.calc)으로 계산해 기록한 _example.json 에서 가져온다(손으로 옮겨 적지 않는다).
    참고값 표(호스 손실률 · 관부속 상당길이 · 강관 내경)는 앱 index.html 의 hyd-engine 을 node 로 읽는다."""
-import os, sys, json, subprocess
+import re, os, sys, json, subprocess
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from manual_engine import fig, T, render, B, MARKS
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -19,10 +19,11 @@ JS = r"""const fs=require('fs');const s=fs.readFileSync(process.argv[1],'utf8');
 const e=s.slice(a,s.indexOf('</script>',a));var window=globalThis;eval(e);console.log(JSON.stringify({PIPE_CONFIG,HOSE_TYPES,FITTING_EQ,TRANS_TYPE,PUMP_EFF}));"""
 D = json.loads(subprocess.check_output(['node', '-e', JS, APPHTML]))
 
-VER = 'Ver-5.1'
-REL = 'v5.1.1'
+VER = 'Ver-6.1'
+REL = 'v' + '.'.join(map(str, max(tuple(map(int, v.split('.'))) for v in re.findall(r'v(6\.\d+\.\d+)', open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'sw.js'), encoding='utf-8').read()))))   # 도구 판 = sw.js 캐시 판(2026-11-25 Ver-6.1 표기 통일)
 DATE = '2026-10-15'
-PDF = '옥내소화전_사용자매뉴얼_Ver-5.1.pdf'
+UPD = '2026-11-25'   # Ver-6.1 표기 통일(판 이름 · PDF 이름 · 대상 프로그램 판), 내용 변경 없음
+PDF = '옥내소화전_사용자매뉴얼_Ver-6.1.pdf'
 APP_URL = 'https://manminkim-eng.github.io/fire-hydrant-calc/'
 APP = '옥내소화전 펌프 용량 계산서'
 NFPC = '옥내소화전설비의 화재안전성능기준(NFPC 102) 소방청고시 제2025-25호(2026. 3. 1. 시행)'
@@ -95,7 +96,7 @@ S.append(f"""{EXTRA_CSS}<section class="ch" id="ch0"><h2><span class="n">00</spa
 {K(T([
  ['대상 프로그램', f'{APP} <b>MANMIN {VER}</b>({REL}) — 탭 막대 「📘 매뉴얼」 버튼으로 이 문서가 열립니다'],
  ['접속 주소', f'<a href="{APP_URL}" target="_blank" rel="noopener">manminkim-eng.github.io/fire-hydrant-calc</a>'],
- ['매뉴얼 판', f'<b>{VER}</b> (화면 표기와 같은 판 번호, 초판) · {DATE} · 작성 김만민 건축사(㈜대성건축사사무소)'],
+ ['매뉴얼 판', f'<b>{VER}</b> (도구 판 6.1.x와 맞춘 판 번호, 초판 {DATE}) · 개정 {UPD} · 작성 김만민 건축사(㈜대성건축사사무소)'],
  ['내려받기', f'<a href="{PDF}" download>PDF(A4)</a> · <a href="../index.html">{APP} 열기</a>'],
  ['예제', f'본문 그림은 예제 A(익산 업무시설 10층 — 소화전 3개 · 실양정 45 m)로 캡처했습니다 — <b>토출량 {A["Clpm"]} L/min · 수원 {f3(A["D"])} + 옥상 {f3(A["R"])} = {f3(A["Dt"])} m³ · 전양정 {A["J"]} m · {A["Php"]:g} HP</b>. 예제 B(고층 40층) · C(지하주차장 호스릴 · 옥상수조 면제)는 <a href="#a2">부록 A2</a>'],
  ['근거 법령', f'{LAW} — LawMCP(국가법령정보센터) 원문 대조({DATE})'],
@@ -335,6 +336,7 @@ S.append(f"""<section class="ch" id="ch7"><h2><span class="n">부록</span></h2>
 {BR(T([rrow('예제 A', A), rrow('예제 B', Bx), rrow('예제 C', C)], ['예제', '개수', '토출량(L/min)', '유효수량(m³)', '옥상(m³)', '총 저수량(m³)', 'h₂(m)', '전양정(m)', 'HP'], num_cols=(1, 2, 3, 4, 5, 6, 7, 8)))}
 <h3 id="a3">A3. 버전 변경 내역</h3>
 {K(T([
+ [f'Ver-6.1 · {REL} (2026-11-25)', '매뉴얼 판 표기 통일 — Ver-5.1 → Ver-6.1(도구 판 6.1.x와 맞춤) · PDF 이름 「…_Ver-6.1.pdf」 · 대상 프로그램 판 · 작성일 갱신 — 본문 · 계산 · 예제 변경 없음'],
  ['Ver-5.1 · v5.1.12 (2026-11-09)', '「🏢 건물개요」 저장 · 불러오기 — 공사명 · 설계자을(를) 다른 MANMIN 도구와 공유, 파일 내보내기 · 가져오기(공통 원본 MM-PROJECT v1.2, 계산 변경 없음)'],
  [f'Ver-5.1 · v5.1.1 ({DATE})', '압력 판정 표시 — 배관 사용압력 1.2 MPa(NFTC 102 2.3.1.2) · 감압장치 0.7 MPa(2.2.1.3 단서) · 최저층 방수구 높이 입력(계산값 불변)'],
  [f'Ver-5.1 · v5.1.0 ({DATE})', 'NFPC 102 · NFTC 102(제2026-34호) · NFTC 604 원문 대조 근거 정정, 옥상수조 1/3, KS 강관 내경, MANMIN 참고값 표기, 계산 엔진 단일화, 탭 막대 「📘 매뉴얼」 · 사용자 매뉴얼(<a href="#s4-8">4-8</a>)'],
@@ -354,8 +356,8 @@ S.append(f"""<section class="ch" id="ch7"><h2><span class="n">부록</span></h2>
 html = render(title=f'{APP} 사용자 매뉴얼 {VER} · MANMIN',
               desc=f'{APP} MANMIN {VER} 사용자 매뉴얼 — 화면 기능, NFPC 102 · NFTC 102 · NFTC 604 해설, 실무 작업 방법',
               eyebrow='MANMIN ENGINEERING · USER MANUAL', h1=f'{APP} 사용자 매뉴얼',
-              sub='수원 · 옥상수조 → 토출량 → 배관 · 호스 마찰손실 → 전양정 → 전동기 동력 → A4 계산서', ver=VER, date=DATE, app_name=APP,
+              sub='수원 · 옥상수조 → 토출량 → 배관 · 호스 마찰손실 → 전양정 → 전동기 동력 → A4 계산서', ver=VER, date=UPD, app_name=APP,
               pdf=PDF, toc=TOC, sections=S, foot_note='NFPC 102 (소방청고시 제2025-25호) · NFTC 102 (국립소방연구원공고 제2026-34호) · NFTC 604')
-html = html.replace('화면 대응 개정 2026-10-12', '화면 대응 개정 ' + DATE)
+html = html.replace('화면 대응 개정 2026-10-12', '화면 대응 개정 ' + UPD)
 open(os.path.join(B, 'index.html'), 'w', encoding='utf-8').write(html)
 print('manual ok', len(html))
